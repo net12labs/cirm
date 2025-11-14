@@ -1,4 +1,2 @@
 github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
 github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
-github.com/net12labs/cirm/dali v0.0.0-20251114164059-9a7214df90ef h1:RxxWTKAUUU0ZAuHpxP5WnzvdCDoqybqXYugRNM4MYEM=
-github.com/net12labs/cirm/dali v0.0.0-20251114164059-9a7214df90ef/go.mod h1:HReJQh8f+myKSx1mT/QWHFJz727BM7VwwhcJTJZXuOQ=

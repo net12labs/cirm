@@ -1,11 +1,12 @@
 package main
 
 import (
-	"cirm/cmd"
-	data "cirm/data"
-	xmain "cirm/main"
 	"fmt"
 	"os"
+
+	"github.com/net12labs/cirm/service-daemon/cmd"
+	data "github.com/net12labs/cirm/service-daemon/data"
+	xmain "github.com/net12labs/cirm/service-daemon/main"
 
 	rtm "github.com/net12labs/cirm/dali/runtime"
 
