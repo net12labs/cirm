@@ -2,10 +2,12 @@ package xmain
 
 import (
 	"cirm/data"
-	ox "cirm/lib/ox"
-	rtm "cirm/lib/runtime"
-	svc "cirm/svc"
 	"fmt"
+
+	ox "github.com/net12labs/cirm/dali/ox"
+	rtm "github.com/net12labs/cirm/dali/runtime"
+
+	svc "github.com/net12labs/cirm/service-daemon/main/svc"
 )
 
 type Serve struct {

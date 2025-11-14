@@ -1,8 +1,9 @@
 package webclient
 
 import (
-	webserver "cirm/lib/web-server"
 	"embed"
+
+	webserver "github.com/net12labs/cirm/dali/web-server"
 )
 
 //go:embed web/*
