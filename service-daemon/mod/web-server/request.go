@@ -1,0 +1,103 @@
+package webserver
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+type Request struct {
+	Req      *http.Request
+	Resp     *http.ResponseWriter
+	Path     *URLPath
+	Method   string
+	Response *Response
+}
+
+type Response struct {
+	StatusCode int
+	Headers    http.Header
+	MimeType   string
+	req        *Request
+}
+
+func NewRequest(w http.ResponseWriter, r *http.Request) *Request {
+	req := &Request{
+		Req:    r,
+		Resp:   &w,
+		Path:   &URLPath{Path: r.URL.Path},
+		Method: r.Method,
+		Response: &Response{
+			Headers: make(http.Header),
+		},
+	}
+	req.Response.req = req
+	return req
+}
+
+func (rs *Response) Write404() {
+	rs.Headers.Set("Content-Type", "text/plain")
+	rs.Headers.Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	rs.StatusCode = http.StatusNotFound
+	(*rs.req.Resp).WriteHeader(rs.StatusCode)
+	(*rs.req.Resp).Write([]byte("404 Not Found"))
+
+}
+
+func (r *Request) WriteResponse(data any) error {
+	if r.Response == nil {
+		r.Response = &Response{}
+	}
+
+	// Set Content-Type from MimeType if specified
+	if r.Response.MimeType != "" {
+		(*r.Resp).Header().Set("Content-Type", r.Response.MimeType)
+	}
+
+	// Set headers
+	for key, values := range r.Response.Headers {
+		for _, value := range values {
+			(*r.Resp).Header().Add(key, value)
+		}
+	}
+
+	// Write data
+	if data != nil {
+		// Set status code before writing data
+		statusCode := r.Response.StatusCode
+		if statusCode == 0 {
+			statusCode = http.StatusOK
+		}
+		(*r.Resp).WriteHeader(statusCode)
+
+		switch v := data.(type) {
+		case string:
+			_, err := (*r.Resp).Write([]byte(v))
+			return err
+		case []byte:
+			_, err := (*r.Resp).Write(v)
+			return err
+		default:
+			// Try to marshal as JSON
+			jsonData, err := json.Marshal(v)
+			if err != nil {
+				return fmt.Errorf("failed to marshal data: %w", err)
+			}
+			// Set Content-Type to JSON only if MimeType not already set
+			if r.Response.MimeType == "" {
+				(*r.Resp).Header().Set("Content-Type", "application/json")
+			}
+			_, err = (*r.Resp).Write(jsonData)
+			return err
+		}
+	} else {
+		// No data, just write status code
+		statusCode := r.Response.StatusCode
+		if statusCode == 0 {
+			statusCode = http.StatusOK
+		}
+		(*r.Resp).WriteHeader(statusCode)
+	}
+
+	return nil
+}
