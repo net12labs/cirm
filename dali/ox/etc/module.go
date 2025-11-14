@@ -1,7 +1,7 @@
 package etc
 
 import (
-	mod "dali/x-module"
+	mod "github.com/net12labs/cirm/dali/x-module"
 )
 
 var Module = mod.NewEtcStoreCb(func(es *mod.EtcStore) {

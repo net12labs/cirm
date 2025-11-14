@@ -1,9 +1,10 @@
 package os
 
 import (
-	etc "dali/ox/etc"
-	pid "dali/ox/pid"
 	"fmt"
+
+	etc "github.com/net12labs/cirm/dali/ox/etc"
+	pid "github.com/net12labs/cirm/dali/ox/pid"
 )
 
 var Pid = pid.Module

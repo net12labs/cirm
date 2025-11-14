@@ -2,12 +2,14 @@ package main
 
 import (
 	"cirm/cmd"
-	ox "cirm/common/ox"
-	rtm "cirm/common/runtime"
 	data "cirm/data"
 	xmain "cirm/main"
 	"fmt"
 	"os"
+
+	rtm "github.com/net12labs/cirm/dali/runtime"
+
+	ox "github.com/net12labs/cirm/dali/ox"
 )
 
 // so context we can also package in the db - so it is all atomic

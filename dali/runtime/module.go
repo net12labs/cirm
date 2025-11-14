@@ -1,8 +1,8 @@
 package runtime
 
 import (
-	"dali/runtime/do"
-	"dali/runtime/unit"
+	"github.com/net12labs/cirm/dali/runtime/do"
+	"github.com/net12labs/cirm/dali/runtime/unit"
 )
 
 var Runtime = unit.NewRuntimeUnit()
