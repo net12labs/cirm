@@ -1,4 +1,4 @@
-package unit
+package user
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 )
 
 type WebApi struct {
-	svc    *SvcUnit
+	svc    *UserUnit
 	Server *webserver.WebServer
 	// WebApi fields here
 }

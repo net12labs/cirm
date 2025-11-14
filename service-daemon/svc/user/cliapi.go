@@ -1,11 +1,11 @@
-package unit
+package user
 
 import (
 	cliserver "github.com/net12labs/cirm/dali/cli-server"
 )
 
 type CliApi struct {
-	svc    *SvcUnit
+	svc    *UserUnit
 	Server *cliserver.CliServer
 
 	// CliApi fields here

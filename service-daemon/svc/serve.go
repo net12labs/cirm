@@ -7,16 +7,27 @@ import (
 
 	ox "github.com/net12labs/cirm/dali/ox"
 	rtm "github.com/net12labs/cirm/dali/runtime"
+	webserver "github.com/net12labs/cirm/dali/web-server"
 
-	svc "github.com/net12labs/cirm/service-daemon/svc/user"
+	admin "github.com/net12labs/cirm/service-daemon/svc/admin"
+	user "github.com/net12labs/cirm/service-daemon/svc/user"
 )
 
 type Serve struct {
 	// Serve fields here
+	Server *webserver.WebServer
+	User   *user.UserUnit
+	Admin  *admin.AdminUnit
 }
 
 func NewServe() *Serve {
-	return &Serve{}
+	sv := &Serve{
+		User:  user.NewUserUnit(),
+		Admin: admin.NewAdminUnit(),
+	}
+	sv.User.WebServer = sv.Server
+	sv.Admin.WebServer = sv.Server
+	return sv
 }
 
 func (s *Serve) Start() error {
@@ -43,20 +54,20 @@ func (s *Serve) Start() error {
 		rtm.Runtime.Exit(1)
 	}
 
-	svc.Svc.Mode.SetKeys("web", "cli")
-	svc.Svc.OnExit = func() {
+	s.User.Mode.SetKeys("web", "cli")
+	s.User.OnExit = func() {
 		// Cleanup tasks here
 	}
 
-	if err := svc.Svc.Init(); err != nil {
+	if err := s.User.Init(); err != nil {
 		fmt.Println(err)
 		rtm.Runtime.Exit(1)
 	}
 
-	exit_code := svc.Svc.Run()
+	exit_code := s.User.Run()
 
 	if exit_code != 0 {
-		fmt.Println(svc.Svc.ExitMessage)
+		fmt.Println(s.User.ExitMessage)
 		rtm.Runtime.Exit(1)
 	}
 	rtm.Runtime.Exit(0)

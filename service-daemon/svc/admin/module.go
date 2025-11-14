@@ -1,33 +1,33 @@
-package unit
+package admin
 
 import (
 	"fmt"
 
+	webserver "github.com/net12labs/cirm/dali/web-server"
 	"github.com/net12labs/cirm/dali/work/service"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
-	webclient "github.com/net12labs/cirm/svc-client-web"
+	webclient "github.com/net12labs/cirm/admin-client-web"
 )
 
 // Possible runmodes are; web, cli
 
-type SvcUnit struct {
+type AdminUnit struct {
 	*service.ServiceUnit
 	WebServer *webserver.WebServer
-
+	WebClient *webclient.AdminClient
 	// Other root fields here
-	Webclient   *webclient.WebClient
+
 	Agent       *SvcAgent
 	ExitMessage string
 	WebApi      *WebApi
 }
 
-func NewSvcUnit() *SvcUnit {
-	svc := &SvcUnit{}
+func NewAdminUnit() *AdminUnit {
+	svc := &AdminUnit{}
 	svc.ServiceUnit = service.NewServiceUnit()
 	svc.WebServer = webserver.NewWebServer()
-	svc.Webclient = webclient.NewWebClient()
-	svc.Webclient.Server = svc.WebServer
+	svc.WebClient = webclient.NewAdminClient()
+	svc.WebClient.Server = svc.WebServer
 	svc.WebApi = NewWebApi()
 	svc.WebApi.Server = svc.WebServer
 	svc.WebApi.svc = svc
@@ -36,8 +36,8 @@ func NewSvcUnit() *SvcUnit {
 	return svc
 }
 
-func (r *SvcUnit) Init() error {
-	r.Webclient.Init()
+func (r *AdminUnit) Init() error {
+	r.WebClient.Init()
 	r.WebApi.Init()
 	if err := r.WebServer.Start(); err != nil {
 		fmt.Printf("Failed to start web server: %v\n", err)
@@ -47,7 +47,7 @@ func (r *SvcUnit) Init() error {
 	return nil
 }
 
-func (r *SvcUnit) Run() int {
+func (r *AdminUnit) Run() int {
 
 	// Initialize othe components here
 
