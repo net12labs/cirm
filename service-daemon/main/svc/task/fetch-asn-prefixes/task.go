@@ -1,10 +1,11 @@
 package fetchdata
 
 import (
-	"cirm/lib/work/task"
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/net12labs/cirm/dali/work/task"
 )
 
 var defaultASNList = []int{
@@ -67,19 +68,19 @@ func (r *FetchIpData) Run() {
 
 func (r *FetchIpData) compileAsnList() {
 	// Determine ASN list
-	var asns []int
-	if len(r.asnList) > 0 {
-		asns = r.asnList
-	} else if *asnFile != "" {
-		var err error
-		asns, err = loadASNsFromFile(*asnFile)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading ASN file: %v\n", err)
-			os.Exit(1)
-		}
-	} else {
-		asns = defaultASNList
-	}
+	// var asns []int
+	// if len(r.asnList) > 0 {
+	// 	asns = r.asnList
+	// } else if *asnFile != "" {
+	// 	var err error
+	// 	asns, err = loadASNsFromFile(*asnFile)
+	// 	if err != nil {
+	// 		fmt.Fprintf(os.Stderr, "Error loading ASN file: %v\n", err)
+	// 		os.Exit(1)
+	// 	}
+	// } else {
+	// 	asns = defaultASNList
+	// }
 
 }
 

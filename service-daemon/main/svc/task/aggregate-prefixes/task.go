@@ -1,7 +1,7 @@
 package aggregateprefixes
 
 import (
-	"cirm/lib/work/task"
+	"github.com/net12labs/cirm/dali/work/task"
 )
 
 type AggregatePrefixes struct {

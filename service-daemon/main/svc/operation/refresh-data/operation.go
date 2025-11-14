@@ -1,9 +1,9 @@
 package refreshdata
 
 import (
-	wop "cirm/lib/work/operation"
-	"cirm/lib/work/task"
-	fetchdata "cirm/svc/task/fetch-asn-prefixes"
+	wop "github.com/net12labs/cirm/dali/work/operation"
+	"github.com/net12labs/cirm/dali/work/task"
+	fetchdata "github.com/net12labs/cirm/service-daemon/main/svc/task/fetch-asn-prefixes"
 )
 
 type RefreshData struct {

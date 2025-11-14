@@ -1,7 +1,7 @@
 package service
 
 import (
-	"cirm/data/unit"
+	"github.com/net12labs/cirm/service-daemon/data/unit"
 )
 
 type Service struct {

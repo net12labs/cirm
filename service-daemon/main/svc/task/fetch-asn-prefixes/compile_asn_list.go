@@ -2,10 +2,11 @@ package fetchdata
 
 import (
 	"bufio"
-	"cirm/lib/work/task"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/net12labs/cirm/dali/work/task"
 )
 
 type CompileAsnList struct {

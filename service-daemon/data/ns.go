@@ -1,9 +1,9 @@
 package data
 
 import (
-	"cirm/data/admin"
-	"cirm/data/service"
-	"cirm/data/unit"
+	"github.com/net12labs/cirm/service-daemon/data/admin"
+	"github.com/net12labs/cirm/service-daemon/data/service"
+	"github.com/net12labs/cirm/service-daemon/data/unit"
 )
 
 var Module = unit.NewDataUnit()

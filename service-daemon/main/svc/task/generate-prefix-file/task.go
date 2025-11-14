@@ -2,11 +2,11 @@ package generateroutesfile
 
 import (
 	"bufio"
-	"cirm/lib/work/task"
 	"fmt"
 	"os"
-	"sort"
 	"time"
+
+	"github.com/net12labs/cirm/dali/work/task"
 )
 
 type GenerateRoutesFile struct {
@@ -15,9 +15,9 @@ type GenerateRoutesFile struct {
 
 func (rf *GenerateRoutesFile) generateBirdConfig(outputFile, gateway string, compact bool) (int, error) {
 	totalRoutes := 0
-	for _, routes := range rf.routes {
-		totalRoutes += len(routes)
-	}
+	// for _, routes := range rf.routes {
+	// 	totalRoutes += len(routes)
+	// }
 
 	f, err := os.Create(outputFile)
 	if err != nil {
@@ -41,27 +41,27 @@ func (rf *GenerateRoutesFile) generateBirdConfig(outputFile, gateway string, com
 	fmt.Fprintln(w, "    ipv6;")
 
 	// Sort ASNs for consistent output
-	var asns []int
-	for asn := range rf.routes {
-		asns = append(asns, asn)
-	}
-	sort.Ints(asns)
+	// var asns []int
+	// for asn := range rf.routes {
+	// 	asns = append(asns, asn)
+	// }
+	// sort.Ints(asns)
 
-	for _, asn := range asns {
-		routes := rf.routes[asn]
-		if len(routes) == 0 {
-			continue
-		}
+	// for _, asn := range asns {
+	// 	routes := rf.routes[asn]
+	// 	if len(routes) == 0 {
+	// 		continue
+	// 	}
 
-		fmt.Fprintf(w, "    # Configuration for ASN AS%d\n", asn)
-		for _, route := range routes {
-			fmt.Fprintf(w, "    route %s via %s;\n", route, gateway)
-		}
+	// 	fmt.Fprintf(w, "    # Configuration for ASN AS%d\n", asn)
+	// 	for _, route := range routes {
+	// 		fmt.Fprintf(w, "    route %s via %s;\n", route, gateway)
+	// 	}
 
-		if !compact {
-			fmt.Fprintln(w)
-		}
-	}
+	// 	if !compact {
+	// 		fmt.Fprintln(w)
+	// 	}
+	// }
 
 	fmt.Fprintln(w, "}")
 
