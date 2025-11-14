@@ -1,4 +1,4 @@
-module cirm //china-ip-routes-maker
+module github.com/net12labs/cirm/service-daemon //china-ip-routes-maker
 
 go 1.21
 
