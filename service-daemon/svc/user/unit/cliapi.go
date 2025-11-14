@@ -1,7 +1,7 @@
 package unit
 
 import (
-	cliserver "github.com/net12labs/cirm/service-daemon/mod/cli-server"
+	cliserver "github.com/net12labs/cirm/dali/cli-server"
 )
 
 type CliApi struct {

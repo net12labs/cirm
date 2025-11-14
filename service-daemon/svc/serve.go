@@ -1,4 +1,4 @@
-package xmain
+package service
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	ox "github.com/net12labs/cirm/dali/ox"
 	rtm "github.com/net12labs/cirm/dali/runtime"
 
-	svc "github.com/net12labs/cirm/service-daemon/main/svc"
+	svc "github.com/net12labs/cirm/service-daemon/svc/user"
 )
 
 type Serve struct {

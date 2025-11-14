@@ -6,7 +6,7 @@ import (
 
 	"github.com/net12labs/cirm/service-daemon/cmd"
 	data "github.com/net12labs/cirm/service-daemon/data"
-	xmain "github.com/net12labs/cirm/service-daemon/main"
+	service "github.com/net12labs/cirm/service-daemon/svc"
 
 	rtm "github.com/net12labs/cirm/dali/runtime"
 
@@ -19,7 +19,7 @@ func main() {
 	ox.Etc.SetKV("unit_id", "default")
 	ox.Etc.SetKV("rtm_name", "china-ip-routes-maker")
 	ox.Etc.SetKV("pid_file_name", "china-ip-routes-maker.pid")
-	ox.Etc.SetKV("data_dir", "../../units")
+	ox.Etc.SetKV("data_dir", "../units")
 
 	rtm.Runtime.OnPanic.AddListener(func(err any) {
 		fmt.Println("Runtime Panic:", err)
@@ -28,12 +28,11 @@ func main() {
 	fmt.Println("China IP Routes Maker", data.Module.DB.DbPath)
 
 	if len(os.Args) > 1 && os.Args[1] == "--serve" {
-		serve := xmain.NewServe()
+		serve := service.NewServe()
 		if err := serve.Start(); err != nil {
 			fmt.Println("Failed to start service:", err)
 			rtm.Runtime.Exit(1)
 		}
-
 	} else {
 		cmd := cmd.Cmd{}
 		cmd.OnExit = func() {

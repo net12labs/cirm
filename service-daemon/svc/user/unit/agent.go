@@ -1,7 +1,7 @@
 package unit
 
 import (
-	refreshdata "github.com/net12labs/cirm/service-daemon/main/svc/operation/refresh-data"
+	refreshdata "github.com/net12labs/cirm/service-daemon/svc/user/operation/refresh-data"
 )
 
 type SvcAgent struct {
