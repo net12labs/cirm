@@ -1,18 +1,18 @@
 package unit
 
 import (
-	webserver "cirm/lib/web-server"
-	"cirm/lib/work/service"
-	"cirm/mod/config"
-	webclient "cirm/svc/web-client"
 	"fmt"
+
+	"github.com/net12labs/cirm/dali/work/service"
+
+	webserver "github.com/net12labs/cirm/dali/web-server"
+	webclient "github.com/net12labs/cirm/svc-client-web"
 )
 
 // Possible runmodes are; web, cli
 
 type SvcUnit struct {
 	*service.ServiceUnit
-	Config    config.Config
 	WebServer *webserver.WebServer
 
 	// Other root fields here

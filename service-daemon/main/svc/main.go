@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"cirm/svc/unit"
+	"github.com/net12labs/cirm/service-daemon/main/svc/unit"
 )
 
 var Svc = unit.NewSvcUnit()

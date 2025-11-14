@@ -1,8 +1,9 @@
 package xmain
 
 import (
-	"cirm/data"
 	"fmt"
+
+	"github.com/net12labs/cirm/service-daemon/data"
 
 	ox "github.com/net12labs/cirm/dali/ox"
 	rtm "github.com/net12labs/cirm/dali/runtime"
