@@ -20,7 +20,7 @@ func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.SubService = service.NewSubService()
 	svc.Service = svc.SubService
-	svc.Webclient = webclient.NewProviderClient()
+	svc.Webclient = webclient.NewWebClient()
 	svc.WebApi = NewWebApi()
 	svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}

@@ -11,3 +11,6 @@ func NewClient() *Client {
 }
 
 var NewWebServer = webserver.NewWebServer
+
+type Request = webserver.Request
+type Response = webserver.Response

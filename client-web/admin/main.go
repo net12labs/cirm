@@ -3,32 +3,32 @@ package webclient
 import (
 	"embed"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	"github.com/net12labs/cirm/dali/client-web"
 )
 
 //go:embed web/*
 var content embed.FS
 
-type AdminClient struct {
-	Server *webserver.WebServer
+type WebClient struct {
+	*client.Client
 }
 
-func NewAdminClient() *AdminClient {
-	return &AdminClient{}
+func NewWebClient() *WebClient {
+	return &WebClient{Client: client.NewClient()}
 }
 
-func (wc *AdminClient) Init() error {
-	wc.Server.AddRoute("/admin", func(req *webserver.Request) {
+func (wc *WebClient) Init() error {
+	wc.Server.AddRoute("/admin", func(req *client.Request) {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {
-			req.Response = &webserver.Response{
+			req.Response = &client.Response{
 				StatusCode: 404,
 			}
 			req.WriteResponse([]byte("404 Not Found"))
 			return
 		}
-		req.Response = &webserver.Response{
+		req.Response = &client.Response{
 			StatusCode: 200,
 			MimeType:   "text/html",
 		}

@@ -1,4 +1,4 @@
-package xmodule
+package etcstore
 
 func NewEtcStore() *EtcStore {
 	store := EtcStore{

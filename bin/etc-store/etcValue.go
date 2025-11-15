@@ -1,4 +1,4 @@
-package xmodule
+package etcstore
 
 import (
 	"fmt"

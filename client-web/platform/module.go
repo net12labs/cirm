@@ -3,25 +3,25 @@ package webclient
 import (
 	"embed"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	"github.com/net12labs/cirm/dali/client-web"
 )
 
 //go:embed web/*
 var content embed.FS
 
 type WebClient struct {
-	Server *webserver.WebServer
+	*client.Client
 }
 
 func NewWebClient() *WebClient {
-	return &WebClient{}
+	return &WebClient{Client: client.NewClient()}
 }
 
 func (wc *WebClient) Init() error {
-	wc.Server.AddRoute("/platform", func(req *webserver.Request) {
+	wc.Server.AddRoute("/platform", func(req *client.Request) {
 		// Serve the main page
 		if req.Path.Path != "/platform" {
-			req.Response = &webserver.Response{
+			req.Response = &client.Response{
 				StatusCode: 404,
 			}
 			req.WriteResponse([]byte("404 Not Found"))
@@ -29,13 +29,13 @@ func (wc *WebClient) Init() error {
 		}
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {
-			req.Response = &webserver.Response{
+			req.Response = &client.Response{
 				StatusCode: 404,
 			}
 			req.WriteResponse([]byte("404 Not Found"))
 			return
 		}
-		req.Response = &webserver.Response{
+		req.Response = &client.Response{
 			StatusCode: 200,
 			MimeType:   "text/html",
 		}
