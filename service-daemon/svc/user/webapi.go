@@ -14,7 +14,7 @@ type WebApi struct {
 
 func (api *WebApi) Init() {
 
-	api.Server.AddRoute("/api/refresh-data", func(req *webserver.Request) {
+	api.Server.AddRoute("/user/api/refresh-data", func(req *webserver.Request) {
 		req.Response = &webserver.Response{
 			StatusCode: http.StatusOK,
 		}
@@ -22,7 +22,7 @@ func (api *WebApi) Init() {
 		api.svc.Agent.RefreshData()
 	})
 
-	api.Server.AddRoute("/api/get-routes", func(req *webserver.Request) {
+	api.Server.AddRoute("/user/api/get-routes", func(req *webserver.Request) {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

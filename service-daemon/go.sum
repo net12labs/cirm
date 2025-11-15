@@ -1,8 +1,2 @@
 github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
 github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
-github.com/net12labs/cirm/admin-client-web v0.0.0-20251114191024-95d4142052d4 h1:scQBkp1Ihx5nAgoO0RsQ3s9Od6UbU+1CnrE7Nrz1EsA=
-github.com/net12labs/cirm/admin-client-web v0.0.0-20251114191024-95d4142052d4/go.mod h1:0nRrhMaVvxABkg7GqTv4tdASZ0ayCfnTNypSMuYKoj0=
-github.com/net12labs/cirm/dali v0.0.0-20251114182153-000f7e221ad5 h1:wAtavmQZNjGMZaOoolP9C2AbtqAI7GKiac/wzjTGWAQ=
-github.com/net12labs/cirm/dali v0.0.0-20251114182153-000f7e221ad5/go.mod h1:HReJQh8f+myKSx1mT/QWHFJz727BM7VwwhcJTJZXuOQ=
-github.com/net12labs/cirm/svc-client-web v0.0.0-20251114170627-3a58839cfb1a h1:sDpe/fkz60uhaVUJn/nU9ypUaIc0jwZ0JJHX++ZFN5o=
-github.com/net12labs/cirm/svc-client-web v0.0.0-20251114170627-3a58839cfb1a/go.mod h1:69uzbVXD/P/oRIZiFr2y8JZySeT8HIt8Rgs0VVGTjZ0=

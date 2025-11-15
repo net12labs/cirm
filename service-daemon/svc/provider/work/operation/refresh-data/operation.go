@@ -11,20 +11,19 @@ type RefreshData struct {
 }
 
 func (r *RefreshData) Init() {
-	r.Op = wop.Operation{
-		Name: "Refresh IP Data",
-		Execute: func() error {
-			retrieveTask := fetchdata.FetchIpData{
-				Task: task.Task{},
-				OnStart: func() {
-					// Task start logic here
-				},
-				OnDone: func() {
-					// Task done logic here
-				},
-			}
-			retrieveTask.Run()
-			return nil
-		},
+	r.Op = *wop.NewOperation()
+	r.Op.Name = "Refresh IP Data"
+	r.Op.Execute = func() error {
+		retrieveTask := fetchdata.FetchIpData{
+			Task: task.Task{},
+			OnStart: func() {
+				// Task start logic here
+			},
+			OnDone: func() {
+				// Task done logic here
+			},
+		}
+		retrieveTask.Run()
+		return nil
 	}
 }

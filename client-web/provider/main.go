@@ -9,21 +9,16 @@ import (
 //go:embed web/*
 var content embed.FS
 
-type WebClient struct {
+type ProviderClient struct {
 	Server *webserver.WebServer
 }
 
-func NewWebClient() *WebClient {
-	return &WebClient{}
+func NewProviderClient() *ProviderClient {
+	return &ProviderClient{}
 }
 
-func (wc *WebClient) OnRequest(req *webserver.Request) error {
-	// Start the web client
-	return nil
-}
-
-func (wc *WebClient) Init() error {
-	wc.Server.AddRoute("/", func(req *webserver.Request) {
+func (wc *ProviderClient) Init() error {
+	wc.Server.AddRoute("/provider", func(req *webserver.Request) {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

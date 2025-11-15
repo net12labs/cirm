@@ -9,6 +9,7 @@ import (
 	rtm "github.com/net12labs/cirm/dali/runtime"
 	webserver "github.com/net12labs/cirm/dali/web-server"
 
+	webclient "github.com/net12labs/cirm/client-web/root"
 	admin "github.com/net12labs/cirm/service-daemon/svc/admin"
 	"github.com/net12labs/cirm/service-daemon/svc/provider"
 	user "github.com/net12labs/cirm/service-daemon/svc/user"
@@ -16,22 +17,26 @@ import (
 
 type Serve struct {
 	// Serve fields here
-	Server   *webserver.WebServer
-	User     *user.Unit
-	Provider *provider.Unit
-	Admin    *admin.Unit
+	WebServer *webserver.WebServer
+	User      *user.Unit
+	Provider  *provider.Unit
+	Admin     *admin.Unit
+	WebClient *webclient.WebClient
 }
 
 func NewServe() *Serve {
 	sv := &Serve{
-		User:     user.NewUnit(),
-		Admin:    admin.NewUnit(),
-		Provider: provider.NewUnit(),
-		Server:   webserver.NewWebServer(),
+		User:      user.NewUnit(),
+		Admin:     admin.NewUnit(),
+		Provider:  provider.NewUnit(),
+		WebServer: webserver.NewWebServer(),
+		WebClient: webclient.NewWebClient(),
 	}
-	sv.User.WebServer = sv.Server
-	sv.Admin.WebServer = sv.Server
-	sv.Provider.WebServer = sv.Server
+	sv.WebClient.Server = sv.WebServer
+	sv.User.WebServer = sv.WebServer
+	sv.Admin.WebServer = sv.WebServer
+	sv.Provider.WebServer = sv.WebServer
+
 	return sv
 }
 
@@ -59,9 +64,34 @@ func (s *Serve) Start() error {
 		rtm.Runtime.Exit(1)
 	}
 
+	if err := s.initClients(); err != nil {
+		fmt.Println(err)
+		rtm.Runtime.Exit(1)
+	}
+	rtm.Runtime.Exit(0)
+	return nil
+
+}
+
+func (s *Serve) initClients() error {
+
 	s.User.Mode.SetKeys("web", "cli")
 	s.User.OnExit = func() {
 		// Cleanup tasks here
+	}
+	if err := s.WebClient.Init(); err != nil {
+		fmt.Println(err)
+		rtm.Runtime.Exit(1)
+	}
+
+	if err := s.Admin.Init(); err != nil {
+		fmt.Println(err)
+		rtm.Runtime.Exit(1)
+	}
+
+	if err := s.Provider.Init(); err != nil {
+		fmt.Println(err)
+		rtm.Runtime.Exit(1)
 	}
 
 	if err := s.User.Init(); err != nil {
@@ -69,13 +99,10 @@ func (s *Serve) Start() error {
 		rtm.Runtime.Exit(1)
 	}
 
-	exit_code := s.User.Run()
-
-	if exit_code != 0 {
-		fmt.Println(s.User.ExitMessage)
-		rtm.Runtime.Exit(1)
+	if err := s.WebServer.Start(); err != nil {
+		fmt.Printf("Failed to start web server: %v\n", err)
+		return err
 	}
-	rtm.Runtime.Exit(0)
 	return nil
 
 }

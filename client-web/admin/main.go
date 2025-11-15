@@ -1,4 +1,4 @@
-package providerclientweb
+package webclient
 
 import (
 	"embed"
@@ -9,16 +9,16 @@ import (
 //go:embed web/*
 var content embed.FS
 
-type ProviderClient struct {
+type AdminClient struct {
 	Server *webserver.WebServer
 }
 
-func NewProviderClient() *ProviderClient {
-	return &ProviderClient{}
+func NewAdminClient() *AdminClient {
+	return &AdminClient{}
 }
 
-func (wc *ProviderClient) Init() error {
-	wc.Server.AddRoute("/provider", func(req *webserver.Request) {
+func (wc *AdminClient) Init() error {
+	wc.Server.AddRoute("/admin", func(req *webserver.Request) {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

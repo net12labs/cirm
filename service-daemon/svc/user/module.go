@@ -1,19 +1,15 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/net12labs/cirm/dali/context/service"
 	webserver "github.com/net12labs/cirm/dali/web-server"
 
-	webclient "github.com/net12labs/cirm/svc-client-web"
+	webclient "github.com/net12labs/cirm/client-web/user"
 )
 
 type Unit struct {
-	*service.ServiceUnit
-	WebServer *webserver.WebServer
-
-	// Other root fields here
+	*service.Service
+	WebServer   *webserver.WebServer
 	Webclient   *webclient.WebClient
 	Agent       *SvcAgent
 	ExitMessage string
@@ -22,24 +18,19 @@ type Unit struct {
 
 func NewUnit() *Unit {
 	svc := &Unit{}
-	svc.ServiceUnit = service.NewService()
+	svc.Service = service.NewService()
 	svc.Webclient = webclient.NewWebClient()
-	svc.Webclient.Server = svc.WebServer
 	svc.WebApi = NewWebApi()
-	svc.WebApi.Server = svc.WebServer
 	svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}
 	return svc
 }
 
 func (r *Unit) Init() error {
+	r.Webclient.Server = r.WebServer
 	r.Webclient.Init()
+	r.WebApi.Server = r.WebServer
 	r.WebApi.Init()
-	if err := r.WebServer.Start(); err != nil {
-		fmt.Printf("Failed to start web server: %v\n", err)
-		return err
-	}
-
 	return nil
 }
 

@@ -1,4 +1,4 @@
-module github.com/net12labs/cirm/user-client-web
+module github.com/net12labs/cirm/client-web/root
 
 go 1.21
 
