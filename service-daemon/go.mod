@@ -8,3 +8,5 @@ require (
 	github.com/net12labs/cirm/dali v0.0.0-20251114182153-000f7e221ad5
 	github.com/net12labs/cirm/svc-client-web v0.0.0-20251114170627-3a58839cfb1a
 )
+
+require github.com/net12labs/cirm/admin-client-web v0.0.0-20251114191024-95d4142052d4 // indirect

@@ -1,7 +1,7 @@
 package admin
 
 type SvcAgent struct {
-	Svc *AdminUnit
+	Svc *Unit
 	// SvcAgent fields here
 }
 

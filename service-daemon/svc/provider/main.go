@@ -1,4 +1,4 @@
-package user
+package provider
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 // Possible runmodes are; web, cli
 
-type UserUnit struct {
+type Unit struct {
 	*service.ServiceUnit
 	WebServer *webserver.WebServer
 
@@ -22,21 +22,19 @@ type UserUnit struct {
 	WebApi      *WebApi
 }
 
-func NewUserUnit() *UserUnit {
-	svc := &UserUnit{}
+func NewUnit() *Unit {
+	svc := &Unit{}
 	svc.ServiceUnit = service.NewServiceUnit()
-	svc.WebServer = webserver.NewWebServer()
 	svc.Webclient = webclient.NewWebClient()
 	svc.Webclient.Server = svc.WebServer
 	svc.WebApi = NewWebApi()
 	svc.WebApi.Server = svc.WebServer
 	svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}
-
 	return svc
 }
 
-func (r *UserUnit) Init() error {
+func (r *Unit) Init() error {
 	r.Webclient.Init()
 	r.WebApi.Init()
 	if err := r.WebServer.Start(); err != nil {
@@ -47,7 +45,7 @@ func (r *UserUnit) Init() error {
 	return nil
 }
 
-func (r *UserUnit) Run() int {
+func (r *Unit) Run() int {
 
 	// Initialize othe components here
 

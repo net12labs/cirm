@@ -1,4 +1,4 @@
-module github.com/net12labs/cirm/svc-client-web
+module github.com/net12labs/cirm/user-client-web
 
 go 1.21
 

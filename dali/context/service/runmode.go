@@ -40,17 +40,3 @@ func (r *RunMode) HasValue(key, value string) bool {
 	}
 	return false
 }
-
-type ServiceUnit struct {
-	Mode   RunMode
-	OnExit func()
-	// Other fields here
-}
-
-func NewServiceUnit() *ServiceUnit {
-	svc := &ServiceUnit{}
-	svc.Mode = RunMode{
-		items: make(map[string]string),
-	}
-	return svc
-}

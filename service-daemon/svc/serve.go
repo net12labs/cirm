@@ -10,23 +10,28 @@ import (
 	webserver "github.com/net12labs/cirm/dali/web-server"
 
 	admin "github.com/net12labs/cirm/service-daemon/svc/admin"
+	"github.com/net12labs/cirm/service-daemon/svc/provider"
 	user "github.com/net12labs/cirm/service-daemon/svc/user"
 )
 
 type Serve struct {
 	// Serve fields here
-	Server *webserver.WebServer
-	User   *user.UserUnit
-	Admin  *admin.AdminUnit
+	Server   *webserver.WebServer
+	User     *user.Unit
+	Provider *provider.Unit
+	Admin    *admin.Unit
 }
 
 func NewServe() *Serve {
 	sv := &Serve{
-		User:  user.NewUserUnit(),
-		Admin: admin.NewAdminUnit(),
+		User:     user.NewUnit(),
+		Admin:    admin.NewUnit(),
+		Provider: provider.NewUnit(),
+		Server:   webserver.NewWebServer(),
 	}
 	sv.User.WebServer = sv.Server
 	sv.Admin.WebServer = sv.Server
+	sv.Provider.WebServer = sv.Server
 	return sv
 }
 

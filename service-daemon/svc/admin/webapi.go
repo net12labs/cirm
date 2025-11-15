@@ -3,7 +3,7 @@ package admin
 import webserver "github.com/net12labs/cirm/dali/web-server"
 
 type WebApi struct {
-	svc    *AdminUnit
+	svc    *Unit
 	Server *webserver.WebServer
 	// WebApi fields here
 }
