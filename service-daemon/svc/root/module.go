@@ -1,9 +1,8 @@
-package admin
+package root
 
 import (
+	webclient "github.com/net12labs/cirm/client-web/root"
 	"github.com/net12labs/cirm/dali/context/service"
-
-	webclient "github.com/net12labs/cirm/client-web/admin"
 )
 
 // Possible runmodes are; web, cli
@@ -11,7 +10,7 @@ import (
 type Unit struct {
 	*service.SubService
 	Service   *service.SubService
-	WebClient *webclient.AdminClient
+	WebClient *webclient.WebClient
 	Agent     *SvcAgent
 	WebApi    *WebApi
 }
@@ -20,7 +19,7 @@ func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.SubService = service.NewSubService()
 	svc.Service = svc.SubService
-	svc.WebClient = webclient.NewAdminClient()
+	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = NewWebApi()
 	svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}

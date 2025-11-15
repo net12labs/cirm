@@ -1,9 +1,9 @@
-package admin
+package root
 
 import (
 	"net/http"
 
-	webapi "github.com/net12labs/cirm/dali/context/webapi"
+	"github.com/net12labs/cirm/dali/context/webapi"
 )
 
 type WebApi struct {
@@ -17,7 +17,7 @@ func NewWebApi() *WebApi {
 }
 
 func (api *WebApi) Init() {
-	api.WebApi.Server.AddRoute("/admin/api/refresh-data", func(req *webapi.Request) {
+	api.Server.AddRoute("/api/refresh-data", func(req *webapi.Request) {
 		req.Response = &webapi.Response{
 			StatusCode: http.StatusOK,
 		}
@@ -25,7 +25,7 @@ func (api *WebApi) Init() {
 		api.svc.Agent.RefreshData()
 	})
 
-	api.WebApi.Server.AddRoute("/admin/api/get-routes", func(req *webapi.Request) {
+	api.Server.AddRoute("/api/get-routes", func(req *webapi.Request) {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

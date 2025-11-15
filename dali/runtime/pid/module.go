@@ -1,14 +1,12 @@
-package os
+package pid
 
 import (
 	"fmt"
 
-	etc "github.com/net12labs/cirm/dali/ox/etc"
-	pid "github.com/net12labs/cirm/dali/ox/pid"
+	pid "github.com/net12labs/cirm/dali/runtime/pid/def"
 )
 
 var Pid = pid.Module
-var Etc = etc.Module
 
 type PidHandler struct {
 	Pid *pid.Pid
@@ -17,7 +15,6 @@ type PidHandler struct {
 func (h *PidHandler) Init() *PidHandler {
 	h.Pid = Pid.NewPid()
 	h.Pid.SetOwnPid()
-	h.Pid.PidFilePath = Etc.Get("pid_dir").String() + "/" + Etc.Get("pid_file_name").String()
 	return h
 }
 

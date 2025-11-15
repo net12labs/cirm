@@ -7,9 +7,3 @@ func NewEtcStore() *EtcStore {
 	}
 	return &store
 }
-
-func NewEtcStoreCb(callback func(*EtcStore)) *EtcStore {
-	store := NewEtcStore()
-	callback(store)
-	return store
-}

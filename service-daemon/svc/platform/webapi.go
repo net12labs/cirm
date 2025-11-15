@@ -1,4 +1,4 @@
-package admin
+package platform
 
 import (
 	"net/http"
@@ -17,7 +17,7 @@ func NewWebApi() *WebApi {
 }
 
 func (api *WebApi) Init() {
-	api.WebApi.Server.AddRoute("/admin/api/refresh-data", func(req *webapi.Request) {
+	api.WebApi.Server.AddRoute("/platform/api/refresh-data", func(req *webapi.Request) {
 		req.Response = &webapi.Response{
 			StatusCode: http.StatusOK,
 		}
@@ -25,7 +25,7 @@ func (api *WebApi) Init() {
 		api.svc.Agent.RefreshData()
 	})
 
-	api.WebApi.Server.AddRoute("/admin/api/get-routes", func(req *webapi.Request) {
+	api.WebApi.Server.AddRoute("/platform/api/get-routes", func(req *webapi.Request) {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

@@ -2,47 +2,45 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/net12labs/cirm/service-daemon/cmd"
-	data "github.com/net12labs/cirm/service-daemon/data"
 	service "github.com/net12labs/cirm/service-daemon/svc"
+	"github.com/net12labs/cirm/service-daemon/unit"
 
 	rtm "github.com/net12labs/cirm/dali/runtime"
-
-	ox "github.com/net12labs/cirm/dali/ox"
 )
 
 // so context we can also package in the db - so it is all atomic
 
 func main() {
-	ox.Etc.SetKV("unit_id", "default")
-	ox.Etc.SetKV("rtm_name", "china-ip-routes-maker")
-	ox.Etc.SetKV("pid_file_name", "china-ip-routes-maker.pid")
-	ox.Etc.SetKV("data_dir", "../units")
+	rtm.Etc.SetKV("unit_id", "default")
+	rtm.Etc.SetKV("rtm_name", "china-ip-routes-maker")
+	rtm.Etc.SetKV("pid_file_path", "../units/"+rtm.Etc.Get("unit_id").String()+"/proc/china-ip-routes-maker.pid")
+	rtm.Etc.SetKV("data_dir", "../units/"+rtm.Etc.Get("unit_id").String()+"/data")
 
 	rtm.Runtime.OnPanic.AddListener(func(err any) {
 		fmt.Println("Runtime Panic:", err)
 	})
 
-	fmt.Println("China IP Routes Maker", data.Module.DB.DbPath)
-
-	if len(os.Args) > 1 && os.Args[1] == "--serve" {
+	if rtm.Args.HasKey("--serve") {
 		serve := service.NewServe()
 		if err := serve.Start(); err != nil {
 			fmt.Println("Failed to start service:", err)
 			rtm.Runtime.Exit(1)
 		}
-	} else {
-		cmd := cmd.Cmd{}
-		cmd.OnExit = func() {
-			// Cleanup tasks here
-		}
-		cmd.Execute(os.Args[1:])
-		rtm.Runtime.OnExit.AddListener(func(code any) {
-			fmt.Println("Exited with code at command", code)
-		})
 		rtm.Runtime.Exit(0)
 	}
+
+	if rtm.Args.HasKey("--cmd") {
+		cmd := cmd.NewCmd()
+		if err := cmd.Execute(); err != nil {
+			fmt.Println("Failed to execute command:", err)
+			rtm.Runtime.Exit(1)
+		}
+		rtm.Runtime.Exit(0)
+	}
+
+	unit.PrintHelp()
+	rtm.Runtime.Exit(0)
 
 }
