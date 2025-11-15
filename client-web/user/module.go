@@ -3,6 +3,7 @@ package webclient
 import (
 	"embed"
 
+	client "github.com/net12labs/cirm/dali/client-web"
 	webserver "github.com/net12labs/cirm/dali/web-server"
 )
 
@@ -10,7 +11,7 @@ import (
 var content embed.FS
 
 type WebClient struct {
-	Server *webserver.WebServer
+	*client.Client
 }
 
 func NewWebClient() *WebClient {

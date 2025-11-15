@@ -13,13 +13,14 @@ require github.com/net12labs/cirm/client-web/user v0.0.0-20251114170627-3a58839c
 require github.com/net12labs/cirm/client-web/provider v0.0.0-20251114191024-95d4142052d4
 
 require github.com/net12labs/cirm/client-web/root v0.0.0-20251114191024-95d4142052d4
+
 require github.com/net12labs/cirm/client-web/platform v0.0.0-20251114191024-95d4142052d4
 
 replace (
 	github.com/net12labs/cirm/client-web/admin => ../client-web/admin
+	github.com/net12labs/cirm/client-web/platform => ../client-web/platform
 	github.com/net12labs/cirm/client-web/provider => ../client-web/provider
 	github.com/net12labs/cirm/client-web/root => ../client-web/root
 	github.com/net12labs/cirm/client-web/user => ../client-web/user
-	github.com/net12labs/cirm/client-web/platform => ../client-web/platform
 	github.com/net12labs/cirm/dali => ../dali
 )
