@@ -1,6 +1,9 @@
 package etcstore
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type EtcStore struct {
 	Data        map[string]string
@@ -54,6 +57,17 @@ func (e *EtcStore) Get(key string) *EtcValue {
 	val.Value = value
 	val.exists = exists
 	return val
+}
+
+func (e *EtcStore) GetJoined(delimiter string, keys ...string) string {
+	var values []string
+	for _, key := range keys {
+		val := e.Get(key)
+		if val.exists {
+			values = append(values, val.String())
+		}
+	}
+	return strings.Join(values, delimiter)
 }
 
 func (e *EtcStore) SetKV(key, value string) error {

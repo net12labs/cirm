@@ -18,10 +18,7 @@ func NewWebClient() *WebClient {
 }
 
 func (wc *WebClient) Init() error {
-	wc.Server.AddRoute("/", func(req *client.Request) error {
-		if req.Path.Path != "/" {
-			return req.WriteResponse404()
-		}
+	wc.Server.AddRoute("/home", func(req *client.Request) error {
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {
 			return req.WriteResponse404()

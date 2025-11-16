@@ -22,7 +22,7 @@ require (
 	github.com/net12labs/cirm/site-web-api v0.0.0-20251116173359-e56a45cf349c
 )
 
-require github.com/net12labs/cirm/mali v0.0.0-20251116070540-b170edf05994 // indirect
+require github.com/net12labs/cirm/mali v0.0.0-20251116070540-b170edf05994
 
 replace (
 	github.com/net12labs/cirm/agent-client-web => ../agent-client-web

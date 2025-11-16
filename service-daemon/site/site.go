@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/net12labs/cirm/dali/context/cmd"
-	"github.com/net12labs/cirm/dali/data"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	"github.com/net12labs/cirm/dali/rtm"
 	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
@@ -38,7 +37,12 @@ func NewSite() *Site {
 		Root:     root.NewUnit(),
 		Platform: platform.NewUnit(),
 	}
-	sv.WebServer = domain_context.NewServer()
+
+	return sv
+}
+
+func (sv *Site) Init() {
+
 	sv.ApiServer = apiwebserver.NewServer()
 	sv.ClientServer = clientwebserver.NewServer()
 
@@ -83,95 +87,38 @@ func NewSite() *Site {
 	sv.Admin.WebAgentApi.Server = sv.ApiServer
 	sv.User.WebAgentApi.Server = sv.ApiServer
 
-	return sv
 }
 
 func (s *Site) Start() error {
 
-	if err := s.runtimeInit(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+	if err := s.startSubdomains(); err != nil {
+		return err
 	}
-
-	if err := s.initClients(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
-	}
-	rtm.Runtime.Exit(0)
 	return nil
 }
 
-func (s *Site) runtimeInit() error {
+func (s *Site) startSubdomains() error {
 
-	pid := rtm.Pid
-	pid.Pid.PidFilePath = rtm.Etc.Get("pid_file_path").String()
-	if err := pid.Handle_ExitOnDuplicate(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
-	}
-	if err := s.dataInit(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
-	}
-	rtm.Runtime.OnPanic.AddListener(func(err any) {
-		pid.Handle_CleanupOnExit()
-	})
-	rtm.Runtime.OnExit.AddListener(func(code any) {
-		pid.Handle_CleanupOnExit()
-		fmt.Println("Exited with code", code)
-	})
-
-	return nil
-}
-
-func (s *Site) dataInit() error {
-	dbPath := rtm.Etc.Get("main_db_path").String()
-	rtm.Do.InitFsPath(dbPath)
-	mainDb := data.Ops.CreateDb("main", dbPath)
-
-	if err := mainDb.Init(); err != nil {
-		fmt.Println("Failed to initialize database:", err)
-		rtm.Runtime.Exit(1)
-	}
-
-	return nil
-}
-
-func (s *Site) initClients() error {
-
-	s.User.Mode.SetKeys("web", "cli")
-	s.User.OnExit = func() {
-		// Cleanup tasks here
-	}
 	if err := s.Root.Init(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+		rtm.Runtime.ExitErr(1, err)
 	}
 
 	if err := s.Admin.Init(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+		rtm.Runtime.ExitErr(1, err)
 	}
 
 	if err := s.Platform.Init(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+		rtm.Runtime.ExitErr(1, err)
 	}
 
 	if err := s.Provider.Init(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+		rtm.Runtime.ExitErr(1, err)
 	}
 
 	if err := s.User.Init(); err != nil {
-		fmt.Println(err)
-		rtm.Runtime.Exit(1)
+		rtm.Runtime.ExitErr(1, err)
 	}
 
-	if err := s.WebServer.Start(); err != nil {
-		fmt.Printf("Failed to start web server: %v\n", err)
-		return err
-	}
 	return nil
 
 }

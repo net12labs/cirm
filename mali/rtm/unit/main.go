@@ -1,6 +1,7 @@
 package unit
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -49,6 +50,12 @@ func (r *RuntimeUnit) Panic(err string) {
 }
 
 func (r *RuntimeUnit) Exit(code int) {
+	dispatchListeners(r.OnExit, code)
+	os.Exit(code)
+}
+
+func (r *RuntimeUnit) ExitErr(code int, err error) {
+	fmt.Println("Exiting with error:", err)
 	dispatchListeners(r.OnExit, code)
 	os.Exit(code)
 }

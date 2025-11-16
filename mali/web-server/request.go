@@ -56,6 +56,11 @@ func (req *Request) WriteResponseHTML(data any) error {
 	return req.WriteResponse(data)
 }
 
+func (req *Request) RedirectToUrl(url string) {
+	(*req.Resp).Header().Set("Location", url)
+	(*req.Resp).WriteHeader(http.StatusFound)
+}
+
 func (r *Request) WriteResponse(data any) error {
 	if r.Response == nil {
 		r.Response = &Response{}
