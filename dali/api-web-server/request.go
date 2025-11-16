@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"io"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 
-type ApiRequest struct {
+type Request struct {
 	*webserver.Request
-	Response *ApiResponse
+	Response *Response
 }
-type ApiResponse struct {
+type Response struct {
 	*webserver.Response
 }
 
-func (s *ApiRequest) Validate_HasBody() bool {
+func (s *Request) Validate_HasBody() bool {
 	return s.Request.Req.Body != nil
 }
 
-func (s *ApiRequest) ReadRequestBodyAsMap() (map[string]any, error) {
+func (s *Request) ReadRequestBodyAsMap() (map[string]any, error) {
 
 	var result map[string]any
 	bodyBytes, err := io.ReadAll(s.Request.Req.Body)
@@ -33,7 +33,7 @@ func (s *ApiRequest) ReadRequestBodyAsMap() (map[string]any, error) {
 	return result, nil
 }
 
-func (s *ApiRequest) WriteResponse(v any) error {
+func (s *Request) WriteResponse(v any) error {
 	fmt.Println("Writing response:", v)
 	return s.Request.WriteResponse(v)
 }

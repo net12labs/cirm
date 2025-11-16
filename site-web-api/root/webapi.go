@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/context/webapi"
 	"github.com/net12labs/cirm/dali/shell"
 )
@@ -29,6 +30,15 @@ func (api *WebApi) Init() {
 		password, _ := rq["password"].(string)
 		if username == "" || password == "" {
 			return fmt.Errorf("username and password are required")
+		}
+
+		cmd := cmd.NewCmd()
+		cmd.Target = "user.login"
+		cmd.Params = map[string]any{"username": username, "password": password}
+		api.Execute(cmd)
+		if cmd.ExitCode != 0 {
+			req.Response.StatusCode = http.StatusBadRequest
+			return req.WriteResponse(map[string]any{"message": cmd.ErrorMsg})
 		}
 
 		// if api.svc.Agent.UserLogin(username, password) == nil {

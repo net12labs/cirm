@@ -1,14 +1,17 @@
 package service
 
 import (
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	"github.com/net12labs/cirm/dali/context/cmd"
+	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 
 type ServiceUnit struct {
+	Path        string
 	Mode        RunMode
 	OnExit      func()
 	ExitMessage string
 	WebServer   *webserver.WebServer
+	Execute     func(cmd *cmd.Cmd)
 	// Other fields here
 }
 
@@ -44,4 +47,12 @@ func NewSubService() *SubService {
 	return svc
 }
 
-var NewServer = webserver.NewWebServer
+func NewServer() *webserver.WebServer {
+	return webserver.NewWebServer()
+}
+
+type WebServer = webserver.WebServer
+
+func (su *ServiceUnit) SetPath(key string) {
+	su.Path = key
+}

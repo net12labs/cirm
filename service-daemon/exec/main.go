@@ -1,4 +1,4 @@
-package cmd
+package exec
 
 type Cmd struct {
 	OnExit func()

@@ -3,14 +3,20 @@ package main
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/service-daemon/cmd"
-	service "github.com/net12labs/cirm/service-daemon/svc"
+	"github.com/net12labs/cirm/dali/context/cmd"
+	"github.com/net12labs/cirm/service-daemon/exec"
+	service "github.com/net12labs/cirm/service-daemon/site"
 	"github.com/net12labs/cirm/service-daemon/unit"
 
 	rtm "github.com/net12labs/cirm/dali/runtime"
 )
 
 // so context we can also package in the db - so it is all atomic
+
+// this is the root level
+
+// And then we track session  - as browser session and tab session
+// so preferable we would be keeping a goroutine alive per session/sub session
 
 func main() {
 	rtm.Etc.SetKV("unit_id", "default")
@@ -25,7 +31,15 @@ func main() {
 
 	if rtm.Args.HasKey("--serve") {
 		go func() {
-			serve := service.NewServe()
+			serve := service.NewSite()
+			serve.Execute = func(cmd *cmd.Cmd) {
+				fmt.Println("Executing command via Site:", cmd)
+				if cmd.ExitCode == -1 {
+					cmd.ExitCode = 1
+					cmd.ErrorMsg = "No handler implemented"
+				}
+			}
+
 			if err := serve.Start(); err != nil {
 				fmt.Println("Failed to start service:", err)
 				rtm.Runtime.Exit(1)
@@ -35,8 +49,8 @@ func main() {
 		rtm.Runtime.WaitForSIGTERM()
 	}
 
-	if rtm.Args.HasKey("--cmd") {
-		cmd := cmd.NewCmd()
+	if rtm.Args.HasKey("--exec") {
+		cmd := exec.NewCmd()
 		if err := cmd.Execute(); err != nil {
 			fmt.Println("Failed to execute command:", err)
 			rtm.Runtime.Exit(1)

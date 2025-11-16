@@ -3,7 +3,7 @@ package apiwebserver
 import (
 	"net/http"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 
 type Server struct {
@@ -13,9 +13,9 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{}
 }
-func (s *Server) AddRoute(path string, handler func(req *ApiRequest) error) error {
+func (s *Server) AddRoute(path string, handler func(req *Request) error) error {
 	s.WebServer.AddRoute(path, func(req *webserver.Request) {
-		apiReq := &ApiRequest{Request: req, Response: &ApiResponse{Response: req.Response}}
+		apiReq := &Request{Request: req, Response: &Response{Response: req.Response}}
 		if !apiReq.Validate_HasBody() {
 			apiReq.Response.StatusCode = http.StatusBadRequest
 			apiReq.WriteResponse(map[string]any{"message": "Request body is required"})

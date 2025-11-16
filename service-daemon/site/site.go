@@ -16,7 +16,7 @@ import (
 	"github.com/net12labs/cirm/service-daemon/site/user"
 )
 
-type Serve struct {
+type Site struct {
 	*service.Service
 	User         *user.Unit
 	Provider     *provider.Unit
@@ -29,8 +29,8 @@ type Serve struct {
 
 // so the actual web server may need to be started even higher
 
-func NewServe() *Serve {
-	sv := &Serve{
+func NewSite() *Site {
+	sv := &Site{
 		Service:  service.NewService(),
 		User:     user.NewUnit(),
 		Admin:    admin.NewUnit(),
@@ -60,6 +60,10 @@ func NewServe() *Serve {
 	sv.Root.WebApi.Server = sv.ApiServer
 	sv.Root.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via WebApi:", cmd)
+
+		// User login should be handled right at the API edge
+		// user create - that needs to be done by root user
+
 		if cmd.Target == "user.login" {
 			cmd.ExitCode = 0
 			cmd.Result = map[string]any{"message": "Login successful", "token": "loonabalooona"}
@@ -82,7 +86,7 @@ func NewServe() *Serve {
 	return sv
 }
 
-func (s *Serve) Start() error {
+func (s *Site) Start() error {
 
 	if err := s.runtimeInit(); err != nil {
 		fmt.Println(err)
@@ -97,7 +101,7 @@ func (s *Serve) Start() error {
 	return nil
 }
 
-func (s *Serve) runtimeInit() error {
+func (s *Site) runtimeInit() error {
 
 	pid := rtm.Pid
 	pid.Pid.PidFilePath = rtm.Etc.Get("pid_file_path").String()
@@ -120,7 +124,7 @@ func (s *Serve) runtimeInit() error {
 	return nil
 }
 
-func (s *Serve) dataInit() error {
+func (s *Site) dataInit() error {
 	dbPath := rtm.Etc.Get("main_db_path").String()
 	rtm.Do.InitFsPath(dbPath)
 	mainDb := data.Ops.CreateDb("main", dbPath)
@@ -133,7 +137,7 @@ func (s *Serve) dataInit() error {
 	return nil
 }
 
-func (s *Serve) initClients() error {
+func (s *Site) initClients() error {
 
 	s.User.Mode.SetKeys("web", "cli")
 	s.User.OnExit = func() {

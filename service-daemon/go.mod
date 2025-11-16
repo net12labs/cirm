@@ -18,7 +18,7 @@ require (
 	github.com/net12labs/cirm/agent-client-web v0.0.0-00010101000000-000000000000
 	github.com/net12labs/cirm/agent-web v0.0.0-00010101000000-000000000000
 	github.com/net12labs/cirm/agent-web-api v0.0.0-00010101000000-000000000000
-	github.com/net12labs/cirm/api-web v0.0.0-00010101000000-000000000000
+	github.com/net12labs/cirm/site-web-api v0.0.0-00010101000000-000000000000
 	github.com/net12labs/cirm/client-web/platform v0.0.0-20251114191024-95d4142052d4
 )
 
@@ -28,7 +28,7 @@ replace (
 	github.com/net12labs/cirm/agent-client-web => ../agent-client-web
 	github.com/net12labs/cirm/agent-web => ../agent-web
 	github.com/net12labs/cirm/agent-web-api => ../agent-web-api
-	github.com/net12labs/cirm/api-web => ../api-web
+	github.com/net12labs/cirm/asite-web-api => ../site-web-api
 	github.com/net12labs/cirm/bin => ../bin
 	github.com/net12labs/cirm/client-web/admin => ../client-web/admin
 	github.com/net12labs/cirm/client-web/platform => ../client-web/platform
@@ -36,4 +36,5 @@ replace (
 	github.com/net12labs/cirm/client-web/root => ../client-web/root
 	github.com/net12labs/cirm/client-web/user => ../client-web/user
 	github.com/net12labs/cirm/dali => ../dali
+	github.com/net12labs/cirm/mali => ../mali
 )
