@@ -10,6 +10,7 @@ type SvcAgent struct {
 	// SvcAgent fields here
 }
 
-func (sa *SvcAgent) RefreshData() {
-
+func (sa *SvcAgent) UserLogin(username, password string) error {
+	// Implement user login logic here
+	return nil
 }

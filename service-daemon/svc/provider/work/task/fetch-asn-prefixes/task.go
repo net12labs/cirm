@@ -2,7 +2,6 @@ package fetchdata
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/net12labs/cirm/dali/work/task"
@@ -39,8 +38,8 @@ var defaultASNList = []int{
 }
 
 type FetchIpData struct {
-	Task    task.Task
-	Fetcher *RoutesFetcher
+	Task task.Task
+	//	Fetcher *RoutesFetcher
 	OnStart func()
 	OnDone  func()
 	asnList []int
@@ -48,22 +47,22 @@ type FetchIpData struct {
 }
 
 func (r *FetchIpData) Run() {
-	success := 0
-	failed := 0
+	// success := 0
+	// failed := 0
 
-	for _, asn := range r.asnList {
-		count, err := r.Fetcher.fetchASN(asn)
-		if err != nil {
-			failed++
-			fmt.Fprintf(os.Stderr, "✗ AS%d: Error: %v\n", asn, err)
-		} else if count > 0 {
-			success++
-			fmt.Fprintf(os.Stderr, "✓ AS%d: %d routes\n", asn, count)
-		} else {
-			failed++
-			fmt.Fprintf(os.Stderr, "✗ AS%d: No routes found\n", asn)
-		}
-	}
+	// for _, asn := range r.asnList {
+	// 	count, err := r.Fetcher.fetchASN(asn)
+	// 	if err != nil {
+	// 		failed++
+	// 		fmt.Fprintf(os.Stderr, "✗ AS%d: Error: %v\n", asn, err)
+	// 	} else if count > 0 {
+	// 		success++
+	// 		fmt.Fprintf(os.Stderr, "✓ AS%d: %d routes\n", asn, count)
+	// 	} else {
+	// 		failed++
+	// 		fmt.Fprintf(os.Stderr, "✗ AS%d: No routes found\n", asn)
+	// 	}
+	// }
 }
 
 func (r *FetchIpData) compileAsnList() {

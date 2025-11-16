@@ -5,12 +5,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/net12labs/cirm/dali/work/task"
 )
 
 type CompileAsnList struct {
-	Task    task.Task // this actually should be a subtask
 	OnStart func()
 }
 

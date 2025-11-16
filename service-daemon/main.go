@@ -17,18 +17,22 @@ func main() {
 	rtm.Etc.SetKV("rtm_name", "china-ip-routes-maker")
 	rtm.Etc.SetKV("pid_file_path", "../units/"+rtm.Etc.Get("unit_id").String()+"/proc/china-ip-routes-maker.pid")
 	rtm.Etc.SetKV("data_dir", "../units/"+rtm.Etc.Get("unit_id").String()+"/data")
+	rtm.Etc.SetKV("main_db_path", rtm.Etc.Get("data_dir").String()+"/main.db")
 
 	rtm.Runtime.OnPanic.AddListener(func(err any) {
 		fmt.Println("Runtime Panic:", err)
 	})
 
 	if rtm.Args.HasKey("--serve") {
-		serve := service.NewServe()
-		if err := serve.Start(); err != nil {
-			fmt.Println("Failed to start service:", err)
-			rtm.Runtime.Exit(1)
-		}
-		rtm.Runtime.Exit(0)
+		go func() {
+			serve := service.NewServe()
+			if err := serve.Start(); err != nil {
+				fmt.Println("Failed to start service:", err)
+				rtm.Runtime.Exit(1)
+			}
+			rtm.Runtime.Exit(0)
+		}()
+		rtm.Runtime.WaitForSIGTERM()
 	}
 
 	if rtm.Args.HasKey("--cmd") {

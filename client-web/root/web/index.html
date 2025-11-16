@@ -46,6 +46,44 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        .login-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-message {
+            color: #388e3c;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -58,12 +96,75 @@
             <button onclick="navigateTo('/user')" style="padding: 20px; font-size: 16px;">User Portal</button>
               <button onclick="navigateTo('/platform')" style="padding: 20px; font-size: 16px;">Platform Portal</button>
         </div>
+
+        <div class="login-section">
+            <h2 style="color: #333; margin-top: 0;">Login</h2>
+            <form id="loginForm" style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" style="width: 100%; padding: 15px; font-size: 16px;">Login</button>
+                <div id="errorMessage" class="error-message"></div>
+                <div id="successMessage" class="success-message"></div>
+            </form>
+        </div>
     </div>
 
     <script>
         function navigateTo(path) {
             window.location.href = path;
         }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    successMessage.textContent = 'Login successful!';
+                    successMessage.style.display = 'block';
+                    // Optionally redirect or store token
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                    }
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        if (data.redirectUrl) {
+                            window.location.href = data.redirectUrl;
+                        }
+                    }, 1000);
+                } else {
+                    errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>

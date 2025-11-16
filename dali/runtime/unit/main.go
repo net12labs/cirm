@@ -1,6 +1,10 @@
 package unit
 
-import "os"
+import (
+	"os"
+	"os/signal"
+	"syscall"
+)
 
 type Listeners struct {
 	items []func(any)
@@ -47,4 +51,12 @@ func (r *RuntimeUnit) Panic(err string) {
 func (r *RuntimeUnit) Exit(code int) {
 	dispatchListeners(r.OnExit, code)
 	os.Exit(code)
+}
+
+func (r *RuntimeUnit) WaitForSIGTERM() {
+	// Wait for interrupt signal
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	<-sigChan
+	r.Exit(0)
 }

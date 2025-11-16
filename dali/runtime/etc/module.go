@@ -1,7 +1,7 @@
 package etc
 
 import (
-	mod "github.com/net12labs/cirm/bin/etc-store"
+	mod "github.com/net12labs/cirm/mali/etc-store"
 )
 
 var Module = mod.NewEtcStore()

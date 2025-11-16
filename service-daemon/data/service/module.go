@@ -1,11 +1,11 @@
 package service
 
 import (
-	"github.com/net12labs/cirm/service-daemon/data/unit"
+	"github.com/net12labs/cirm/dali/data"
 )
 
 type Service struct {
-	Db *unit.SqliteDb
+	Db *data.SqliteDb
 }
 
 func NewService() *Service {

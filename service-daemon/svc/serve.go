@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/net12labs/cirm/dali/context/service"
+	"github.com/net12labs/cirm/dali/data"
 	rtm "github.com/net12labs/cirm/dali/runtime"
-	"github.com/net12labs/cirm/service-daemon/data"
 	"github.com/net12labs/cirm/service-daemon/svc/admin"
 	"github.com/net12labs/cirm/service-daemon/svc/platform"
 	"github.com/net12labs/cirm/service-daemon/svc/provider"
@@ -42,6 +42,7 @@ func NewServe() *Serve {
 }
 
 func (s *Serve) Start() error {
+
 	if err := s.runtimeInit(); err != nil {
 		fmt.Println(err)
 		rtm.Runtime.Exit(1)
@@ -79,11 +80,11 @@ func (s *Serve) runtimeInit() error {
 }
 
 func (s *Serve) dataInit() error {
-	dbPath := rtm.Etc.Get("data_dir").String() + "/data.db"
-	data.Module.DB.DbPath = dbPath
-	rtm.Do.InitFsPath(data.Module.DB.DbPath)
+	dbPath := rtm.Etc.Get("main_db_path").String()
+	rtm.Do.InitFsPath(dbPath)
+	mainDb := data.Ops.CreateDb("main", dbPath)
 
-	if err := data.Module.Init(); err != nil {
+	if err := mainDb.Init(); err != nil {
 		fmt.Println("Failed to initialize database:", err)
 		rtm.Runtime.Exit(1)
 	}

@@ -16,7 +16,10 @@ require github.com/net12labs/cirm/client-web/root v0.0.0-20251114191024-95d41420
 
 require github.com/net12labs/cirm/client-web/platform v0.0.0-20251114191024-95d4142052d4
 
+require github.com/net12labs/cirm/bin v0.0.0-20251115102942-9c752c6c92f5 // indirect
+
 replace (
+	github.com/net12labs/cirm/bin => ../bin
 	github.com/net12labs/cirm/client-web/admin => ../client-web/admin
 	github.com/net12labs/cirm/client-web/platform => ../client-web/platform
 	github.com/net12labs/cirm/client-web/provider => ../client-web/provider
