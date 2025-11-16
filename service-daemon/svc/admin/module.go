@@ -3,6 +3,9 @@ package admin
 import (
 	"github.com/net12labs/cirm/dali/context/service"
 
+	webagentclient "github.com/net12labs/cirm/agent-client-web/admin"
+	webagentapi "github.com/net12labs/cirm/agent-web-api/admin"
+
 	webagent "github.com/net12labs/cirm/agent-web/admin"
 	webapi "github.com/net12labs/cirm/api-web/admin"
 	webclient "github.com/net12labs/cirm/client-web/admin"
@@ -12,10 +15,12 @@ import (
 
 type Unit struct {
 	*service.SubService
-	Service   *service.SubService
-	WebClient *webclient.WebClient
-	WebAgent  *webagent.SvcAgent
-	WebApi    *webapi.WebApi
+	Service        *service.SubService
+	WebClient      *webclient.WebClient
+	WebAgent       *webagent.Agent
+	WebApi         *webapi.WebApi
+	WebAgentApi    *webagentapi.WebAgentApi
+	WebAgentClient *webagentclient.WebAgentClient
 }
 
 func NewUnit() *Unit {
@@ -24,7 +29,9 @@ func NewUnit() *Unit {
 	svc.Service = svc.SubService
 	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = webapi.NewWebApi()
-	svc.Agent = &SvcAgent{Svc: svc}
+	svc.WebAgent = webagent.NewAgent()
+	svc.WebAgentApi = webagentapi.NewWebAgentApi()
+	svc.WebAgentClient = webagentclient.NewWebAgentClient()
 
 	return svc
 }
@@ -32,6 +39,8 @@ func NewUnit() *Unit {
 func (r *Unit) Init() error {
 	r.WebClient.Init()
 	r.WebApi.Init()
+	r.WebAgent.Init()
+	r.WebAgentApi.Init()
 	return nil
 }
 

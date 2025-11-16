@@ -17,7 +17,3 @@ func NewAgent() *Agent {
 	ag.Agent = agent.NewAgent()
 	return ag
 }
-
-func (a *Agent) Init() error {
-	return nil
-}
