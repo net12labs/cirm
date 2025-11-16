@@ -1,14 +1,14 @@
 package webapi
 
 import (
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	apiwebserver "github.com/net12labs/cirm/dali/api-web-server"
 )
 
-type Request = webserver.Request
-type Response = webserver.Response
+type Request = apiwebserver.ApiRequest
+type Response = apiwebserver.ApiResponse
 
 type WebApi struct {
-	Server *webserver.WebServer
+	Server *apiwebserver.Server
 	// WebApi fields here
 }
 

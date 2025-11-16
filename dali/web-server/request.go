@@ -7,11 +7,13 @@ import (
 )
 
 type Request struct {
-	Req      *http.Request
-	Resp     *http.ResponseWriter
-	Path     *URLPath
-	Method   string
-	Response *Response
+	Req       *http.Request
+	Resp      *http.ResponseWriter
+	Path      *URLPath
+	Method    string
+	Response  *Response
+	IsInvalid bool
+	Error     string
 }
 
 type Response struct {
@@ -23,10 +25,12 @@ type Response struct {
 
 func NewRequest(w http.ResponseWriter, r *http.Request) *Request {
 	req := &Request{
-		Req:    r,
-		Resp:   &w,
-		Path:   &URLPath{Path: r.URL.Path},
-		Method: r.Method,
+		Req:       r,
+		Resp:      &w,
+		Path:      &URLPath{Path: r.URL.Path},
+		Method:    r.Method,
+		IsInvalid: false,
+		Error:     "",
 		Response: &Response{
 			Headers: make(http.Header),
 		},

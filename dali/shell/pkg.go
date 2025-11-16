@@ -1,44 +1,36 @@
 package shell
 
 import (
+	"github.com/net12labs/cirm/dali/accounts/account"
 	"github.com/net12labs/cirm/dali/bin"
-	"github.com/net12labs/cirm/dali/users/user"
+	shellcore "github.com/net12labs/cirm/mali/shell-core"
 )
 
-type ShellCore struct {
-	User    *user.User
-	Buffer  []string
-	History []string
-}
-
 type Shell struct {
-	Core *ShellCore
+	*shellcore.Shell
+	Core *shellcore.ShellCore
 }
 
 func NewShell(userId int64) *Shell {
 	return &Shell{
-		Core: &ShellCore{
-			User:    user.NewUser(userId, ""),
-			Buffer:  []string{},
-			History: []string{},
-		},
+		Shell: shellcore.NewShell(),
+		Core:  shellcore.NewShellCore(userId),
 	}
 }
 
 func (s *Shell) Execute(path string, args ...string) int {
-	err := bin.Exec(s.Core.User.Id(), path, args...)
+	err := bin.Exec(s.Core.AccountId, path, args...)
 	if err != nil {
 		return 1
 	}
 	return 0
 }
 
-func (s *ShellCore) AddToHistory(command string) {
-	s.History = append(s.History, command)
+func (s *Shell) CreateStdAccount(name string) *account.StdAccount {
+	return account.GetStdAccount(5888, name)
 }
-
-func (s *ShellCore) CreateStdUser(name string) *user.StdUser {
-	return user.GetStdUser(5888, name)
+func (s *Shell) SetAccountPassword(accountId int64, password string) error {
+	return nil
 }
 
 // for every context - like root, project etc - there is a separate shell

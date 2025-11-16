@@ -4,8 +4,7 @@ go 1.21
 
 require (
 	github.com/mattn/go-sqlite3 v1.14.32
-	github.com/net12labs/cirm/bin v0.0.0-20251115102942-9c752c6c92f5
+	github.com/net12labs/cirm/mali v0.0.0-00010101000000-000000000000
 )
-
 
 replace github.com/net12labs/cirm/mali => ../mali

@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	apiwebserver "github.com/net12labs/cirm/dali/api-web-server"
 	"github.com/net12labs/cirm/dali/context/service"
 	"github.com/net12labs/cirm/dali/data"
 	rtm "github.com/net12labs/cirm/dali/runtime"
@@ -15,12 +16,15 @@ import (
 
 type Serve struct {
 	*service.Service
-	User     *user.Unit
-	Provider *provider.Unit
-	Platform *platform.Unit
-	Root     *root.Unit
-	Admin    *admin.Unit
+	User      *user.Unit
+	Provider  *provider.Unit
+	Platform  *platform.Unit
+	Root      *root.Unit
+	Admin     *admin.Unit
+	ApiServer *apiwebserver.Server
 }
+
+// so the actual web server may need to be started even higher
 
 func NewServe() *Serve {
 	sv := &Serve{
@@ -32,11 +36,14 @@ func NewServe() *Serve {
 		Platform: platform.NewUnit(),
 	}
 	sv.WebServer = service.NewWebServer()
-	sv.Root.WebServer = sv.WebServer
-	sv.User.WebServer = sv.WebServer
-	sv.Admin.WebServer = sv.WebServer
-	sv.Provider.WebServer = sv.WebServer
-	sv.Platform.WebServer = sv.WebServer
+	sv.ApiServer = apiwebserver.NewServer()
+	sv.ApiServer.Server = sv.WebServer
+
+	sv.Root.WebApi.Server = sv.ApiServer
+	sv.Provider.WebApi.Server = sv.ApiServer
+	sv.Platform.WebApi.Server = sv.ApiServer
+	sv.Admin.WebApi.Server = sv.ApiServer
+	sv.User.WebApi.Server = sv.ApiServer
 
 	return sv
 }

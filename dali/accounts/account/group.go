@@ -1,4 +1,4 @@
-package user
+package account
 
 type Group struct {
 	id          int64

@@ -14,9 +14,7 @@ type WebApi struct {
 func (api *WebApi) Init() {
 
 	api.WebApi.Server.AddRoute("/provider/api/refresh-data", func(req *webapi.Request) {
-		req.Response = &webapi.Response{
-			StatusCode: http.StatusOK,
-		}
+		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		api.svc.Agent.RefreshData()
 	})
@@ -38,17 +36,14 @@ func (api *WebApi) Init() {
 			"count": 2,
 		}
 
-		req.Response = &webapi.Response{
-			StatusCode: http.StatusOK,
-			MimeType:   "application/json",
-		}
+		req.Response.StatusCode = http.StatusOK
+		req.Response.MimeType = "application/json"
 		req.WriteResponse(response)
 	})
 
 }
 
 func (api *WebApi) Start() {
-	api.Server.Start()
 }
 
 func NewWebApi() *WebApi {

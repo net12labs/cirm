@@ -30,7 +30,6 @@ func NewUnit() *Unit {
 func (r *Unit) Init() error {
 	r.Webclient.Server = r.WebServer
 	r.Webclient.Init()
-	r.WebApi.Server = r.WebServer
 	r.WebApi.Init()
 
 	return nil

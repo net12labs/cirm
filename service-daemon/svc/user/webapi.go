@@ -3,26 +3,24 @@ package user
 import (
 	"net/http"
 
-	webserver "github.com/net12labs/cirm/dali/web-server"
+	"github.com/net12labs/cirm/dali/context/webapi"
 )
 
 type WebApi struct {
-	svc    *Unit
-	Server *webserver.WebServer
+	*webapi.WebApi
+	svc *Unit
 	// WebApi fields here
 }
 
 func (api *WebApi) Init() {
 
-	api.Server.AddRoute("/user/api/refresh-data", func(req *webserver.Request) {
-		req.Response = &webserver.Response{
-			StatusCode: http.StatusOK,
-		}
+	api.Server.AddRoute("/user/api/refresh-data", func(req *webapi.Request) {
+		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		api.svc.Agent.RefreshData()
 	})
 
-	api.Server.AddRoute("/user/api/get-routes", func(req *webserver.Request) {
+	api.Server.AddRoute("/user/api/get-routes", func(req *webapi.Request) {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {
@@ -39,17 +37,14 @@ func (api *WebApi) Init() {
 			"count": 2,
 		}
 
-		req.Response = &webserver.Response{
-			StatusCode: http.StatusOK,
-			MimeType:   "application/json",
-		}
+		req.Response.StatusCode = http.StatusOK
+		req.Response.MimeType = "application/json"
 		req.WriteResponse(response)
 	})
 
 }
 
 func (api *WebApi) Start() {
-	api.Server.Start()
 }
 
 func NewWebApi() *WebApi {

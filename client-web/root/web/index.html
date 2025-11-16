@@ -113,6 +113,27 @@
                 <div id="successMessage" class="success-message"></div>
             </form>
         </div>
+
+        <div class="login-section">
+            <h2 style="color: #333; margin-top: 0;">Create Account</h2>
+            <form id="createAccountForm" style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="newUsername">Username</label>
+                    <input type="text" id="newUsername" name="newUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Password</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" style="width: 100%; padding: 15px; font-size: 16px;">Create Account</button>
+                <div id="createErrorMessage" class="error-message"></div>
+                <div id="createSuccessMessage" class="success-message"></div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -158,6 +179,52 @@
                     }, 1000);
                 } else {
                     errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        document.getElementById('createAccountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('createErrorMessage');
+            const successMessage = document.getElementById('createSuccessMessage');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/create-account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    successMessage.textContent = 'Account created successfully!';
+                    successMessage.style.display = 'block';
+                    // Clear form
+                    document.getElementById('createAccountForm').reset();
+                } else {
+                    errorMessage.textContent = data.message || 'Failed to create account. Please try again.';
                     errorMessage.style.display = 'block';
                 }
             } catch (error) {
