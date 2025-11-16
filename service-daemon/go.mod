@@ -4,7 +4,7 @@ go 1.21
 
 require github.com/mattn/go-sqlite3 v1.14.32 // indirect
 
-require github.com/net12labs/cirm/dali v0.0.0-20251115100224-b432eab83657
+require github.com/net12labs/cirm/dali v0.0.0-20251116070540-b170edf05994
 
 require github.com/net12labs/cirm/client-web/admin v0.0.0-20251114191024-95d4142052d4
 

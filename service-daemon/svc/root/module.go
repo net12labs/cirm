@@ -1,6 +1,7 @@
 package root
 
 import (
+	webapi "github.com/net12labs/cirm/api-web/root"
 	webclient "github.com/net12labs/cirm/client-web/root"
 	"github.com/net12labs/cirm/dali/context/service"
 )
@@ -12,7 +13,7 @@ type Unit struct {
 	Service   *service.SubService
 	WebClient *webclient.WebClient
 	Agent     *SvcAgent
-	WebApi    *WebApi
+	WebApi    *webapi.WebApi
 }
 
 func NewUnit() *Unit {
@@ -20,8 +21,7 @@ func NewUnit() *Unit {
 	svc.SubService = service.NewSubService()
 	svc.Service = svc.SubService
 	svc.WebClient = webclient.NewWebClient()
-	svc.WebApi = NewWebApi()
-	svc.WebApi.svc = svc
+	svc.WebApi = webapi.NewWebApi()
 	svc.Agent = &SvcAgent{Svc: svc}
 
 	return svc

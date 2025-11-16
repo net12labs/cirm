@@ -2,26 +2,23 @@ package user
 
 import (
 	"github.com/net12labs/cirm/dali/context/service"
-	webserver "github.com/net12labs/cirm/dali/web-server"
 
+	webapi "github.com/net12labs/cirm/api-web/user"
 	webclient "github.com/net12labs/cirm/client-web/user"
 )
 
 type Unit struct {
 	*service.Service
-	WebServer   *webserver.WebServer
-	WebClient   *webclient.WebClient
-	Agent       *SvcAgent
-	ExitMessage string
-	WebApi      *WebApi
+	WebClient *webclient.WebClient
+	Agent     *SvcAgent
+	WebApi    *webapi.WebApi
 }
 
 func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.Service = service.NewService()
 	svc.WebClient = webclient.NewWebClient()
-	svc.WebApi = NewWebApi()
-	svc.WebApi.svc = svc
+	svc.WebApi = webapi.NewWebApi()
 	svc.Agent = &SvcAgent{Svc: svc}
 	return svc
 }

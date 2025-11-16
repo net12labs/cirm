@@ -1,4 +1,4 @@
-package provider
+package platform
 
 import (
 	"net/http"
@@ -8,19 +8,21 @@ import (
 
 type WebApi struct {
 	*webapi.WebApi
-	svc *Unit
+	// WebApi fields here
+}
+
+func NewWebApi() *WebApi {
+	return &WebApi{WebApi: webapi.NewWebApi()}
 }
 
 func (api *WebApi) Init() {
-
-	api.WebApi.Server.AddRoute("/provider/api/refresh-data", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute("/platform/api/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
-		api.svc.Agent.RefreshData()
 		return nil
 	})
 
-	api.WebApi.Server.AddRoute("/provider/api/get-routes", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute("/platform/api/get-routes", func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {
@@ -41,12 +43,4 @@ func (api *WebApi) Init() {
 		req.Response.MimeType = "application/json"
 		return req.WriteResponse(response)
 	})
-
-}
-
-func (api *WebApi) Start() {
-}
-
-func NewWebApi() *WebApi {
-	return &WebApi{WebApi: webapi.NewWebApi()}
 }

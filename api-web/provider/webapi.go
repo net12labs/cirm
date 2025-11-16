@@ -1,27 +1,24 @@
-package user
+package webapi
 
 import (
 	"net/http"
 
-	"github.com/net12labs/cirm/dali/context/webapi"
+	webapi "github.com/net12labs/cirm/dali/context/webapi"
 )
 
 type WebApi struct {
 	*webapi.WebApi
-	svc *Unit
-	// WebApi fields here
 }
 
 func (api *WebApi) Init() {
 
-	api.Server.AddRoute("/user/api/refresh-data", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute("/provider/api/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
-		api.svc.Agent.RefreshData()
 		return nil
 	})
 
-	api.Server.AddRoute("/user/api/get-routes", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute("/provider/api/get-routes", func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

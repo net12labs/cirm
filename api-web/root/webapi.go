@@ -1,4 +1,4 @@
-package root
+package webapi
 
 import (
 	"fmt"
@@ -10,7 +10,6 @@ import (
 
 type WebApi struct {
 	*webapi.WebApi
-	svc *Unit
 	// WebApi fields here
 }
 
@@ -28,15 +27,17 @@ func (api *WebApi) Init() {
 
 		username, _ := rq["username"].(string)
 		password, _ := rq["password"].(string)
-
-		if api.svc.Agent.UserLogin(username, password) == nil {
-			req.Response.StatusCode = http.StatusOK
-			req.WriteResponse(map[string]any{"token": "loonabalooona"})
-		} else {
-			req.Response.StatusCode = http.StatusUnauthorized
-			req.WriteResponse(map[string]any{"message": "Login failed"})
+		if username == "" || password == "" {
+			return fmt.Errorf("username and password are required")
 		}
-		return nil
+
+		// if api.svc.Agent.UserLogin(username, password) == nil {
+		req.Response.StatusCode = http.StatusOK
+		return req.WriteResponse(map[string]any{"token": "loonabalooona"})
+		// } else {
+		// 	req.Response.StatusCode = http.StatusUnauthorized
+		// 	req.WriteResponse(map[string]any{"message": "Login failed"})
+		// }
 	})
 
 	api.Server.AddRoute("/api/create-account", func(req *webapi.Request) error {

@@ -3,6 +3,7 @@ package platform
 import (
 	"github.com/net12labs/cirm/dali/context/service"
 
+	webapi "github.com/net12labs/cirm/api-web/platform"
 	webclient "github.com/net12labs/cirm/client-web/platform"
 )
 
@@ -13,7 +14,7 @@ type Unit struct {
 	Service   *service.SubService
 	WebClient *webclient.WebClient
 	Agent     *SvcAgent
-	WebApi    *WebApi
+	WebApi    *webapi.WebApi
 }
 
 func NewUnit() *Unit {
@@ -21,9 +22,8 @@ func NewUnit() *Unit {
 	svc.SubService = service.NewSubService()
 	svc.Service = svc.SubService
 	svc.WebClient = webclient.NewWebClient()
-	svc.WebApi = NewWebApi()
-	svc.WebApi.svc = svc
-	svc.Agent = &SvcAgent{Svc: svc}
+	svc.WebApi = webapi.NewWebApi()
+	svc.Agent = &SvcAgent{}
 
 	return svc
 }

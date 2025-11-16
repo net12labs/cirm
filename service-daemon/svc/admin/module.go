@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/net12labs/cirm/dali/context/service"
 
+	webagent "github.com/net12labs/cirm/agent-web/admin"
 	webapi "github.com/net12labs/cirm/api-web/admin"
 	webclient "github.com/net12labs/cirm/client-web/admin"
 )
@@ -13,7 +14,7 @@ type Unit struct {
 	*service.SubService
 	Service   *service.SubService
 	WebClient *webclient.WebClient
-	Agent     *SvcAgent
+	WebAgent  *webagent.SvcAgent
 	WebApi    *webapi.WebApi
 }
 
@@ -23,7 +24,6 @@ func NewUnit() *Unit {
 	svc.Service = svc.SubService
 	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = webapi.NewWebApi()
-	// svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}
 
 	return svc
