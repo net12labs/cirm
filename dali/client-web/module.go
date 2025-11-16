@@ -1,16 +1,16 @@
 package client
 
-import webserver "github.com/net12labs/cirm/dali/web-server"
+import clientwebserver "github.com/net12labs/cirm/dali/client-web-server"
 
 type Client struct {
-	Server *webserver.WebServer
+	Server *clientwebserver.Server
 }
 
 func NewClient() *Client {
 	return &Client{}
 }
 
-var NewWebServer = webserver.NewWebServer
+var NewServer = clientwebserver.NewServer
 
-type Request = webserver.Request
-type Response = webserver.Response
+type Request = clientwebserver.Request
+type Response = clientwebserver.Response

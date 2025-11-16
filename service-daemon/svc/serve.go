@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	apiwebserver "github.com/net12labs/cirm/dali/api-web-server"
+	clientwebserver "github.com/net12labs/cirm/dali/client-web-server"
 	"github.com/net12labs/cirm/dali/context/service"
 	"github.com/net12labs/cirm/dali/data"
 	rtm "github.com/net12labs/cirm/dali/runtime"
+	webserver "github.com/net12labs/cirm/dali/web-server"
 	"github.com/net12labs/cirm/service-daemon/svc/admin"
 	"github.com/net12labs/cirm/service-daemon/svc/platform"
 	"github.com/net12labs/cirm/service-daemon/svc/provider"
@@ -16,12 +18,13 @@ import (
 
 type Serve struct {
 	*service.Service
-	User      *user.Unit
-	Provider  *provider.Unit
-	Platform  *platform.Unit
-	Root      *root.Unit
-	Admin     *admin.Unit
-	ApiServer *apiwebserver.Server
+	User         *user.Unit
+	Provider     *provider.Unit
+	Platform     *platform.Unit
+	Root         *root.Unit
+	Admin        *admin.Unit
+	ApiServer    *apiwebserver.Server
+	ClientServer *clientwebserver.Server
 }
 
 // so the actual web server may need to be started even higher
@@ -35,9 +38,18 @@ func NewServe() *Serve {
 		Root:     root.NewUnit(),
 		Platform: platform.NewUnit(),
 	}
-	sv.WebServer = service.NewWebServer()
+	sv.WebServer = webserver.NewWebServer()
 	sv.ApiServer = apiwebserver.NewServer()
-	sv.ApiServer.Server = sv.WebServer
+	sv.ClientServer = clientwebserver.NewServer()
+
+	sv.ApiServer.WebServer = sv.WebServer
+	sv.ClientServer.WebServer = sv.WebServer
+
+	sv.Root.WebClient.Server = sv.ClientServer
+	sv.Provider.WebClient.Server = sv.ClientServer
+	sv.Platform.WebClient.Server = sv.ClientServer
+	sv.Admin.WebClient.Server = sv.ClientServer
+	sv.User.WebClient.Server = sv.ClientServer
 
 	sv.Root.WebApi.Server = sv.ApiServer
 	sv.Provider.WebApi.Server = sv.ApiServer

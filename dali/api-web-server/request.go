@@ -2,6 +2,7 @@ package apiwebserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	webserver "github.com/net12labs/cirm/dali/web-server"
@@ -33,5 +34,6 @@ func (s *ApiRequest) ReadRequestBodyAsMap() (map[string]any, error) {
 }
 
 func (s *ApiRequest) WriteResponse(v any) error {
+	fmt.Println("Writing response:", v)
 	return s.Request.WriteResponse(v)
 }

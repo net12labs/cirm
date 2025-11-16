@@ -28,9 +28,7 @@ func NewUnit() *Unit {
 }
 
 func (r *Unit) Init() error {
-	r.WebClient.Server = r.WebServer
 	r.WebClient.Init()
-	r.WebApi.Server = r.WebServer
 	r.WebApi.Init()
 	return nil
 }

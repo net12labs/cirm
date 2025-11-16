@@ -18,21 +18,13 @@ func NewWebClient() *WebClient {
 }
 
 func (wc *WebClient) Init() error {
-	wc.Server.AddRoute("/admin", func(req *client.Request) {
+	wc.Server.AddRoute("/admin", func(req *client.Request) error {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {
-			req.Response = &client.Response{
-				StatusCode: 404,
-			}
-			req.WriteResponse([]byte("404 Not Found"))
-			return
+			return req.WriteResponse404()
 		}
-		req.Response = &client.Response{
-			StatusCode: 200,
-			MimeType:   "text/html",
-		}
-		req.WriteResponse(data)
+		return req.WriteResponseHTML(data)
 	})
 	return nil
 }

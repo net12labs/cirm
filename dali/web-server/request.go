@@ -39,13 +39,21 @@ func NewRequest(w http.ResponseWriter, r *http.Request) *Request {
 	return req
 }
 
-func (rs *Response) Write404() {
-	rs.Headers.Set("Content-Type", "text/plain")
-	rs.Headers.Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	rs.StatusCode = http.StatusNotFound
-	(*rs.req.Resp).WriteHeader(rs.StatusCode)
-	(*rs.req.Resp).Write([]byte("404 Not Found"))
+func (rs *Request) WriteResponse404() error {
+	rs.Response.Headers.Set("Content-Type", "text/plain")
+	rs.Response.Headers.Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	rs.Response.StatusCode = http.StatusNotFound
+	(*rs.Resp).WriteHeader(rs.Response.StatusCode)
+	(*rs.Resp).Write([]byte("404 Not Found"))
+	return nil
+}
 
+func (req *Request) WriteResponseHTML(data any) error {
+	if req.Response == nil {
+		req.Response = &Response{}
+	}
+	req.Response.MimeType = "text/html"
+	return req.WriteResponse(data)
 }
 
 func (r *Request) WriteResponse(data any) error {
@@ -72,13 +80,14 @@ func (r *Request) WriteResponse(data any) error {
 		if statusCode == 0 {
 			statusCode = http.StatusOK
 		}
-		(*r.Resp).WriteHeader(statusCode)
 
 		switch v := data.(type) {
 		case string:
+			(*r.Resp).WriteHeader(statusCode)
 			_, err := (*r.Resp).Write([]byte(v))
 			return err
 		case []byte:
+			(*r.Resp).WriteHeader(statusCode)
 			_, err := (*r.Resp).Write(v)
 			return err
 		default:
@@ -87,6 +96,7 @@ func (r *Request) WriteResponse(data any) error {
 			if err != nil {
 				return fmt.Errorf("failed to marshal data: %w", err)
 			}
+			(*r.Resp).WriteHeader(statusCode)
 			// Set Content-Type to JSON only if MimeType not already set
 			if r.Response.MimeType == "" {
 				(*r.Resp).Header().Set("Content-Type", "application/json")

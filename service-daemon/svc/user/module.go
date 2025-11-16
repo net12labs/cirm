@@ -10,7 +10,7 @@ import (
 type Unit struct {
 	*service.Service
 	WebServer   *webserver.WebServer
-	Webclient   *webclient.WebClient
+	WebClient   *webclient.WebClient
 	Agent       *SvcAgent
 	ExitMessage string
 	WebApi      *WebApi
@@ -19,7 +19,7 @@ type Unit struct {
 func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.Service = service.NewService()
-	svc.Webclient = webclient.NewWebClient()
+	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = NewWebApi()
 	svc.WebApi.svc = svc
 	svc.Agent = &SvcAgent{Svc: svc}
@@ -27,8 +27,7 @@ func NewUnit() *Unit {
 }
 
 func (r *Unit) Init() error {
-	r.Webclient.Server = r.WebServer
-	r.Webclient.Init()
+	r.WebClient.Init()
 	r.WebApi.Init()
 	return nil
 }

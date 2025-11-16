@@ -13,13 +13,14 @@ type WebApi struct {
 
 func (api *WebApi) Init() {
 
-	api.WebApi.Server.AddRoute("/provider/api/refresh-data", func(req *webapi.Request) {
+	api.WebApi.Server.AddRoute("/provider/api/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		api.svc.Agent.RefreshData()
+		return nil
 	})
 
-	api.WebApi.Server.AddRoute("/provider/api/get-routes", func(req *webapi.Request) {
+	api.WebApi.Server.AddRoute("/provider/api/get-routes", func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {
@@ -27,7 +28,7 @@ func (api *WebApi) Init() {
 		}
 
 		// Example response structure
-		response := map[string]interface{}{
+		response := map[string]any{
 			"format": format,
 			"routes": []string{
 				"route 1.1.1.0/24 via 192.168.1.1",
@@ -38,7 +39,7 @@ func (api *WebApi) Init() {
 
 		req.Response.StatusCode = http.StatusOK
 		req.Response.MimeType = "application/json"
-		req.WriteResponse(response)
+		return req.WriteResponse(response)
 	})
 
 }
