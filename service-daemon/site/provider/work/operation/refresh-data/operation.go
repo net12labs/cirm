@@ -1,8 +1,8 @@
 package refreshdata
 
 import (
-	wop "github.com/net12labs/cirm/dali/work/operation"
-	"github.com/net12labs/cirm/dali/work/task"
+	wop "github.com/net12labs/cirm/dali/shell/work/operation"
+	"github.com/net12labs/cirm/dali/shell/work/task"
 	fetchdata "github.com/net12labs/cirm/service-daemon/site/provider/work/task/fetch-asn-prefixes"
 )
 

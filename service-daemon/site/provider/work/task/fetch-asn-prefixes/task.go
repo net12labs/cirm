@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/net12labs/cirm/dali/work/task"
+	"github.com/net12labs/cirm/dali/shell/work/task"
 )
 
 var defaultASNList = []int{

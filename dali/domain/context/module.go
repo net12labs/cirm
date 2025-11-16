@@ -1,11 +1,11 @@
-package service
+package domain_context
 
 import (
 	"github.com/net12labs/cirm/dali/context/cmd"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 
-type ServiceUnit struct {
+type DomainUnit struct {
 	Path        string
 	Mode        RunMode
 	OnExit      func()
@@ -15,31 +15,31 @@ type ServiceUnit struct {
 	// Other fields here
 }
 
-type Service struct {
-	*ServiceUnit
+type Domain struct {
+	*DomainUnit
 
 	// Other fields here
 }
 
-type SubService struct {
-	*ServiceUnit
+type SubDomain struct {
+	*DomainUnit
 
 	// Other fields here
 }
 
-func NewService() *Service {
-	svc := &Service{}
-	svc.ServiceUnit = &ServiceUnit{
+func NewDomain() *Domain {
+	d := &Domain{}
+	d.DomainUnit = &DomainUnit{
 		Mode: RunMode{
 			items: make(map[string]string),
 		},
 	}
-	return svc
+	return d
 }
 
-func NewSubService() *SubService {
-	svc := &SubService{}
-	svc.ServiceUnit = &ServiceUnit{
+func NewSubDomain() *SubDomain {
+	svc := &SubDomain{}
+	svc.DomainUnit = &DomainUnit{
 		Mode: RunMode{
 			items: make(map[string]string),
 		},
@@ -53,6 +53,6 @@ func NewServer() *webserver.WebServer {
 
 type WebServer = webserver.WebServer
 
-func (su *ServiceUnit) SetPath(key string) {
+func (su *DomainUnit) SetPath(key string) {
 	su.Path = key
 }

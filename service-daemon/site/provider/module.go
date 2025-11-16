@@ -1,8 +1,7 @@
 package provider
 
 import (
-	"github.com/net12labs/cirm/dali/context/service"
-
+	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	webclient "github.com/net12labs/cirm/site-client-web/provider"
 	webapi "github.com/net12labs/cirm/site-web-api/provider"
 
@@ -14,8 +13,8 @@ import (
 // Possible runmodes are; web, cli
 
 type Unit struct {
-	*service.SubService
-	Service        *service.SubService
+	*domain_context.SubDomain
+	Domain         *domain_context.SubDomain
 	WebClient      *webclient.ProviderClient
 	WebApi         *webapi.WebApi
 	WebAgent       *webagent.Agent
@@ -25,8 +24,8 @@ type Unit struct {
 
 func NewUnit() *Unit {
 	svc := &Unit{}
-	svc.SubService = service.NewSubService()
-	svc.Service = svc.SubService
+	svc.SubDomain = domain_context.NewSubDomain()
+	svc.Domain = svc.SubDomain
 	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = webapi.NewWebApi()
 	svc.WebAgent = webagent.NewAgent()

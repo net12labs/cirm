@@ -8,7 +8,7 @@ import (
 	"github.com/net12labs/cirm/service-daemon/meta"
 	"github.com/net12labs/cirm/service-daemon/site"
 
-	rtm "github.com/net12labs/cirm/dali/runtime"
+	"github.com/net12labs/cirm/dali/rtm"
 )
 
 // so context we can also package in the db - so it is all atomic

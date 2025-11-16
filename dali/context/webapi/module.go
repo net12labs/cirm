@@ -1,8 +1,8 @@
 package webapi
 
 import (
-	apiwebserver "github.com/net12labs/cirm/dali/api-web-server"
 	"github.com/net12labs/cirm/dali/context/cmd"
+	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
 )
 
 type Request = apiwebserver.Request

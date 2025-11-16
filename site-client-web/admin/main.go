@@ -3,7 +3,7 @@ package webclient
 import (
 	"embed"
 
-	"github.com/net12labs/cirm/dali/client-web"
+	client "github.com/net12labs/cirm/dali/site-client-web"
 )
 
 //go:embed web/*

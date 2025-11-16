@@ -2,7 +2,6 @@ package shell
 
 import (
 	"github.com/net12labs/cirm/dali/accounts/account"
-	"github.com/net12labs/cirm/dali/bin"
 	shellcore "github.com/net12labs/cirm/mali/shell-core"
 )
 
@@ -19,10 +18,10 @@ func NewShell(userId int64) *Shell {
 }
 
 func (s *Shell) Execute(path string, args ...string) int {
-	err := bin.Exec(s.Core.AccountId, path, args...)
-	if err != nil {
-		return 1
-	}
+	// err := bin.Exec(s.Core.AccountId, path, args...)
+	// if err != nil {
+	// 	return 1
+	// }
 	return 0
 }
 

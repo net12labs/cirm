@@ -3,7 +3,7 @@ package pid
 import (
 	"fmt"
 
-	pid "github.com/net12labs/cirm/dali/runtime/pid/def"
+	pid "github.com/net12labs/cirm/mali/rtm/pid/def"
 )
 
 var Pid = pid.Module

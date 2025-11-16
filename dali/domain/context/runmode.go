@@ -1,4 +1,4 @@
-package service
+package domain_context
 
 type RunMode struct {
 	items map[string]string

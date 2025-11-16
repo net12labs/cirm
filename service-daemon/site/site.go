@@ -3,12 +3,12 @@ package site
 import (
 	"fmt"
 
-	apiwebserver "github.com/net12labs/cirm/dali/api-web-server"
-	clientwebserver "github.com/net12labs/cirm/dali/client-web-server"
 	"github.com/net12labs/cirm/dali/context/cmd"
-	"github.com/net12labs/cirm/dali/context/service"
 	"github.com/net12labs/cirm/dali/data"
-	rtm "github.com/net12labs/cirm/dali/runtime"
+	domain_context "github.com/net12labs/cirm/dali/domain/context"
+	"github.com/net12labs/cirm/dali/rtm"
+	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
+	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
 	"github.com/net12labs/cirm/service-daemon/site/admin"
 	"github.com/net12labs/cirm/service-daemon/site/platform"
 	"github.com/net12labs/cirm/service-daemon/site/provider"
@@ -17,7 +17,7 @@ import (
 )
 
 type Site struct {
-	*service.Service
+	*domain_context.Domain
 	User         *user.Unit
 	Provider     *provider.Unit
 	Platform     *platform.Unit
@@ -31,14 +31,14 @@ type Site struct {
 
 func NewSite() *Site {
 	sv := &Site{
-		Service:  service.NewService(),
+		Domain:   domain_context.NewDomain(),
 		User:     user.NewUnit(),
 		Admin:    admin.NewUnit(),
 		Provider: provider.NewUnit(),
 		Root:     root.NewUnit(),
 		Platform: platform.NewUnit(),
 	}
-	sv.WebServer = service.NewServer()
+	sv.WebServer = domain_context.NewServer()
 	sv.ApiServer = apiwebserver.NewServer()
 	sv.ClientServer = clientwebserver.NewServer()
 

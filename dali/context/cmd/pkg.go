@@ -6,8 +6,9 @@ type Cmd struct {
 	Ttl       int
 	ContextId int64
 	SenderId  int64
+	Cmd       string
 	Src       []string
-	Target    string
+	Target    string // this should be a target context/target shell
 	Args      []string
 	Params    map[string]any
 	Options   map[string]any

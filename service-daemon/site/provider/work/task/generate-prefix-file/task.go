@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/net12labs/cirm/dali/work/task"
+	"github.com/net12labs/cirm/dali/shell/work/task"
 )
 
 type GenerateRoutesFile struct {
