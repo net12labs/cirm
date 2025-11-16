@@ -18,6 +18,8 @@ func (u *accounts) AccountGetByName(name string) *account.Account {
 	return account.NewAccount(1, name)
 }
 
+// Also need to create the equivalent groups
+
 var Root = account.GetRoot()
 var Nobody = account.GetNobody()
 var Somebody = account.GetSomebody()

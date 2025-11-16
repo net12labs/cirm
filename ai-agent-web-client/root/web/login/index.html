@@ -1,0 +1,134 @@
+<div class="login-widget">
+    <style scoped>
+        .login-widget {
+            font-family: Arial, sans-serif;
+        }
+        .login-widget .form-group {
+            margin-bottom: 15px;
+        }
+        .login-widget label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .login-widget input[type="text"],
+        .login-widget input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .login-widget input[type="text"]:focus,
+        .login-widget input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .login-widget button[type="submit"] {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .login-widget button[type="submit"]:hover {
+            background: #5568d3;
+        }
+        .login-widget .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            display: none;
+        }
+        .login-widget .success-message {
+            color: #388e3c;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+    
+    <form id="loginFormWidget" style="max-width: 400px; margin: 0 auto;">
+        <div class="form-group">
+            <label for="usernameWidget">Username</label>
+            <input type="text" id="usernameWidget" name="username" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+            <label for="passwordWidget">Password</label>
+            <input type="password" id="passwordWidget" name="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit">Login</button>
+        <div id="errorMessageWidget" class="error-message"></div>
+        <div id="successMessageWidget" class="success-message"></div>
+    </form>
+    
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
+        var self = this;
+        setTimeout(function() {
+            (function() {
+                console.log('Login widget loaded.');
+                
+                const form = document.getElementById('loginFormWidget');
+                const username = document.getElementById('usernameWidget');
+                const password = document.getElementById('passwordWidget');
+                const errorMessage = document.getElementById('errorMessageWidget');
+                const successMessage = document.getElementById('successMessageWidget');
+                
+                if (!form || !username || !password) {
+                    console.error('Login widget elements not found');
+                    return;
+                }
+                
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    errorMessage.style.display = 'none';
+                    successMessage.style.display = 'none';
+                    
+                    try {
+                        const response = await fetch('/api/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ 
+                                username: username.value, 
+                                password: password.value 
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            successMessage.textContent = 'Login successful!';
+                            successMessage.style.display = 'block';
+                            
+                            if (data.token) {
+                                localStorage.setItem('token', data.token);
+                            }
+                            
+                            setTimeout(function() {
+                                if (data.redirectUrl) {
+                                    window.location.href = data.redirectUrl;
+                                }
+                            }, 1000);
+                        } else {
+                            errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                            errorMessage.style.display = 'block';
+                        }
+                    } catch (error) {
+                        errorMessage.textContent = 'An error occurred. Please try again.';
+                        errorMessage.style.display = 'block';
+                    }
+                });
+            })();
+            
+            if (self && self.parentNode) {
+                self.parentNode.removeChild(self);
+            }
+        }, 0);
+    " style="display:none;">
+</div>

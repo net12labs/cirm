@@ -8,32 +8,44 @@ import (
 	webagentclient "github.com/net12labs/cirm/agent-client-web/user"
 	webagentapi "github.com/net12labs/cirm/agent-web-api/user"
 	webagent "github.com/net12labs/cirm/agent-web/user"
+
+	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/admin"
+	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-client/admin"
+	webaiagent "github.com/net12labs/cirm/ai-agent-web/admin"
 )
 
 type Unit struct {
 	*domain_context.SubDomain
 	Domain         *domain_context.SubDomain
-	WebClient      *webclient.WebClient
-	WebApi         *webapi.WebApi
+	WebSiteClient  *webclient.WebClient
+	WebSiteApi     *webapi.WebApi
 	WebAgent       *webagent.Agent
 	WebAgentApi    *webagentapi.WebAgentApi
 	WebAgentClient *webagentclient.WebAgentClient
+
+	WebAiAgent       *webaiagent.AiAgent
+	WebAiAgentApi    *aiagentwebapi.WebAiAgentApi
+	WebAiAgentClient *aiagentwebclient.WebAiAgentClient
 }
 
 func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.Domain = domain_context.NewSubDomain()
-	svc.WebClient = webclient.NewWebClient()
-	svc.WebApi = webapi.NewWebApi()
+	svc.WebSiteClient = webclient.NewWebClient()
+	svc.WebSiteApi = webapi.NewWebApi()
 	svc.WebAgent = webagent.NewAgent()
 	svc.WebAgentApi = webagentapi.NewWebApi()
 	svc.WebAgentClient = webagentclient.NewClient()
+
+	svc.WebAiAgent = webaiagent.NewAiAgent()
+	svc.WebAiAgentApi = aiagentwebapi.NewWebApi()
+	svc.WebAiAgentClient = aiagentwebclient.NewClient()
 	return svc
 }
 
 func (r *Unit) Init() error {
-	r.WebClient.Init()
-	r.WebApi.Init()
+	r.WebSiteClient.Init()
+	r.WebSiteApi.Init()
 	return nil
 }
 

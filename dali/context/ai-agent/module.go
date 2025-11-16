@@ -1,14 +1,14 @@
-package agent
+package aiagent
 
 import "github.com/net12labs/cirm/dali/context/cmd"
 
-type Agent struct {
+type AiAgent struct {
 	Execute   func(cmd *cmd.Cmd)
 	OnExecute func(cmd *cmd.Cmd)
 }
 
-func NewAgent() *Agent {
-	agent := &Agent{}
+func NewAiAgent() *AiAgent {
+	agent := &AiAgent{}
 	// Initialize Agent fields here
 	return agent
 }

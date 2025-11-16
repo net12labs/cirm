@@ -2,22 +2,21 @@ package domain
 
 import (
 	"fmt"
-	"net"
-	"os"
 
 	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/data"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	"github.com/net12labs/cirm/dali/rtm"
+	socketserver "github.com/net12labs/cirm/dali/socket-server"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 	"github.com/net12labs/cirm/service-daemon/site"
 )
 
 type dom struct {
-	name           string
-	Site           *site.Site
-	WebServer      *domain_context.WebServer
-	socketListener net.Listener
+	name         string
+	Site         *site.Site
+	WebServer    *domain_context.WebServer
+	SocketServer *socketserver.SocketServer
 }
 
 var Main = &dom{}
@@ -37,13 +36,35 @@ func (d *dom) Init(name string) *dom {
 
 	d.Site.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via Site:", cmd)
+
+		if cmd.Cmd == "domain.shutdown" {
+			fmt.Println("Shutting down service...")
+			rtm.Runtime.Exit(0)
+			return
+		}
+
+		if cmd.Cmd == "domain.user.create" {
+			// Example implementation for user creation
+			username := cmd.Params["username"].(string)
+			password := cmd.Params["password"].(string)
+			fmt.Printf("Creating user: %s with password: %s\n", username, password)
+			// Add actual user creation logic here
+			cmd.ExitCode = 0
+			return
+		}
+
 		if cmd.ExitCode == -1 {
 			cmd.ExitCode = 1
 			cmd.ErrorMsg = "No handler implemented"
 		}
 	}
 
-	d.startSocket()
+	d.SocketServer = socketserver.NewSocketServer()
+	socketPath := rtm.Etc.Get("socket_path").String()
+	if err := d.SocketServer.Start(socketPath); err != nil {
+		fmt.Println("Failed to start socket server:", err)
+		rtm.Runtime.Exit(1)
+	}
 
 	d.WebServer = webserver.NewWebServer()
 	d.Site.WebServer = d.WebServer
@@ -102,72 +123,4 @@ func (d *dom) runtimeInit() {
 		fmt.Println("Exited with code", code)
 	})
 
-}
-
-func (d *dom) startSocket() {
-	socketPath := rtm.Etc.Get("socket_path").String()
-	rtm.Do.InitFsPath(socketPath)
-
-	// Remove existing socket file if it exists
-	if err := os.Remove(socketPath); err != nil && !os.IsNotExist(err) {
-		fmt.Println("Failed to remove existing socket:", err)
-		rtm.Runtime.Exit(1)
-	}
-
-	// Create Unix domain socket
-	listener, err := net.Listen("unix", socketPath)
-	if err != nil {
-		fmt.Println("Failed to create socket:", err)
-		rtm.Runtime.Exit(1)
-	}
-
-	d.socketListener = listener
-
-	// Cleanup socket on exit
-	rtm.Runtime.OnExit.AddListener(func(code any) {
-		if d.socketListener != nil {
-			d.socketListener.Close()
-			d.socketListener = nil
-		}
-		os.Remove(socketPath)
-	})
-
-	// Start listening for connections in a goroutine
-	go func() {
-		fmt.Println("Socket listening on:", socketPath)
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				// Check if listener was closed intentionally
-				if d.socketListener == nil {
-					return
-				}
-				return
-			}
-
-			// Handle connection in a separate goroutine
-			go d.handleSocketConnection(conn)
-		}
-	}()
-}
-
-func (d *dom) handleSocketConnection(conn net.Conn) {
-	defer conn.Close()
-
-	buf := make([]byte, 4096)
-	n, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Socket read error:", err)
-		return
-	}
-
-	// Process the received data
-	data := buf[:n]
-	fmt.Printf("Received on socket: %s\n", string(data))
-
-	// Send response back
-	response := "ACK"
-	if _, err := conn.Write([]byte(response)); err != nil {
-		fmt.Println("Socket write error:", err)
-	}
 }

@@ -49,11 +49,11 @@ func (sv *Site) Init() {
 	sv.ApiServer.WebServer = sv.WebServer
 	sv.ClientServer.WebServer = sv.WebServer
 
-	sv.Root.WebClient.Server = sv.ClientServer
-	sv.Provider.WebClient.Server = sv.ClientServer
-	sv.Platform.WebClient.Server = sv.ClientServer
-	sv.Admin.WebClient.Server = sv.ClientServer
-	sv.User.WebClient.Server = sv.ClientServer
+	sv.Root.WebSiteClient.Server = sv.ClientServer
+	sv.Provider.WebSiteClient.Server = sv.ClientServer
+	sv.Platform.WebSiteClient.Server = sv.ClientServer
+	sv.Admin.WebSiteClient.Server = sv.ClientServer
+	sv.User.WebSiteClient.Server = sv.ClientServer
 
 	sv.Root.WebAgentClient.Server = sv.ClientServer
 	sv.Platform.WebAgentClient.Server = sv.ClientServer
@@ -61,7 +61,7 @@ func (sv *Site) Init() {
 	sv.Admin.WebAgentClient.Server = sv.ClientServer
 	sv.User.WebAgentClient.Server = sv.ClientServer
 
-	sv.Root.WebApi.Server = sv.ApiServer
+	sv.Root.WebSiteApi.Server = sv.ApiServer
 	sv.Root.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via WebApi:", cmd)
 
@@ -76,16 +76,40 @@ func (sv *Site) Init() {
 		sv.Execute(cmd)
 	}
 
-	sv.Provider.WebApi.Server = sv.ApiServer
-	sv.Platform.WebApi.Server = sv.ApiServer
-	sv.Admin.WebApi.Server = sv.ApiServer
-	sv.User.WebApi.Server = sv.ApiServer
+	sv.Provider.WebSiteApi.Server = sv.ApiServer
+	sv.Platform.WebSiteApi.Server = sv.ApiServer
+	sv.Admin.WebSiteApi.Server = sv.ApiServer
+	sv.User.WebSiteApi.Server = sv.ApiServer
 
 	sv.Root.WebAgentApi.Server = sv.ApiServer
 	sv.Platform.WebAgentApi.Server = sv.ApiServer
 	sv.Provider.WebAgentApi.Server = sv.ApiServer
 	sv.Admin.WebAgentApi.Server = sv.ApiServer
 	sv.User.WebAgentApi.Server = sv.ApiServer
+
+	sv.Platform.WebAgent.Execute = func(cmd *cmd.Cmd) {
+		// So we will have an intercept by id to catch it into a specific target
+
+		fmt.Println("Executing command via Platform WebAgent:", cmd)
+		sv.Execute(cmd)
+	}
+
+	sv.Platform.WebAgentApi.Execute = func(cmd *cmd.Cmd) {
+		fmt.Println("Executing command via Platform WebAgentApi:", cmd)
+		sv.Platform.WebAgent.OnExecute(cmd)
+	}
+
+	sv.Provider.WebAiAgentApi.Server = sv.ApiServer
+	sv.Admin.WebAiAgentApi.Server = sv.ApiServer
+	sv.Root.WebAiAgentApi.Server = sv.ApiServer
+	sv.User.WebAiAgentApi.Server = sv.ApiServer
+	sv.Platform.WebAiAgentApi.Server = sv.ApiServer
+
+	sv.Provider.WebAiAgentClient.Server = sv.ClientServer
+	sv.Admin.WebAiAgentClient.Server = sv.ClientServer
+	sv.Root.WebAiAgentClient.Server = sv.ClientServer
+	sv.User.WebAiAgentClient.Server = sv.ClientServer
+	sv.Platform.WebAiAgentClient.Server = sv.ClientServer
 
 }
 

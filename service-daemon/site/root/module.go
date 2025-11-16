@@ -11,6 +11,10 @@ import (
 	webagentclient "github.com/net12labs/cirm/agent-client-web/root"
 	webagentapi "github.com/net12labs/cirm/agent-web-api/root"
 	webagent "github.com/net12labs/cirm/agent-web/root"
+
+	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/admin"
+	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-client/admin"
+	webaiagent "github.com/net12labs/cirm/ai-agent-web/admin"
 )
 
 // Possible runmodes are; web, cli
@@ -18,31 +22,43 @@ import (
 type Unit struct {
 	*domain_context.SubDomain
 	Domain         *domain_context.SubDomain
-	WebClient      *webclient.WebClient
-	WebApi         *webapi.WebApi
+	WebSiteClient  *webclient.WebClient
+	WebSiteApi     *webapi.WebApi
 	WebAgent       *webagent.Agent
 	WebAgentApi    *webagentapi.WebAgentApi
 	WebAgentClient *webagentclient.WebAgentClient
+
+	WebAiAgent       *webaiagent.AiAgent
+	WebAiAgentApi    *aiagentwebapi.WebAiAgentApi
+	WebAiAgentClient *aiagentwebclient.WebAiAgentClient
 }
 
 func NewUnit() *Unit {
 	svc := &Unit{}
 	svc.SubDomain = domain_context.NewSubDomain()
 	svc.Domain = svc.SubDomain
-	svc.WebClient = webclient.NewWebClient()
-	svc.WebApi = webapi.NewWebApi()
+	svc.WebSiteClient = webclient.NewWebClient()
+	svc.WebSiteApi = webapi.NewWebApi()
 	svc.WebAgent = webagent.NewAgent()
 	svc.WebAgentApi = webagentapi.NewWebApi()
 	svc.WebAgentClient = webagentclient.NewClient()
+
+	svc.WebAiAgent = webaiagent.NewAiAgent()
+	svc.WebAiAgentApi = aiagentwebapi.NewWebApi()
+	svc.WebAiAgentClient = aiagentwebclient.NewClient()
 	return svc
 }
 
 func (r *Unit) Init() error {
-	r.WebClient.Init()
-	r.WebApi.Init()
+	r.WebSiteClient.Init()
+	r.WebSiteApi.Init()
 	r.WebAgent.Init()
 	r.WebAgentApi.Init()
 	r.WebAgentClient.Init()
+
+	r.WebAiAgent.Init()
+	r.WebAiAgentApi.Init()
+	r.WebAiAgentClient.Init()
 
 	r.WebAgentApi.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via WebAgentApi:", cmd)
@@ -50,8 +66,8 @@ func (r *Unit) Init() error {
 		// Implement command execution logic here
 	}
 
-	r.WebApi.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
+	r.WebSiteApi.Execute = func(cmd *cmd.Cmd) {
+		fmt.Println("Executing command via WebSiteApi:", cmd)
 		r.Execute(cmd)
 		// Implement command execution logic here
 	}
