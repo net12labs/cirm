@@ -3,9 +3,9 @@ package root
 import (
 	"fmt"
 
-	webclient "github.com/net12labs/cirm/client-web/root"
 	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/context/service"
+	webclient "github.com/net12labs/cirm/site-client-web/root"
 	webapi "github.com/net12labs/cirm/site-web-api/root"
 
 	webagentclient "github.com/net12labs/cirm/agent-client-web/root"

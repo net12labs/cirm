@@ -5,16 +5,14 @@ import (
 
 	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/service-daemon/exec"
-	service "github.com/net12labs/cirm/service-daemon/site"
-	"github.com/net12labs/cirm/service-daemon/unit"
+	"github.com/net12labs/cirm/service-daemon/meta"
+	"github.com/net12labs/cirm/service-daemon/site"
 
 	rtm "github.com/net12labs/cirm/dali/runtime"
 )
 
 // so context we can also package in the db - so it is all atomic
-
 // this is the root level
-
 // And then we track session  - as browser session and tab session
 // so preferable we would be keeping a goroutine alive per session/sub session
 
@@ -29,10 +27,11 @@ func main() {
 		fmt.Println("Runtime Panic:", err)
 	})
 
-	if rtm.Args.HasKey("--serve") {
+	if rtm.Args.HasKey("--run") {
 		go func() {
-			serve := service.NewSite()
-			serve.Execute = func(cmd *cmd.Cmd) {
+			site := site.NewSite()
+
+			site.Execute = func(cmd *cmd.Cmd) {
 				fmt.Println("Executing command via Site:", cmd)
 				if cmd.ExitCode == -1 {
 					cmd.ExitCode = 1
@@ -40,7 +39,7 @@ func main() {
 				}
 			}
 
-			if err := serve.Start(); err != nil {
+			if err := site.Start(); err != nil {
 				fmt.Println("Failed to start service:", err)
 				rtm.Runtime.Exit(1)
 			}
@@ -58,7 +57,12 @@ func main() {
 		rtm.Runtime.Exit(0)
 	}
 
-	unit.PrintHelp()
+	if rtm.Args.HasKey("--help") || rtm.Args.HasKey("-h") {
+		meta.PrintHelp()
+		rtm.Runtime.Exit(0)
+	}
+
+	meta.PrintHelp()
 	rtm.Runtime.Exit(0)
 
 }

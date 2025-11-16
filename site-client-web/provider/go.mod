@@ -1,4 +1,4 @@
-module github.com/net12labs/cirm/client-web/admin
+module github.com/net12labs/cirm/site-client-web/provider
 
 go 1.21
 

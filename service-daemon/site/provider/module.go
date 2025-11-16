@@ -3,7 +3,7 @@ package provider
 import (
 	"github.com/net12labs/cirm/dali/context/service"
 
-	webclient "github.com/net12labs/cirm/client-web/provider"
+	webclient "github.com/net12labs/cirm/site-client-web/provider"
 	webapi "github.com/net12labs/cirm/site-web-api/provider"
 
 	webagentclient "github.com/net12labs/cirm/agent-client-web/provider"

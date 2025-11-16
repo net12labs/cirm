@@ -6,20 +6,20 @@ require github.com/mattn/go-sqlite3 v1.14.32 // indirect
 
 require github.com/net12labs/cirm/dali v0.0.0-20251116081312-f45cc7e2572e
 
-require github.com/net12labs/cirm/client-web/admin v0.0.0-20251114191024-95d4142052d4
+require github.com/net12labs/cirm/site-client-web/admin v0.0.0-20251114191024-95d4142052d4
 
-require github.com/net12labs/cirm/client-web/user v0.0.0-20251114170627-3a58839cfb1a
+require github.com/net12labs/cirm/site-client-web/user v0.0.0-20251114170627-3a58839cfb1a
 
-require github.com/net12labs/cirm/client-web/provider v0.0.0-20251114191024-95d4142052d4
+require github.com/net12labs/cirm/site-client-web/provider v0.0.0-20251114191024-95d4142052d4
 
-require github.com/net12labs/cirm/client-web/root v0.0.0-20251114191024-95d4142052d4
+require github.com/net12labs/cirm/site-client-web/root v0.0.0-20251114191024-95d4142052d4
 
 require (
 	github.com/net12labs/cirm/agent-client-web v0.0.0-00010101000000-000000000000
 	github.com/net12labs/cirm/agent-web v0.0.0-00010101000000-000000000000
 	github.com/net12labs/cirm/agent-web-api v0.0.0-00010101000000-000000000000
-	github.com/net12labs/cirm/site-web-api v0.0.0-00010101000000-000000000000
-	github.com/net12labs/cirm/client-web/platform v0.0.0-20251114191024-95d4142052d4
+	github.com/net12labs/cirm/site-client-web/platform v0.0.0-00010101000000-000000000000
+	github.com/net12labs/cirm/site-web-api v0.0.0-20251116173359-e56a45cf349c
 )
 
 require github.com/net12labs/cirm/mali v0.0.0-20251116070540-b170edf05994 // indirect
@@ -28,13 +28,13 @@ replace (
 	github.com/net12labs/cirm/agent-client-web => ../agent-client-web
 	github.com/net12labs/cirm/agent-web => ../agent-web
 	github.com/net12labs/cirm/agent-web-api => ../agent-web-api
-	github.com/net12labs/cirm/asite-web-api => ../site-web-api
 	github.com/net12labs/cirm/bin => ../bin
-	github.com/net12labs/cirm/client-web/admin => ../client-web/admin
-	github.com/net12labs/cirm/client-web/platform => ../client-web/platform
-	github.com/net12labs/cirm/client-web/provider => ../client-web/provider
-	github.com/net12labs/cirm/client-web/root => ../client-web/root
-	github.com/net12labs/cirm/client-web/user => ../client-web/user
 	github.com/net12labs/cirm/dali => ../dali
 	github.com/net12labs/cirm/mali => ../mali
+	github.com/net12labs/cirm/site-client-web/admin => ../site-client-web/admin
+	github.com/net12labs/cirm/site-client-web/platform => ../site-client-web/platform
+	github.com/net12labs/cirm/site-client-web/provider => ../site-client-web/provider
+	github.com/net12labs/cirm/site-client-web/root => ../site-client-web/root
+	github.com/net12labs/cirm/site-client-web/user => ../site-client-web/user
+	github.com/net12labs/cirm/site-web-api => ../site-web-api
 )

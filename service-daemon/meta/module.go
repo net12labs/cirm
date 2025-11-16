@@ -1,4 +1,4 @@
-package unit
+package meta
 
 func PrintHelp() {
 	println("This is the help information for the Unit module.")

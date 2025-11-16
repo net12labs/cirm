@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/net12labs/cirm/dali/context/service"
 
-	webclient "github.com/net12labs/cirm/client-web/user"
+	webclient "github.com/net12labs/cirm/site-client-web/user"
 	webapi "github.com/net12labs/cirm/site-web-api/user"
 
 	webagentclient "github.com/net12labs/cirm/agent-client-web/user"

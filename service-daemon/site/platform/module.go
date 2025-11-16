@@ -6,7 +6,7 @@ import (
 	webagentclient "github.com/net12labs/cirm/agent-client-web/platform"
 	webagentapi "github.com/net12labs/cirm/agent-web-api/platform"
 	webagent "github.com/net12labs/cirm/agent-web/platform"
-	webclient "github.com/net12labs/cirm/client-web/platform"
+	webclient "github.com/net12labs/cirm/site-client-web/platform"
 	webapi "github.com/net12labs/cirm/site-web-api/platform"
 )
 
