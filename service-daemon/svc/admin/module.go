@@ -17,8 +17,8 @@ type Unit struct {
 	*service.SubService
 	Service        *service.SubService
 	WebClient      *webclient.WebClient
-	WebAgent       *webagent.Agent
 	WebApi         *webapi.WebApi
+	WebAgent       *webagent.Agent
 	WebAgentApi    *webagentapi.WebAgentApi
 	WebAgentClient *webagentclient.WebAgentClient
 }
@@ -30,8 +30,8 @@ func NewUnit() *Unit {
 	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = webapi.NewWebApi()
 	svc.WebAgent = webagent.NewAgent()
-	svc.WebAgentApi = webagentapi.NewWebAgentApi()
-	svc.WebAgentClient = webagentclient.NewWebAgentClient()
+	svc.WebAgentApi = webagentapi.NewWebApi()
+	svc.WebAgentClient = webagentclient.NewClient()
 
 	return svc
 }

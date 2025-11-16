@@ -5,13 +5,19 @@ import (
 
 	webapi "github.com/net12labs/cirm/api-web/user"
 	webclient "github.com/net12labs/cirm/client-web/user"
+
+	webagentclient "github.com/net12labs/cirm/agent-client-web/user"
+	webagentapi "github.com/net12labs/cirm/agent-web-api/user"
+	webagent "github.com/net12labs/cirm/agent-web/user"
 )
 
 type Unit struct {
 	*service.Service
-	WebClient *webclient.WebClient
-	Agent     *SvcAgent
-	WebApi    *webapi.WebApi
+	WebClient      *webclient.WebClient
+	WebApi         *webapi.WebApi
+	WebAgent       *webagent.Agent
+	WebAgentApi    *webagentapi.WebAgentApi
+	WebAgentClient *webagentclient.WebAgentClient
 }
 
 func NewUnit() *Unit {
@@ -19,7 +25,9 @@ func NewUnit() *Unit {
 	svc.Service = service.NewService()
 	svc.WebClient = webclient.NewWebClient()
 	svc.WebApi = webapi.NewWebApi()
-	svc.Agent = &SvcAgent{Svc: svc}
+	svc.WebAgent = webagent.NewAgent()
+	svc.WebAgentApi = webagentapi.NewWebApi()
+	svc.WebAgentClient = webagentclient.NewClient()
 	return svc
 }
 

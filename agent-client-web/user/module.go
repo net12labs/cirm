@@ -13,12 +13,12 @@ type WebAgentClient struct {
 	*client.Client
 }
 
-func NewWebClient() *WebAgentClient {
+func NewClient() *WebAgentClient {
 	return &WebAgentClient{Client: client.NewClient()}
 }
 
 func (wc *WebAgentClient) Init() error {
-	wc.Server.AddRoute("/user", func(req *client.Request) error {
+	wc.Server.AddRoute("/user/agent", func(req *client.Request) error {
 
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

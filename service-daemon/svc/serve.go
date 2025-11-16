@@ -57,6 +57,18 @@ func NewServe() *Serve {
 	sv.Admin.WebApi.Server = sv.ApiServer
 	sv.User.WebApi.Server = sv.ApiServer
 
+	sv.Root.WebAgentApi.Server = sv.ApiServer
+	sv.Platform.WebAgentApi.Server = sv.ApiServer
+	sv.Provider.WebAgentApi.Server = sv.ApiServer
+	sv.Admin.WebAgentApi.Server = sv.ApiServer
+	sv.User.WebAgentApi.Server = sv.ApiServer
+
+	sv.Root.WebAgentClient.Server = sv.ClientServer
+	sv.Platform.WebAgentClient.Server = sv.ClientServer
+	sv.Provider.WebAgentClient.Server = sv.ClientServer
+	sv.Admin.WebAgentClient.Server = sv.ClientServer
+	sv.User.WebAgentClient.Server = sv.ClientServer
+
 	return sv
 }
 
