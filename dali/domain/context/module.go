@@ -12,6 +12,7 @@ type DomainUnit struct {
 	ExitMessage string
 	WebServer   *webserver.WebServer
 	Execute     func(cmd *cmd.Cmd)
+
 	// Other fields here
 }
 
@@ -55,4 +56,8 @@ type WebServer = webserver.WebServer
 
 func (su *DomainUnit) SetPath(key string) {
 	su.Path = key
+}
+
+func (a *DomainUnit) OnExecute(cmd *cmd.Cmd) {
+	a.Execute(cmd)
 }

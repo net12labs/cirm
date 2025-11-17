@@ -1,28 +1,25 @@
-package webagentapi
+package webapi
 
 import (
 	"net/http"
 
-	webapi "github.com/net12labs/cirm/dali/context/webapi"
+	"github.com/net12labs/cirm/dali/context/webapi"
 )
 
-type WebAgentApi struct {
+type WebApi struct {
 	*webapi.WebApi
 	// WebApi fields here
 }
 
-func NewWebApi() *WebAgentApi {
-	return &WebAgentApi{WebApi: webapi.NewWebApi()}
-}
+func (api *WebApi) Init() {
 
-func (api *WebAgentApi) Init() {
-	api.WebApi.Server.AddRoute("/user/agent/api/refresh-data", func(req *webapi.Request) error {
+	api.Server.AddRoute("/consumer/api/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	api.WebApi.Server.AddRoute("/user/agent/api/get-routes", func(req *webapi.Request) error {
+	api.Server.AddRoute("/consumer/api/get-routes", func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {
@@ -43,4 +40,12 @@ func (api *WebAgentApi) Init() {
 		req.Response.MimeType = "application/json"
 		return req.WriteResponse(response)
 	})
+
+}
+
+func (api *WebApi) Start() {
+}
+
+func NewWebApi() *WebApi {
+	return &WebApi{WebApi: webapi.NewWebApi()}
 }

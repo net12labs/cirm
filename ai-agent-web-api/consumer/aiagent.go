@@ -16,7 +16,7 @@ func NewWebApi() *WebAiAgentApi {
 }
 
 func (api *WebAiAgentApi) Init() {
-	api.WebApi.Server.AddRoute("/user/ai-agent/api/refresh-data", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute("/consumer/ai-agent/api/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil

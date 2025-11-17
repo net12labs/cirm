@@ -18,7 +18,7 @@ func NewClient() *WebAgentClient {
 }
 
 func (wc *WebAgentClient) Init() error {
-	wc.Server.AddRoute("/user/agent", func(req *client.Request) error {
+	wc.Server.AddRoute("/consumer/agent", func(req *client.Request) error {
 
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

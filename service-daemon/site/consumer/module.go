@@ -1,24 +1,22 @@
-package root
+package consumer
 
 import (
 	"fmt"
 
 	"github.com/net12labs/cirm/dali/context/cmd"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
-	webclient "github.com/net12labs/cirm/site-client-web/root"
-	webapi "github.com/net12labs/cirm/site-web-api/root"
-	website "github.com/net12labs/cirm/site-web/root"
+	webclient "github.com/net12labs/cirm/site-client-web/consumer"
+	webapi "github.com/net12labs/cirm/site-web-api/consumer"
+	website "github.com/net12labs/cirm/site-web/consumer"
 
-	webagentclient "github.com/net12labs/cirm/agent-client-web/root"
-	webagentapi "github.com/net12labs/cirm/agent-web-api/root"
-	webagent "github.com/net12labs/cirm/agent-web/root"
+	webagentclient "github.com/net12labs/cirm/agent-client-web/consumer"
+	webagentapi "github.com/net12labs/cirm/agent-web-api/consumer"
+	webagent "github.com/net12labs/cirm/agent-web/consumer"
 
-	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/root"
-	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-client/root"
-	webaiagent "github.com/net12labs/cirm/ai-agent-web/root"
+	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/consumer"
+	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-client/consumer"
+	webaiagent "github.com/net12labs/cirm/ai-agent-web/consumer"
 )
-
-// Possible runmodes are; web, cli
 
 type Unit struct {
 	*domain_context.SubDomain
@@ -61,7 +59,6 @@ func (r *Unit) Init() error {
 		fmt.Println("Executing command via Platform WebSiteApi:", cmd)
 		r.WebSite.OnExecute(cmd)
 	}
-
 	r.WebSite.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via Platform WebSite:", cmd)
 		r.OnExecute(cmd)
@@ -96,13 +93,10 @@ func (r *Unit) Init() error {
 	r.WebSiteClient.Init()
 	r.WebAgentClient.Init()
 	r.WebAiAgentClient.Init()
-
 	return nil
 }
 
 func (r *Unit) Run() int {
 
-	// Initialize other components here
-	// Start the application
 	return 0
 }

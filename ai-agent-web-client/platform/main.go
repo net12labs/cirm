@@ -18,7 +18,7 @@ func NewClient() *WebAiAgentClient {
 }
 
 func (wc *WebAiAgentClient) Init() error {
-	wc.Server.AddRoute("/admin/ai-agent", func(req *client.Request) error {
+	wc.Server.AddRoute("/platform/ai-agent", func(req *client.Request) error {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

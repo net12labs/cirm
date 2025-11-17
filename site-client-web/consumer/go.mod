@@ -1,4 +1,4 @@
-module github.com/net12labs/cirm/site-client-web/user
+module github.com/net12labs/cirm/site-client-web/consumer
 
 go 1.21
 

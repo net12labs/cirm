@@ -17,6 +17,7 @@ type dom struct {
 	Site         *site.Site
 	WebServer    *domain_context.WebServer
 	SocketServer *socketserver.SocketServer
+	Execute      func(cmd *cmd.Cmd)
 }
 
 var Main = &dom{}
@@ -27,6 +28,28 @@ func (d *dom) Name() string {
 
 // we should also be able to bubble from here up
 
+func (d *dom) OnExecute(cmd *cmd.Cmd) {
+	fmt.Println("Executing command via Site:", cmd)
+
+	if cmd.Cmd == "domain.shutdown" {
+		fmt.Println("Shutting down service...")
+		rtm.Runtime.Exit(0)
+		return
+	}
+
+	if cmd.Cmd == "domain.user.create" {
+		// Example implementation for user creation
+		username := cmd.Params["username"].(string)
+		password := cmd.Params["password"].(string)
+		fmt.Printf("Creating user: %s with password: %s\n", username, password)
+		// Add actual user creation logic here
+		cmd.ExitCode = 0
+		return
+	}
+
+	d.Execute(cmd)
+}
+
 func (d *dom) Init(name string) *dom {
 	d.name = name
 	d.runtimeInit()
@@ -35,28 +58,7 @@ func (d *dom) Init(name string) *dom {
 	d.Site = site.NewSite()
 
 	d.Site.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Site:", cmd)
-
-		if cmd.Cmd == "domain.shutdown" {
-			fmt.Println("Shutting down service...")
-			rtm.Runtime.Exit(0)
-			return
-		}
-
-		if cmd.Cmd == "domain.user.create" {
-			// Example implementation for user creation
-			username := cmd.Params["username"].(string)
-			password := cmd.Params["password"].(string)
-			fmt.Printf("Creating user: %s with password: %s\n", username, password)
-			// Add actual user creation logic here
-			cmd.ExitCode = 0
-			return
-		}
-
-		if cmd.ExitCode == -1 {
-			cmd.ExitCode = 1
-			cmd.ErrorMsg = "No handler implemented"
-		}
+		d.OnExecute(cmd)
 	}
 
 	d.SocketServer = socketserver.NewSocketServer()

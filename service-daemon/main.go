@@ -7,6 +7,7 @@ import (
 	"github.com/net12labs/cirm/service-daemon/exec"
 	"github.com/net12labs/cirm/service-daemon/meta"
 
+	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/rtm"
 )
 
@@ -34,6 +35,14 @@ func main() {
 	if rtm.Args.HasKey("--run") {
 		go func() {
 			dom := domain.Main.Init(rtm.Etc.Get("domain_name").String())
+
+			dom.Execute = func(cmd *cmd.Cmd) {
+				if cmd.ExitCode == -1 {
+					cmd.ExitCode = 1
+					cmd.ErrorMsg = "No handler implemented"
+				}
+			}
+
 			dom.Start()
 			rtm.Runtime.Exit(0)
 		}()
