@@ -19,13 +19,21 @@ func NewWebClient() *WebClient {
 	return cl
 }
 
+func HandleHtmlRequest(req *client.Request, filePath string) error {
+	data, err := content.ReadFile(filePath)
+	if err != nil {
+		return req.WriteResponse404()
+	}
+	return req.WriteResponseHTML(data)
+}
+
 func (wc *WebClient) Init() error {
 	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
-		data, err := content.ReadFile("web/index.html")
-		if err != nil {
-			return req.WriteResponse404()
-		}
-		return req.WriteResponseHTML(data)
+		return HandleHtmlRequest(req, "web/guest-lander.html")
+	})
+
+	wc.Server.AddRoute(wc.Domain.MakePath("home"), func(req *client.Request) error {
+		return HandleHtmlRequest(req, "web/home.html")
 	})
 
 	return nil

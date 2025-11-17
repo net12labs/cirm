@@ -1,7 +1,8 @@
 package domain
 
 import (
-	dom_webserver "github.com/net12labs/cirm/dolly/web-server-client"
+	"github.com/net12labs/cirm/dolly/context/cmd"
+	webserver "github.com/net12labs/cirm/dolly/web-server-client"
 	webclient "github.com/net12labs/cirm/domain-web/site-client-web"
 )
 
@@ -10,16 +11,21 @@ import (
 
 type domAdmin struct {
 	WebClient *webclient.WebClient
-	WebServer *dom_webserver.Server
+	WebServer *webserver.Server
+	OnExecute func(cmd *cmd.Cmd)
 }
 
 func NewDomAdmin() *domAdmin {
-	return &domAdmin{
+	ad := &domAdmin{
 		WebClient: webclient.NewWebClient(),
-		WebServer: dom_webserver.NewServer(),
+		WebServer: webserver.NewServer(),
 	}
+	ad.WebClient.Server = ad.WebServer
+	return ad
 }
 
 func (da *domAdmin) Init() error {
 	return da.WebClient.Init()
 }
+
+func (da *domAdmin) Execute(cmd *cmd.Cmd) {}

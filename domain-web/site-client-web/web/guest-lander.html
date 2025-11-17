@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIRM - Welcome</title>
+    <script src="/ecdn/js/core.js"></script>
+    <script>
+        // Load all components when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadComponent('loginContainer', '/site/agent/login', 'login form');
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .login-section {
+            margin-top: 40px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-message {
+            color: #388e3c;
+            margin-top: 10px;
+            display: none;
+        }
+        .console-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .console-link:hover {
+            background: #229954;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to CIRM</h1>
+        
+        <div class="login-section">
+            <h2 style="color: #2c3e50; margin-top: 0;">Login</h2>
+            <div id="loginContainer" style="max-width: 400px; margin: 0 auto;">
+                <p style="color: #666;">Loading login form...</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/dom/home" class="console-link">🖥️ Go to Admin Cockpit</a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

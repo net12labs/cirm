@@ -7,7 +7,6 @@ import (
 	"github.com/net12labs/cirm/service-daemon/exec"
 	"github.com/net12labs/cirm/service-daemon/meta"
 
-	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/rtm"
 )
 
@@ -16,6 +15,24 @@ import (
 // And then we track session  - as browser session and tab session
 // so preferable we would be keeping a goroutine alive per session/sub session
 // Sessions can also be remote
+
+func processInit() {
+
+	pid := rtm.Pid
+	pid.Pid.PidFilePath = rtm.Etc.Get("pid_file_path").String()
+	if err := pid.Handle_ExitOnDuplicate(); err != nil {
+		fmt.Println(err)
+		rtm.Runtime.Exit(1)
+	}
+	rtm.Runtime.OnPanic.AddListener(func(err any) {
+		pid.Handle_CleanupOnExit()
+	})
+	rtm.Runtime.OnExit.AddListener(func(code any) {
+		pid.Handle_CleanupOnExit()
+		fmt.Println("Exited with code", code)
+	})
+
+}
 
 func main() {
 
@@ -35,16 +52,16 @@ func main() {
 	})
 
 	if rtm.Args.HasKey("--run") {
+		processInit()
+
 		go func() {
-			dom := domain.Main.Init(rtm.Etc.Get("domain_name").String())
-
-			dom.Execute = func(cmd *cmd.Cmd) {
-				if cmd.ExitCode == -1 {
-					cmd.ExitCode = 1
-					cmd.ErrorMsg = "No handler implemented"
-				}
+			dom := domain.Main.Init()
+			dom.StdOut = func(msg string) {
+				fmt.Println("STDOUT:", msg)
 			}
-
+			dom.StdErr = func(msg string) {
+				fmt.Println("STDERR:", msg)
+			}
 			dom.Start()
 			rtm.Runtime.Exit(0)
 		}()
