@@ -3,86 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>China IP Routes</title>
+    <title>Social Media Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+        * {
             margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .header {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        h1 {
+        .header h1 {
+            color: #1877f2;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .stat-card .number {
+            color: #1877f2;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .feed-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .feed-section h2 {
             color: #333;
-            margin-top: 0;
+            margin-bottom: 15px;
         }
-        button {
-            background: #667eea;
+        .post {
+            border-bottom: 1px solid #e4e6eb;
+            padding: 15px 0;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 5px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .post-info h4 {
+            color: #333;
             font-size: 14px;
         }
-        button:hover {
-            background: #5568d3;
+        .post-info p {
+            color: #65676b;
+            font-size: 12px;
         }
-        #output {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f5f5f5;
+        .post-content {
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .post-actions {
+            display: flex;
+            gap: 15px;
+        }
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #65676b;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
             border-radius: 5px;
-            min-height: 100px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        }
+        .post-actions button:hover {
+            background: #f0f2f5;
+        }
+        .ai-sidebar {
+            width: 350px;
+            background: white;
+            box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .ai-chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .ai-message {
+            background: #f0f2f5;
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+        .user-message {
+            background: #1877f2;
+            color: white;
+            align-self: flex-end;
+        }
+        .ai-input-area {
+            padding: 15px;
+            border-top: 1px solid #e4e6eb;
+        }
+        .ai-input-area input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e4e6eb;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        .ai-input-area input:focus {
+            border-color: #1877f2;
+        }
+        .top-bar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1877f2;
+        }
+        .logout-btn {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: #166fe5;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>China IP Routes Manager</h1>
-        <div>
-            <button onclick="refreshData()">Refresh Data</button>
-            <button onclick="getRoutes()">Get Routes</button>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="logo">🌐 Social Portal</div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-        <div id="output">Click a button to see results...</div>
+        <div class="header">
+            <h1>📱 Social Media Dashboard</h1>
+            <p style="color: #65676b;">Welcome back! Here's your overview</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Followers</h3>
+                <div class="number">12.5K</div>
+            </div>
+            <div class="stat-card">
+                <h3>Engagement Rate</h3>
+                <div class="number">8.2%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Posts Today</h3>
+                <div class="number">24</div>
+            </div>
+            <div class="stat-card">
+                <h3>New Messages</h3>
+                <div class="number">47</div>
+            </div>
+        </div>
+
+        <div class="feed-section">
+            <h2>📰 Recent Activity</h2>
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">JD</div>
+                    <div class="post-info">
+                        <h4>John Doe</h4>
+                        <p>2 hours ago</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Just launched our new product! Excited to share this with everyone. Check it out! 🚀
+                </div>
+                <div class="post-actions">
+                    <button>👍 Like (245)</button>
+                    <button>💬 Comment (32)</button>
+                    <button>↗️ Share</button>
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">AS</div>
+                    <div class="post-info">
+                        <h4>Alice Smith</h4>
+                        <p>5 hours ago</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Great meeting with the team today. Looking forward to implementing our new strategy! 💼
+                </div>
+                <div class="post-actions">
+                    <button>👍 Like (189)</button>
+                    <button>💬 Comment (18)</button>
+                    <button>↗️ Share</button>
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">MB</div>
+                    <div class="post-info">
+                        <h4>Mike Brown</h4>
+                        <p>8 hours ago</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Working on some exciting updates. Can't wait to share them with you all! Stay tuned... ✨
+                </div>
+                <div class="post-actions">
+                    <button>👍 Like (312)</button>
+                    <button>💬 Comment (45)</button>
+                    <button>↗️ Share</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ai-sidebar">
+        <div class="ai-header">
+            🤖 AI Assistant
+        </div>
+        <div class="ai-chat" id="chatContainer">
+            <div class="ai-message">
+                Hi! I'm your AI assistant. How can I help you today?
+            </div>
+            <div class="user-message">
+                Help me analyze my social media performance
+            </div>
+            <div class="ai-message">
+                Based on your dashboard, your engagement rate of 8.2% is above average! Your followers are growing steadily. Would you like specific recommendations?
+            </div>
+        </div>
+        <div class="ai-input-area">
+            <input type="text" id="aiInput" placeholder="Ask me anything..." onkeypress="handleAIInput(event)">
+        </div>
     </div>
 
     <script>
-        async function refreshData() {
-            const output = document.getElementById('output');
-            output.textContent = 'Refreshing data...';
-            
-            try {
-                const response = await fetch('/admin/api/refresh-data');
-                const text = await response.text();
-                output.textContent = text;
-            } catch (error) {
-                output.textContent = 'Error: ' + error.message;
+        function handleAIInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('aiInput');
+                const message = input.value.trim();
+                if (message) {
+                    const chatContainer = document.getElementById('chatContainer');
+                    const userMsg = document.createElement('div');
+                    userMsg.className = 'ai-message user-message';
+                    userMsg.textContent = message;
+                    chatContainer.appendChild(userMsg);
+                    
+                    setTimeout(() => {
+                        const aiMsg = document.createElement('div');
+                        aiMsg.className = 'ai-message';
+                        aiMsg.textContent = 'I received your message: "' + message + '". I\'m here to help!';
+                        chatContainer.appendChild(aiMsg);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, 500);
+                    
+                    input.value = '';
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
             }
         }
 
-        async function getRoutes() {
-            const output = document.getElementById('output');
-            output.textContent = 'Fetching routes...';
-            
-            try {
-                const response = await fetch('/admin/api/get-routes?format=json');
-                const data = await response.json();
-                output.textContent = JSON.stringify(data, null, 2);
-            } catch (error) {
-                output.textContent = 'Error: ' + error.message;
-            }
+        function logout() {
+            window.location.href = '/site/home';
         }
     </script>
 </body>

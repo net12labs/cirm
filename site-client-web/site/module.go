@@ -21,7 +21,15 @@ func NewWebClient() *WebClient {
 
 func (wc *WebClient) Init() error {
 	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
-		data, err := content.ReadFile("web/index.html")
+		data, err := content.ReadFile("web/guest.html")
+		if err != nil {
+			return req.WriteResponse404()
+		}
+		return req.WriteResponseHTML(data)
+	})
+
+	wc.Server.AddRoute(wc.Domain.MakePath("home"), func(req *client.Request) error {
+		data, err := content.ReadFile("web/home.html")
 		if err != nil {
 			return req.WriteResponse404()
 		}

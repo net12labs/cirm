@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	webapi "github.com/net12labs/cirm/dolly/context/webapi"
+	domain "github.com/net12labs/cirm/domain-web"
 )
 
 type WebAiAgentApi struct {
@@ -13,7 +14,7 @@ type WebAiAgentApi struct {
 
 func NewWebApi() *WebAiAgentApi {
 	agt := &WebAiAgentApi{WebApi: webapi.NewWebApi()}
-	agt.Domain.Path = "/dom/ai-agent/api"
+	agt.Domain.Path = domain.UrlPrefix + "/ai-agent/api"
 	return agt
 }
 

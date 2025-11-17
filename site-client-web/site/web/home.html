@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIRM - Welcome</title>
+    <script src="/ecdn/js/core.js"></script>
+    <script>
+        // Load all components when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadComponent('aiAssistantContainer', '/site/agent/assistant', 'AI assistant');
+            loadComponent('aiCopilotContainer', '/site/ai-agent/ai-assistant', 'AI Copilot', true); // Use Shadow DOM
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .login-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-message {
+            color: #388e3c;
+            margin-top: 10px;
+            display: none;
+        }
+        .logo {
+            width: 60px;
+            height: auto;
+            vertical-align: middle;
+            margin-right: 15px;
+        }
+        .header-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <img src="/ecdn/img/domain_logo_192.webp" alt="CIRM Logo" class="logo">
+            <h1>Welcome to CIRM</h1>
+        </div>
+        <p style="color: #666; margin-bottom: 30px;">Select your role to continue:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+            <button onclick="navigateTo('/provider')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Provider Portal</button>
+            <button onclick="navigateTo('/admin')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Admin Portal</button>
+            <button onclick="navigateTo('/consumer')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Consumer Portal</button>
+            <button onclick="navigateTo('/platform')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Platform Portal</button>
+        </div>
+
+        <div class="login-section">
+            <h2 style="color: #333; margin-top: 0;">AI Assistant</h2>
+            <div id="aiAssistantContainer" style="max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 8px; min-height: 200px;">
+                <p style="color: #666;">Loading AI assistant...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Copilot Side Panel Container -->
+    <div id="aiCopilotContainer">
+        <p style="color: #666;">Loading AI Copilot...</p>
+    </div>
+
+    <script>
+        function navigateTo(path) {
+            window.location.href = path;
+        }
+    </script>
+</body>
+</html>

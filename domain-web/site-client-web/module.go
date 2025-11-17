@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	client "github.com/net12labs/cirm/dolly/site-client-web"
+	domain "github.com/net12labs/cirm/domain-web"
 )
 
 //go:embed web/*
@@ -15,7 +16,7 @@ type WebClient struct {
 
 func NewWebClient() *WebClient {
 	cl := &WebClient{Client: client.NewClient()}
-	cl.Domain.Path = "/dom"
+	cl.Domain.Path = domain.UrlPrefix
 	return cl
 }
 
