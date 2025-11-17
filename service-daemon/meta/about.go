@@ -38,3 +38,16 @@ as a kind - I gain attributes and capabilities
 
 
 */
+
+/*
+
+So the ACL ing logic will be very important
+we can have users only join a specific project, or even task
+we can use include and exclude rules
+
+Also - different types of shells for different tasks
+
+A lot of tasks could be virtual tasks -- where you need to edit an image - but the agent puts it in a filder and opens gimp
+or redirects you to a temporary station where you have the heavy tools installed
+
+*/

@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodHub - Delicious Deals</title>
+    <script src="/ecdn/js/core.js"></script>
+    <script>
+        // Load copilot lite component when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadComponent('copilotLiteContainer', '/site/ai-agent/ai-assistant', 'Copilot Lite', true); // Use Shadow DOM
+        });
+    </script>
     <style>
         * {
             margin: 0;
@@ -620,6 +627,11 @@
             <p>&copy; 2024 FoodHub. All rights reserved. | Delivering happiness one meal at a time 🍔</p>
         </div>
     </footer>
+
+    <!-- Copilot Lite Side Panel Container -->
+    <div id="copilotLiteContainer">
+        <p style="color: #666;">Loading Copilot Lite...</p>
+    </div>
 
     <script>
         // Logout functionality
