@@ -18,9 +18,13 @@ type dom struct {
 	WebServer    *domain_context.WebServer
 	SocketServer *socketserver.SocketServer
 	Execute      func(cmd *cmd.Cmd)
+
+	DomAdmin *domAdmin
 }
 
-var Main = &dom{}
+var Main = &dom{
+	DomAdmin: NewDomAdmin(),
+}
 
 func (d *dom) Name() string {
 	return d.name
@@ -69,7 +73,10 @@ func (d *dom) Init(name string) *dom {
 	}
 
 	d.WebServer = webserver.NewWebServer()
+	d.DomAdmin.WebServer.WebServer = d.WebServer
+
 	d.Site.WebServer = d.WebServer
+	d.DomAdmin.Init()
 
 	d.WebServer.AddRoute("/", func(req *webserver.Request) {
 		if req.Path.Path == "/" {
@@ -78,7 +85,6 @@ func (d *dom) Init(name string) *dom {
 		}
 		req.WriteResponse404()
 	})
-
 	d.Site.Init()
 
 	return d

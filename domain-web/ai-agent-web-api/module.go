@@ -13,7 +13,7 @@ type WebAiAgentApi struct {
 
 func NewWebApi() *WebAiAgentApi {
 	agt := &WebAiAgentApi{WebApi: webapi.NewWebApi()}
-	agt.Domain.Path = "/site/ai-agent/api"
+	agt.Domain.Path = "/dom/ai-agent/api"
 	return agt
 }
 
