@@ -11,15 +11,21 @@ type WebApi struct {
 	// WebApi fields here
 }
 
+func NewWebApi() *WebApi {
+	api := &WebApi{WebApi: webapi.NewWebApi()}
+	api.Domain.Path = "/consumer/api"
+	return api
+}
+
 func (api *WebApi) Init() {
 
-	api.Server.AddRoute("/consumer/api/refresh-data", func(req *webapi.Request) error {
+	api.Server.AddRoute(api.Domain.MakePath("refresh-data"), func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	api.Server.AddRoute("/consumer/api/get-routes", func(req *webapi.Request) error {
+	api.Server.AddRoute(api.Domain.MakePath("get-routes"), func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {
@@ -44,8 +50,4 @@ func (api *WebApi) Init() {
 }
 
 func (api *WebApi) Start() {
-}
-
-func NewWebApi() *WebApi {
-	return &WebApi{WebApi: webapi.NewWebApi()}
 }

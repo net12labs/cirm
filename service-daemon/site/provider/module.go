@@ -23,7 +23,7 @@ import (
 type Unit struct {
 	*domain_context.SubDomain
 	Domain        *domain_context.SubDomain
-	WebSiteClient *webclient.ProviderClient
+	WebSiteClient *webclient.WebClient
 	WebSiteApi    *webapi.WebApi
 	WebSite       *website.Site
 

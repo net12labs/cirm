@@ -1,0 +1,172 @@
+<div class="ai-assistant-widget">
+    <style scoped>
+        .ai-assistant-widget {
+            font-family: Arial, sans-serif;
+        }
+        .ai-chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ai-chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+        }
+        .ai-message {
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .ai-message.user {
+            background: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .ai-message.assistant {
+            background: #f5f5f5;
+            margin-right: auto;
+        }
+        .ai-chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        .ai-chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .ai-chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .ai-send-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .ai-send-button:hover {
+            background: #5568d3;
+        }
+        .ai-send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+    
+    <div class="ai-chat-header">
+        <span>🤖</span>
+        <span>AI Assistant</span>
+    </div>
+    
+    <div class="ai-chat-messages" id="aiChatMessages">
+        <div class="ai-message assistant">
+            Hello! I'm your AI assistant. How can I help you today?
+        </div>
+    </div>
+    
+    <div class="ai-chat-input-area">
+        <input 
+            type="text" 
+            class="ai-chat-input" 
+            id="aiChatInput" 
+            placeholder="Type your message..."
+        >
+        <button class="ai-send-button" id="aiSendButton">Send</button>
+    </div>
+    
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
+        var self = this;
+        setTimeout(function() {
+            (function() {
+                let isProcessing = false;
+                console.log('AI Assistant widget loaded.');
+                
+                const input = document.getElementById('aiChatInput');
+                const sendButton = document.getElementById('aiSendButton');
+                const messagesContainer = document.getElementById('aiChatMessages');
+                
+                if (!input || !sendButton || !messagesContainer) {
+                    console.error('AI Assistant elements not found');
+                    return;
+                }
+                
+                async function sendAIMessage() {
+                    const message = input.value.trim();
+                    
+                    if (!message || isProcessing) return;
+                    
+                    isProcessing = true;
+                    sendButton.disabled = true;
+                    
+                    const userMsg = document.createElement('div');
+                    userMsg.className = 'ai-message user';
+                    userMsg.textContent = message;
+                    messagesContainer.appendChild(userMsg);
+                    
+                    input.value = '';
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    
+                    try {
+                        const response = await fetch('/site/api/ai-chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ message })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        const assistantMsg = document.createElement('div');
+                        assistantMsg.className = 'ai-message assistant';
+                        assistantMsg.textContent = data.reply || 'Sorry, I could not process your request.';
+                        messagesContainer.appendChild(assistantMsg);
+                        
+                    } catch (error) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'ai-message assistant';
+                        errorMsg.textContent = 'Error: Could not connect to AI service.';
+                        messagesContainer.appendChild(errorMsg);
+                    }
+                    
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    isProcessing = false;
+                    sendButton.disabled = false;
+                }
+                
+                sendButton.addEventListener('click', sendAIMessage);
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendAIMessage();
+                    }
+                });
+            })();
+            
+            if (self && self.parentNode) {
+                self.parentNode.removeChild(self);
+            }
+        }, 0);
+    " style="display:none;">
+</div>

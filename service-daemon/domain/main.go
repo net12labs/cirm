@@ -73,7 +73,7 @@ func (d *dom) Init(name string) *dom {
 
 	d.WebServer.AddRoute("/", func(req *webserver.Request) {
 		if req.Path.Path == "/" {
-			req.RedirectToUrl("/home")
+			req.RedirectToUrl("/site")
 			return
 		}
 		req.WriteResponse404()

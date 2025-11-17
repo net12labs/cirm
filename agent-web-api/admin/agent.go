@@ -12,17 +12,19 @@ type WebAgentApi struct {
 }
 
 func NewWebApi() *WebAgentApi {
-	return &WebAgentApi{WebApi: webapi.NewWebApi()}
+	agt := &WebAgentApi{WebApi: webapi.NewWebApi()}
+	agt.Domain.Path = "/admin/agent/api"
+	return agt
 }
 
 func (api *WebAgentApi) Init() {
-	api.WebApi.Server.AddRoute("/admin/agent/api/refresh-data", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute(api.Domain.MakePath("refresh-data"), func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	api.WebApi.Server.AddRoute("/admin/agent/api/get-routes", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute(api.Domain.MakePath("get-routes"), func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

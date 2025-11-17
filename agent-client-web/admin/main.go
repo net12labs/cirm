@@ -14,11 +14,13 @@ type WebAgentClient struct {
 }
 
 func NewClient() *WebAgentClient {
-	return &WebAgentClient{Client: client.NewClient()}
+	cli := &WebAgentClient{Client: client.NewClient()}
+	cli.Domain.Path = "/admin/agent"
+	return cli
 }
 
 func (wc *WebAgentClient) Init() error {
-	wc.Server.AddRoute("/admin/agent", func(req *client.Request) error {
+	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

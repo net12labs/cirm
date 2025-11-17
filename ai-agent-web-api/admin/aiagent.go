@@ -12,11 +12,13 @@ type WebAiAgentApi struct {
 }
 
 func NewWebApi() *WebAiAgentApi {
-	return &WebAiAgentApi{WebApi: webapi.NewWebApi()}
+	agt := &WebAiAgentApi{WebApi: webapi.NewWebApi()}
+	agt.Domain.Path = "/admin/ai-agent/api"
+	return agt
 }
 
 func (api *WebAiAgentApi) Init() {
-	api.WebApi.Server.AddRoute("/admin/ai-agent/api/refresh-data", func(req *webapi.Request) error {
+	api.WebApi.Server.AddRoute(api.Domain.Path+"/refresh-data", func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil

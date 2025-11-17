@@ -12,7 +12,7 @@ import (
 	"github.com/net12labs/cirm/service-daemon/site/consumer"
 	"github.com/net12labs/cirm/service-daemon/site/platform"
 	"github.com/net12labs/cirm/service-daemon/site/provider"
-	"github.com/net12labs/cirm/service-daemon/site/root"
+	"github.com/net12labs/cirm/service-daemon/site/site"
 )
 
 type Site struct {
@@ -20,7 +20,7 @@ type Site struct {
 	Consumer     *consumer.Unit
 	Provider     *provider.Unit
 	Platform     *platform.Unit
-	Root         *root.Unit
+	Site         *site.Unit
 	Admin        *admin.Unit
 	ApiServer    *apiwebserver.Server
 	ClientServer *clientwebserver.Server
@@ -34,7 +34,7 @@ func NewSite() *Site {
 		Consumer: consumer.NewUnit(),
 		Admin:    admin.NewUnit(),
 		Provider: provider.NewUnit(),
-		Root:     root.NewUnit(),
+		Site:     site.NewUnit(),
 		Platform: platform.NewUnit(),
 	}
 
@@ -49,25 +49,25 @@ func (sv *Site) Init() {
 	sv.ApiServer.WebServer = sv.WebServer
 	sv.ClientServer.WebServer = sv.WebServer
 
-	sv.Root.WebSiteClient.Server = sv.ClientServer
+	sv.Site.WebSiteClient.Server = sv.ClientServer
 	sv.Provider.WebSiteClient.Server = sv.ClientServer
 	sv.Platform.WebSiteClient.Server = sv.ClientServer
 	sv.Admin.WebSiteClient.Server = sv.ClientServer
 	sv.Consumer.WebSiteClient.Server = sv.ClientServer
 
-	sv.Root.WebAgentClient.Server = sv.ClientServer
+	sv.Site.WebAgentClient.Server = sv.ClientServer
 	sv.Platform.WebAgentClient.Server = sv.ClientServer
 	sv.Provider.WebAgentClient.Server = sv.ClientServer
 	sv.Admin.WebAgentClient.Server = sv.ClientServer
 	sv.Consumer.WebAgentClient.Server = sv.ClientServer
 
-	sv.Root.WebSiteApi.Server = sv.ApiServer
+	sv.Site.WebSiteApi.Server = sv.ApiServer
 	sv.Provider.WebSiteApi.Server = sv.ApiServer
 	sv.Platform.WebSiteApi.Server = sv.ApiServer
 	sv.Admin.WebSiteApi.Server = sv.ApiServer
 	sv.Consumer.WebSiteApi.Server = sv.ApiServer
 
-	sv.Root.WebAgentApi.Server = sv.ApiServer
+	sv.Site.WebAgentApi.Server = sv.ApiServer
 	sv.Platform.WebAgentApi.Server = sv.ApiServer
 	sv.Provider.WebAgentApi.Server = sv.ApiServer
 	sv.Admin.WebAgentApi.Server = sv.ApiServer
@@ -75,13 +75,13 @@ func (sv *Site) Init() {
 
 	sv.Provider.WebAiAgentApi.Server = sv.ApiServer
 	sv.Admin.WebAiAgentApi.Server = sv.ApiServer
-	sv.Root.WebAiAgentApi.Server = sv.ApiServer
+	sv.Site.WebAiAgentApi.Server = sv.ApiServer
 	sv.Consumer.WebAiAgentApi.Server = sv.ApiServer
 	sv.Platform.WebAiAgentApi.Server = sv.ApiServer
 
 	sv.Provider.WebAiAgentClient.Server = sv.ClientServer
 	sv.Admin.WebAiAgentClient.Server = sv.ClientServer
-	sv.Root.WebAiAgentClient.Server = sv.ClientServer
+	sv.Site.WebAiAgentClient.Server = sv.ClientServer
 	sv.Consumer.WebAiAgentClient.Server = sv.ClientServer
 	sv.Platform.WebAiAgentClient.Server = sv.ClientServer
 
@@ -95,7 +95,7 @@ func (sv *Site) Init() {
 		sv.OnExecute(cmd)
 	}
 
-	sv.Root.Execute = func(cmd *cmd.Cmd) {
+	sv.Site.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via WebApi:", cmd)
 		sv.OnExecute(cmd)
 	}
@@ -122,7 +122,7 @@ func (s *Site) Start() error {
 
 func (s *Site) startSubdomains() error {
 
-	if err := s.Root.Init(); err != nil {
+	if err := s.Site.Init(); err != nil {
 		rtm.Runtime.ExitErr(1, err)
 	}
 

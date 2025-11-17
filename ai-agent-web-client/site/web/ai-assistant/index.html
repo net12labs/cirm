@@ -1,0 +1,357 @@
+<!-- AI Copilot Side Panel Toggle Button -->
+<button id="aiCopilotToggle" class="ai-copilot-toggle">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-1-9h2v4h-2zm0 5h2v2h-2z"/>
+    </svg>
+    <span>AI Copilot</span>
+</button>
+
+<!-- AI Copilot Side Panel -->
+<div class="ai-copilot-panel" id="aiCopilotPanel">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .ai-copilot-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 9998;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .ai-copilot-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+        }
+
+        .ai-copilot-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .ai-copilot-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            bottom: 0;
+            width: 400px;
+            height: 100%;
+            background: #f8f9fa;
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .ai-copilot-panel.open {
+            right: 0;
+        }
+
+        .ai-copilot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            flex-grow: 0;
+        }
+
+        .ai-copilot-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .ai-copilot-close {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .ai-copilot-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-copilot-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .ai-copilot-panel .ai-chat-messages {
+            flex: 1 1 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+            background: #f8f9fa;
+            display: block;
+            max-height: none !important;
+            height: auto !important;
+        }
+        
+        .ai-copilot-panel .ai-chat-messages > * {
+            margin-bottom: 12px;
+        }
+        
+        .ai-copilot-panel .ai-chat-messages > *:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-copilot-panel .ai-chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .ai-copilot-panel .ai-chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .ai-copilot-panel .ai-chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .ai-copilot-panel .ai-chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .ai-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message.assistant {
+            background: white;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            flex-grow: 0;
+            position: relative;
+        }
+
+        .ai-chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .ai-chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .ai-send-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .ai-send-button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .ai-send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .ai-copilot-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+    
+    <div class="ai-copilot-header">
+        <div class="ai-copilot-header-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+            </svg>
+            <span>AI Copilot</span>
+        </div>
+        <button class="ai-copilot-close" id="aiCopilotClose">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    </div>
+    
+    <div class="ai-chat-messages" id="aiCopilotMessages">
+        <div class="ai-message assistant">
+            Hello! I'm your AI Copilot assistant. How can I help you today?
+        </div>
+    </div>
+    
+    <div class="ai-chat-input-area">
+        <input 
+            type="text" 
+            class="ai-chat-input" 
+            id="aiCopilotInput" 
+            placeholder="Ask me anything..."
+        >
+        <button class="ai-send-button" id="aiCopilotSendButton">Send</button>
+    </div>
+</div>
+
+<script>
+(function() {
+    let isProcessing = false;
+    console.log('AI Copilot loaded.');
+    
+    const toggleButton = document.getElementById('aiCopilotToggle');
+    const panel = document.getElementById('aiCopilotPanel');
+    const closeButton = document.getElementById('aiCopilotClose');
+    const input = document.getElementById('aiCopilotInput');
+    const sendButton = document.getElementById('aiCopilotSendButton');
+    const messagesContainer = document.getElementById('aiCopilotMessages');
+    
+    if (!toggleButton || !panel || !closeButton || !input || !sendButton || !messagesContainer) {
+        console.error('AI Copilot elements not found', {
+            toggleButton, panel, closeButton, input, sendButton, messagesContainer
+        });
+        return;
+    }
+    
+    // Toggle panel open/close
+    toggleButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            input.focus();
+        }
+    });
+    
+    closeButton.addEventListener('click', function() {
+        panel.classList.remove('open');
+    });
+    
+    async function sendAIMessage() {
+        const message = input.value.trim();
+        
+        if (!message || isProcessing) return;
+        
+        isProcessing = true;
+        sendButton.disabled = true;
+        
+        const userMsg = document.createElement('div');
+        userMsg.className = 'ai-message user';
+        userMsg.textContent = message;
+        messagesContainer.appendChild(userMsg);
+        
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        try {
+            const response = await fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+            
+            const data = await response.json();
+            
+            const assistantMsg = document.createElement('div');
+            assistantMsg.className = 'ai-message assistant';
+            assistantMsg.textContent = data.reply || 'Sorry, I could not process your request.';
+            messagesContainer.appendChild(assistantMsg);
+            
+        } catch (error) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'ai-message assistant';
+            errorMsg.textContent = 'Error: Could not connect to AI service.';
+            messagesContainer.appendChild(errorMsg);
+        }
+        
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        isProcessing = false;
+        sendButton.disabled = false;
+        input.focus();
+    }
+    
+    sendButton.addEventListener('click', sendAIMessage);
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendAIMessage();
+        }
+    });
+})();
+</script>

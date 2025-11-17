@@ -28,6 +28,8 @@ func main() {
 	rtm.Etc.SetKV("main_db_path", rtm.Etc.Get("data_dir").String()+"/main.db")
 	rtm.Etc.SetKV("socket_path", rtm.Etc.Get("home_dir").String()+"/main.sock")
 
+	// so the domain needs to have separate logic (like a kernel)
+
 	rtm.Runtime.OnPanic.AddListener(func(err any) {
 		fmt.Println("Runtime Panic:", err)
 	})

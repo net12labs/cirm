@@ -14,11 +14,13 @@ type WebClient struct {
 }
 
 func NewWebClient() *WebClient {
-	return &WebClient{Client: client.NewClient()}
+	cl := &WebClient{Client: client.NewClient()}
+	cl.Domain.Path = "/consumer"
+	return cl
 }
 
 func (wc *WebClient) Init() error {
-	wc.Server.AddRoute("/consumer", func(req *client.Request) error {
+	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
 
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

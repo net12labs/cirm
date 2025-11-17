@@ -2,6 +2,7 @@ package webapi
 
 import (
 	"github.com/net12labs/cirm/dali/context/cmd"
+	webapidomain "github.com/net12labs/cirm/dali/domain/web-api"
 	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
 )
 
@@ -11,11 +12,13 @@ type Response = apiwebserver.Response
 type WebApi struct {
 	Server  *apiwebserver.Server
 	Execute func(cmd *cmd.Cmd)
+	Domain  *webapidomain.Domain
 	// WebApi fields here
 }
 
 func NewWebApi() *WebApi {
 	api := &WebApi{}
+	api.Domain = webapidomain.NewDomain()
 	// Initialize WebApi fields here
 	return api
 }
