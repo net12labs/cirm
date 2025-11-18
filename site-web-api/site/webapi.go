@@ -5,17 +5,17 @@ import (
 	"net/http"
 
 	"github.com/net12labs/cirm/dali/context/cmd"
-	"github.com/net12labs/cirm/dali/context/webapi"
 	"github.com/net12labs/cirm/dali/shell"
+	webapi "github.com/net12labs/cirm/dali/site-client-api"
 )
 
 type WebApi struct {
-	*webapi.WebApi
+	*webapi.Client
 	// WebApi fields here
 }
 
 func NewWebApi() *WebApi {
-	api := &WebApi{WebApi: webapi.NewWebApi()}
+	api := &WebApi{Client: webapi.NewClient()}
 	api.Domain.Path = "/site/api"
 	return api
 }

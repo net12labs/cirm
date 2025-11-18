@@ -1,7 +1,6 @@
 package domain_context
 
 import (
-	"github.com/net12labs/cirm/dali/context/cmd"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 
@@ -11,20 +10,20 @@ type DomainUnit struct {
 	OnExit      func()
 	ExitMessage string
 	WebServer   *webserver.WebServer
-	Execute     func(cmd *cmd.Cmd)
+	ApiRequest  func(req *webserver.Request)
 
 	// Other fields here
 }
 
 type Domain struct {
 	*DomainUnit
-
+	PageRequest func(req *webserver.Request)
 	// Other fields here
 }
 
 type SubDomain struct {
 	*DomainUnit
-
+	PageRequest func(req *webserver.Request)
 	// Other fields here
 }
 
@@ -58,6 +57,6 @@ func (su *DomainUnit) SetPath(key string) {
 	su.Path = key
 }
 
-func (a *DomainUnit) OnExecute(cmd *cmd.Cmd) {
-	a.Execute(cmd)
+func (a *DomainUnit) OnApiRequest(req *webserver.Request) {
+	a.ApiRequest(req)
 }

@@ -3,11 +3,11 @@ package site
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/dali/context/cmd"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	"github.com/net12labs/cirm/dali/rtm"
 	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
 	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
+	webserver "github.com/net12labs/cirm/mali/web-server"
 	"github.com/net12labs/cirm/service-daemon/site/admin"
 	"github.com/net12labs/cirm/service-daemon/site/consumer"
 	"github.com/net12labs/cirm/service-daemon/site/platform"
@@ -85,31 +85,65 @@ func (sv *Site) Init() {
 	sv.Consumer.WebAiAgentClient.Server = sv.ClientServer
 	sv.Platform.WebAiAgentClient.Server = sv.ClientServer
 
-	sv.Provider.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
-		sv.OnExecute(cmd)
+	// these are API request routers
+
+	sv.Provider.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnApiRequest(req.Request)
 	}
 
-	sv.Admin.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
-		sv.OnExecute(cmd)
+	sv.Admin.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnApiRequest(req.Request)
 	}
 
-	sv.Site.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
-		sv.OnExecute(cmd)
+	sv.Site.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnApiRequest(req.Request)
 	}
 
-	sv.Consumer.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
-		sv.OnExecute(cmd)
+	sv.Consumer.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnApiRequest(req.Request)
 	}
 
-	sv.Platform.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via WebApi:", cmd)
-		sv.OnExecute(cmd)
+	sv.Platform.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnApiRequest(req.Request)
 	}
 
+	// Page request handlers
+
+	sv.Provider.PageRequest = func(req *webserver.Request) {
+		fmt.Println("Getting html page at the root", req)
+		sv.OnPageRequest(req)
+	}
+
+	sv.Consumer.PageRequest = func(req *webserver.Request) {
+		fmt.Println("Getting html page at the root", req)
+		sv.OnPageRequest(req)
+	}
+
+	sv.Platform.PageRequest = func(req *webserver.Request) {
+		fmt.Println("Getting html page at the root", req)
+		sv.OnPageRequest(req)
+	}
+	sv.Admin.PageRequest = func(req *webserver.Request) {
+		fmt.Println("Getting html page at the root", req)
+		sv.OnPageRequest(req)
+	}
+	sv.Site.PageRequest = func(req *webserver.Request) {
+		fmt.Println("Getting html page at the root", req)
+		sv.OnPageRequest(req)
+	}
+
+}
+
+func (s *Site) OnPageRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Site PageRequest:", req)
+}
+func (s *Site) OnApiRequest(req *apiwebserver.Request) {
+	fmt.Println("Executing command via Site ApiRequest:", req)
 }
 
 func (s *Site) Start() error {

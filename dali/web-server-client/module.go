@@ -18,6 +18,7 @@ func (s *Server) AddRoute(path string, handler func(req *Request) error) error {
 	s.WebServer.AddRoute(path, func(req *webserver.Request) {
 		apiReq := &Request{Request: req, Response: &Response{Response: req.Response}}
 
+		// TODO: this needs changing
 		if err := handler(apiReq); err != nil {
 			apiReq.Response.StatusCode = http.StatusInternalServerError
 			fmt.Println("Failed to handle API request:", err)

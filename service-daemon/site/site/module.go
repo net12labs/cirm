@@ -9,6 +9,8 @@ import (
 	webapi "github.com/net12labs/cirm/site-web-api/site"
 	website "github.com/net12labs/cirm/site-web/site"
 
+	sitewebapi "github.com/net12labs/cirm/dali/site-client-api"
+
 	webagentclient "github.com/net12labs/cirm/agent-client-web/site"
 	webagentapi "github.com/net12labs/cirm/agent-web-api/site"
 	webagent "github.com/net12labs/cirm/agent-web/site"
@@ -57,14 +59,11 @@ func NewUnit() *Unit {
 
 func (r *Unit) Init() error {
 
-	r.WebSiteApi.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebSiteApi:", cmd)
-		r.WebSite.OnExecute(cmd)
-	}
+	// todo: so these need to be All converted to the ApiRequest
 
-	r.WebSite.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebSite:", cmd)
-		r.OnExecute(cmd)
+	r.WebSiteApi.ApiRequest = func(req *sitewebapi.Request) {
+		fmt.Println("Executing command via Platform WebSite:", req)
+		r.OnApiRequest(req.Request)
 	}
 
 	r.WebAgentApi.Execute = func(cmd *cmd.Cmd) {
@@ -73,7 +72,6 @@ func (r *Unit) Init() error {
 	}
 	r.WebAgent.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via Platform WebAgent:", cmd)
-		r.OnExecute(cmd)
 	}
 
 	r.WebAiAgentApi.Execute = func(cmd *cmd.Cmd) {
@@ -82,7 +80,6 @@ func (r *Unit) Init() error {
 	}
 	r.WebAiAgent.Execute = func(cmd *cmd.Cmd) {
 		fmt.Println("Executing command via Platform WebAiAgent:", cmd)
-		r.OnExecute(cmd)
 	}
 
 	r.WebSite.Init()

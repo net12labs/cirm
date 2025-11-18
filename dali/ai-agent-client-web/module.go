@@ -6,8 +6,9 @@ import (
 )
 
 type Client struct {
-	Server *clientwebserver.Server
-	Domain *domain.Domain
+	Server      *clientwebserver.Server
+	Domain      *domain.Domain
+	PageRequest func(req *Request)
 }
 
 func NewClient() *Client {

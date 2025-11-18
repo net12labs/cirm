@@ -19,6 +19,9 @@ func NewWebClient() *WebClient {
 	return cl
 }
 
+type Request = client.Request
+type Response = client.Response
+
 func (wc *WebClient) Init() error {
 	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
 

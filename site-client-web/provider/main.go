@@ -25,6 +25,7 @@ func (wc *WebClient) Init() error {
 		if err != nil {
 			return req.WriteResponse404()
 		}
+		wc.PageRequest(req)
 		return req.WriteResponseHTML(data)
 	})
 	return nil

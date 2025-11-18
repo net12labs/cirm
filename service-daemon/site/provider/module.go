@@ -3,8 +3,13 @@ package provider
 import (
 	"fmt"
 
+	agentclientweb "github.com/net12labs/cirm/dali/agent-client-web"
+	aiagentclientweb "github.com/net12labs/cirm/dali/ai-agent-client-web"
 	"github.com/net12labs/cirm/dali/context/cmd"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
+	siteclientweb "github.com/net12labs/cirm/dali/site-client-web"
+	webserver "github.com/net12labs/cirm/mali/web-server"
+
 	webclient "github.com/net12labs/cirm/site-client-web/provider"
 	webapi "github.com/net12labs/cirm/site-web-api/provider"
 	website "github.com/net12labs/cirm/site-web/provider"
@@ -84,6 +89,21 @@ func (r *Unit) Init() error {
 		r.OnExecute(cmd)
 	}
 
+	r.WebSiteClient.PageRequest = func(req *siteclientweb.Request) {
+		fmt.Println("Getting html page:", req)
+		r.OnPageRequest(req.Request)
+	}
+
+	r.WebAgentClient.PageRequest = func(req *agentclientweb.Request) {
+		fmt.Println("Getting html page:", req)
+		r.OnPageRequest(req.Request)
+	}
+
+	r.WebAiAgentClient.PageRequest = func(req *aiagentclientweb.Request) {
+		fmt.Println("Getting html page:", req)
+		r.OnPageRequest(req.Request)
+	}
+
 	r.WebSite.Init()
 	r.WebAgent.Init()
 	r.WebAiAgent.Init()
@@ -97,6 +117,11 @@ func (r *Unit) Init() error {
 	r.WebAiAgentClient.Init()
 
 	return nil
+}
+
+func (r *Unit) OnPageRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Platform PageRequest:", req)
+	r.PageRequest(req)
 }
 
 func (r *Unit) Run() int {

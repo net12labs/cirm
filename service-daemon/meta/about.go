@@ -50,4 +50,10 @@ Also - different types of shells for different tasks
 A lot of tasks could be virtual tasks -- where you need to edit an image - but the agent puts it in a filder and opens gimp
 or redirects you to a temporary station where you have the heavy tools installed
 
+For us it is basically just an SKU that matters - but the AI generated bundles and product can just stay in HTML
+
+Because in this way it is publishing specific projects - so we may need to be able to link those as well.
+
+Also - what we need to do is to generate some product descriptions, taggings etc. so the details can be pulled in.
+
 */

@@ -3,16 +3,16 @@ package platform
 import (
 	"net/http"
 
-	webapi "github.com/net12labs/cirm/dali/context/webapi"
+	webapi "github.com/net12labs/cirm/dali/site-client-api"
 )
 
 type WebApi struct {
-	*webapi.WebApi
+	*webapi.Client
 	// WebApi fields here
 }
 
 func NewWebApi() *WebApi {
-	api := &WebApi{WebApi: webapi.NewWebApi()}
+	api := &WebApi{Client: webapi.NewClient()}
 	api.Domain.Path = "/platform/api"
 	return api
 }
