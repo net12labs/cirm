@@ -3,18 +3,18 @@ package platform
 import (
 	"fmt"
 
-	webagentclient "github.com/net12labs/cirm/astro-site/agent-client-web/platform"
-	webagentapi "github.com/net12labs/cirm/astro-site/agent-web-api/platform"
-	webagent "github.com/net12labs/cirm/astro-site/agent-web/platform"
-	webapi "github.com/net12labs/cirm/astro-site/website-web-api/platform"
-	webclient "github.com/net12labs/cirm/astro-site/website-web-page/platform"
-	website "github.com/net12labs/cirm/astro-site/website-web/platform"
+	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-web/platform"
+	webagentapi "github.com/net12labs/cirm/astro-site/web/agent-web-api/platform"
+	webagent "github.com/net12labs/cirm/astro-site/web/agent-web/platform"
+	webapi "github.com/net12labs/cirm/astro-site/web/website-web-api/platform"
+	webclient "github.com/net12labs/cirm/astro-site/web/website-web-page/platform"
+	website "github.com/net12labs/cirm/astro-site/web/website-web/platform"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 
-	aiagentwebapi "github.com/net12labs/cirm/astro-site/ai-agent-web-api/platform"
-	aiagentwebclient "github.com/net12labs/cirm/astro-site/ai-agent-web-page/platform"
-	webaiagent "github.com/net12labs/cirm/astro-site/ai-agent-web/platform"
+	aiagentwebapi "github.com/net12labs/cirm/astro-site/web/ai-agent-web-api/platform"
+	aiagentwebclient "github.com/net12labs/cirm/astro-site/web/ai-agent-web-page/platform"
+	webaiagent "github.com/net12labs/cirm/astro-site/web/ai-agent-web/platform"
 
 	agent_client "github.com/net12labs/cirm/dali/client-page/agent"
 	aiagent_client "github.com/net12labs/cirm/dali/client-page/ai-agent"
