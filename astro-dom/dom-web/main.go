@@ -6,43 +6,36 @@ import (
 	"github.com/net12labs/cirm/ops/rtm"
 )
 
-type dom struct {
+type AstroDom struct {
 	name     string
 	Services *Svcs
 	Admin    *domAdmin
-	WebSite  *WebSite
+	MainSite *WebSite
 	StdOut   func(string)
 	StdErr   func(string)
 }
 
-var Main = &dom{}
+var Main = &AstroDom{Services: NewSvcs(), MainSite: NewWebSite()}
 
 // we should also be able to bubble from here up
 
-func (d *dom) Init() *dom {
+func (d *AstroDom) Init() *AstroDom {
 	d.name = rtm.Etc.Get("domain_name").String()
-	d.Services = NewSvcs()
 	d.Services.Init()
 
 	d.Admin = NewDomAdmin()
-	d.WebSite = NewWebSite()
 
 	d.Admin.WebServer.WebServer = d.Services.WebServer
-	d.WebSite.Site.WebServer = d.Services.WebServer
-	d.Services.Ecdn.Server.WebServer = d.Services.WebServer
+	d.MainSite.Site.WebServer = d.Services.WebServer
 
-	if err := d.Services.Ecdn.Server.Init(); err != nil {
-		fmt.Printf("Failed to initialize ECDN server: %v\n", err)
-		rtm.Runtime.Exit(1)
-	}
 	d.Admin.Init()
-	d.WebSite.Init()
+	d.MainSite.Init()
 
 	return d
 }
 
-func (d *dom) Start() {
-	d.WebSite.Start()
+func (d *AstroDom) Start() {
+	d.MainSite.Start()
 
 	if err := d.Services.WebServer.Start(); err != nil {
 		fmt.Printf("Failed to start web server: %v\n", err)

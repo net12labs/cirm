@@ -3,7 +3,7 @@ package ecdn
 import (
 	"embed"
 
-	ecdnwebserver "github.com/net12labs/cirm/dolly/web-server-ecdn"
+	ecdnwebserver "github.com/net12labs/cirm/mali/web-server-ecdn"
 )
 
 //go:embed cdn/*

@@ -3,9 +3,8 @@ package domain
 import (
 	"fmt"
 
-	site "github.com/net12labs/cirm/astro-pack/web-main"
+	site "github.com/net12labs/cirm/astro-host/host-web"
 	"github.com/net12labs/cirm/dolly/cmd"
-	"github.com/net12labs/cirm/ops/data"
 	"github.com/net12labs/cirm/ops/rtm"
 )
 
@@ -57,19 +56,6 @@ func (d *WebSite) Start() {
 
 }
 
-func (d *WebSite) dataInit() {
-	dbPath := rtm.Etc.Get("main_db_path").String()
-	mainDb := data.Ops.CreateDb("main", dbPath)
-
-	if err := mainDb.Init(); err != nil {
-		fmt.Println("Failed to initialize database:", err)
-		rtm.Runtime.Exit(1)
-	}
-}
-
 func (d *WebSite) Init() {
-	d.dataInit()
-
 	d.Site.Init()
-
 }

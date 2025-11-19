@@ -1,4 +1,4 @@
-module github.com/net12labs/cirm/astro-pack //china-ip-routes-maker
+module github.com/net12labs/cirm/astro-host //china-ip-routes-maker
 
 go 1.24.1
 
@@ -25,7 +25,6 @@ require (
 )
 
 replace (
-
 	github.com/net12labs/cirm/astro-dom => ../astro-dom
 	github.com/net12labs/cirm/astro-site/agent-client-web => ../astro-site/agent-client-web
 	github.com/net12labs/cirm/astro-site/agent-web => ../astro-site/agent-web

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/net12labs/cirm/astro-pack/exec"
-	proc_main "github.com/net12labs/cirm/astro-pack/main"
-	"github.com/net12labs/cirm/astro-pack/meta"
+	"github.com/net12labs/cirm/astro-host/exec"
+	proc_main "github.com/net12labs/cirm/astro-host/host-main"
+	"github.com/net12labs/cirm/astro-host/meta"
 
 	"github.com/net12labs/cirm/ops/rtm"
 
-	config "github.com/net12labs/cirm/astro-pack/config"
+	config "github.com/net12labs/cirm/astro-host/config"
 )
 
 func main() {

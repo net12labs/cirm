@@ -1,7 +1,7 @@
 package domain
 
 import (
-	webclient "github.com/net12labs/cirm/astro-dom/web-admin/site-client-web"
+	webclient "github.com/net12labs/cirm/astro-dom/dom-admin/web/site-client-web"
 	"github.com/net12labs/cirm/dolly/context/cmd"
 	webserver "github.com/net12labs/cirm/dolly/web-server-client"
 )

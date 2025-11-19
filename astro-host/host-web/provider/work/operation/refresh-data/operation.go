@@ -1,7 +1,7 @@
 package refreshdata
 
 import (
-	fetchdata "github.com/net12labs/cirm/astro-pack/web-main/provider/work/task/fetch-asn-prefixes"
+	fetchdata "github.com/net12labs/cirm/astro-host/host-web/provider/work/task/fetch-asn-prefixes"
 	wop "github.com/net12labs/cirm/dali/shell/work/operation"
 	"github.com/net12labs/cirm/dali/shell/work/task"
 )
