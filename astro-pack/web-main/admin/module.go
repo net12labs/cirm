@@ -3,19 +3,19 @@ package admin
 import (
 	"fmt"
 
-	webagentclient "github.com/net12labs/cirm/agent-client-web/admin"
-	webagentapi "github.com/net12labs/cirm/agent-web-api/admin"
+	webagentclient "github.com/net12labs/cirm/astro-site/agent-client-web/admin"
+	webagentapi "github.com/net12labs/cirm/astro-site/agent-web-api/admin"
+	website "github.com/net12labs/cirm/astro-site/website-web/admin"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	webserver "github.com/net12labs/cirm/mali/web-server"
-	website "github.com/net12labs/cirm/website-web/admin"
 
-	webagent "github.com/net12labs/cirm/agent-web/admin"
-	webapi "github.com/net12labs/cirm/website-web-api/admin"
-	webclient "github.com/net12labs/cirm/website-web-page/admin"
+	webagent "github.com/net12labs/cirm/astro-site/agent-web/admin"
+	webapi "github.com/net12labs/cirm/astro-site/website-web-api/admin"
+	webclient "github.com/net12labs/cirm/astro-site/website-web-page/admin"
 
-	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/admin"
-	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-page/admin"
-	webaiagent "github.com/net12labs/cirm/ai-agent-web/admin"
+	aiagentwebapi "github.com/net12labs/cirm/astro-site/ai-agent-web-api/admin"
+	aiagentwebclient "github.com/net12labs/cirm/astro-site/ai-agent-web-page/admin"
+	webaiagent "github.com/net12labs/cirm/astro-site/ai-agent-web/admin"
 
 	agent_client "github.com/net12labs/cirm/dali/client-page/agent"
 	aiagent_client "github.com/net12labs/cirm/dali/client-page/ai-agent"

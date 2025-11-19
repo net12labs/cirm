@@ -1,2 +1,2 @@
-github.com/net12labs/cirm/mali v0.0.0-20251117081457-1fef358e292e h1:gVApjPVmAeyrnjGPDqZcQ/2wxmQ+06jP/kB+8wYvkJI=
-github.com/net12labs/cirm/mali v0.0.0-20251117081457-1fef358e292e/go.mod h1:yxMYC8hWNhN5TKIVcJuLlj2uL2K9WBlIrqJIhxCOAA0=
+github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
+github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=

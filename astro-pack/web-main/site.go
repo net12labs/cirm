@@ -1,4 +1,4 @@
-package site
+package astrowebmain
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	web_server "github.com/net12labs/cirm/dali/web-server/web"
 	"github.com/net12labs/cirm/ops/rtm"
 
-	"github.com/net12labs/cirm/astro-pack/site/admin"
-	"github.com/net12labs/cirm/astro-pack/site/consumer"
-	"github.com/net12labs/cirm/astro-pack/site/platform"
-	"github.com/net12labs/cirm/astro-pack/site/provider"
-	"github.com/net12labs/cirm/astro-pack/site/site"
+	"github.com/net12labs/cirm/astro-pack/web-main/admin"
+	"github.com/net12labs/cirm/astro-pack/web-main/consumer"
+	"github.com/net12labs/cirm/astro-pack/web-main/platform"
+	"github.com/net12labs/cirm/astro-pack/web-main/provider"
+	"github.com/net12labs/cirm/astro-pack/web-main/site"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 )
 

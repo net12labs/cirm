@@ -6,17 +6,17 @@ import (
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 
-	webapi "github.com/net12labs/cirm/website-web-api/provider"
-	webclient "github.com/net12labs/cirm/website-web-page/provider"
-	website "github.com/net12labs/cirm/website-web/provider"
+	webapi "github.com/net12labs/cirm/astro-site/website-web-api/provider"
+	webclient "github.com/net12labs/cirm/astro-site/website-web-page/provider"
+	website "github.com/net12labs/cirm/astro-site/website-web/provider"
 
-	webagentclient "github.com/net12labs/cirm/agent-client-web/provider"
-	webagentapi "github.com/net12labs/cirm/agent-web-api/provider"
-	webagent "github.com/net12labs/cirm/agent-web/provider"
+	webagentclient "github.com/net12labs/cirm/astro-site/agent-client-web/provider"
+	webagentapi "github.com/net12labs/cirm/astro-site/agent-web-api/provider"
+	webagent "github.com/net12labs/cirm/astro-site/agent-web/provider"
 
-	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/provider"
-	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-page/provider"
-	webaiagent "github.com/net12labs/cirm/ai-agent-web/provider"
+	aiagentwebapi "github.com/net12labs/cirm/astro-site/ai-agent-web-api/provider"
+	aiagentwebclient "github.com/net12labs/cirm/astro-site/ai-agent-web-page/provider"
+	webaiagent "github.com/net12labs/cirm/astro-site/ai-agent-web/provider"
 
 	agent_client "github.com/net12labs/cirm/dali/client-page/agent"
 	aiagent_client "github.com/net12labs/cirm/dali/client-page/ai-agent"

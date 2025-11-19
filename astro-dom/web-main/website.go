@@ -3,7 +3,7 @@ package domain
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/astro-pack/site"
+	site "github.com/net12labs/cirm/astro-pack/web-main"
 	"github.com/net12labs/cirm/dolly/cmd"
 	"github.com/net12labs/cirm/ops/data"
 	"github.com/net12labs/cirm/ops/rtm"
