@@ -3,7 +3,7 @@ package domain
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/dali/rtm"
+	"github.com/net12labs/cirm/ops/rtm"
 )
 
 type dom struct {

@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	client "github.com/net12labs/cirm/dali/client-page/website"
+	dom "github.com/net12labs/cirm/website-web-page/site/domain"
 )
 
 //go:embed web/*
@@ -15,7 +16,6 @@ type WebClient struct {
 
 func NewWebClient() *WebClient {
 	cl := &WebClient{Client: client.NewClient()}
-	cl.Domain.Path = "/site"
 	return cl
 }
 
@@ -23,7 +23,8 @@ type Request = client.Request
 type Response = client.Response
 
 func (wc *WebClient) Init() error {
-	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+
+	wc.Server.AddRoute(dom.Domain().Path(), func(req *client.Request) error {
 		data, err := content.ReadFile("web/guest.html")
 		if err != nil {
 			return req.WriteResponse404()
@@ -31,7 +32,7 @@ func (wc *WebClient) Init() error {
 		return req.WriteResponseHTML(data)
 	})
 
-	wc.Server.AddRoute(wc.Domain.MakePath("home"), func(req *client.Request) error {
+	wc.Server.AddRoute(dom.Domain().MakePath("at"), func(req *client.Request) error {
 		data, err := content.ReadFile("web/home.html")
 		if err != nil {
 			return req.WriteResponse404()

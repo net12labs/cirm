@@ -3,6 +3,7 @@ package aiagentwebclient
 import (
 	"embed"
 
+	dom "github.com/net12labs/cirm/ai-agent-web-page/consumer/domain"
 	client "github.com/net12labs/cirm/dali/client-page/ai-agent"
 )
 
@@ -15,12 +16,11 @@ type WebAiAgentClient struct {
 
 func NewClient() *WebAiAgentClient {
 	cli := &WebAiAgentClient{Client: client.NewClient()}
-	cli.Domain.Path = "/consumer/ai-agent"
 	return cli
 }
 
 func (wc *WebAiAgentClient) Init() error {
-	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+	wc.Server.AddRoute(dom.Domain().Path(), func(req *client.Request) error {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

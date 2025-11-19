@@ -3,9 +3,9 @@ package domain
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/dali/context/cmd"
-	"github.com/net12labs/cirm/dali/data"
-	"github.com/net12labs/cirm/dali/rtm"
+	"github.com/net12labs/cirm/dali/shell/cmd"
+	"github.com/net12labs/cirm/ops/data"
+	"github.com/net12labs/cirm/ops/rtm"
 	"github.com/net12labs/cirm/service-daemon/site"
 )
 
@@ -17,6 +17,9 @@ func NewWebSite() *WebSite {
 	return &WebSite{
 		Site: site.NewSite(),
 	}
+}
+
+type TaskShell struct {
 }
 
 func (d *WebSite) OnExecute(cmd *cmd.Cmd) {
@@ -56,7 +59,6 @@ func (d *WebSite) Start() {
 
 func (d *WebSite) dataInit() {
 	dbPath := rtm.Etc.Get("main_db_path").String()
-	rtm.Do.InitFsPath(dbPath)
 	mainDb := data.Ops.CreateDb("main", dbPath)
 
 	if err := mainDb.Init(); err != nil {

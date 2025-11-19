@@ -1,7 +1,7 @@
 package client
 
 import (
-	webapi "github.com/net12labs/cirm/dali/context/webapi"
+	webapi "github.com/net12labs/cirm/dali/domain/webapi"
 )
 
 type ClientApi struct {

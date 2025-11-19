@@ -1,6 +1,7 @@
 package webaiagentweb
 
 import (
+	dom "github.com/net12labs/cirm/ai-agent-web/admin/domain"
 	client "github.com/net12labs/cirm/dali/client-web/ai-agent"
 )
 
@@ -10,12 +11,12 @@ type WebAiAgent struct {
 
 func New() *WebAiAgent {
 	cli := &WebAiAgent{ClientWeb: client.NewClient()}
-	cli.Domain.Path = "/ai-agent/admin/web"
+
 	return cli
 }
 
 func (wc *WebAiAgent) Init() error {
-	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+	wc.Server.AddRoute(dom.Domain().Path(), func(req *client.Request) error {
 		return req.WriteResponse("Not implemented yet")
 	})
 	return nil

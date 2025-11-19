@@ -2,6 +2,7 @@ package websiteweb
 
 import (
 	client "github.com/net12labs/cirm/dali/client-web/website"
+	dom "github.com/net12labs/cirm/website-web/provider/domain"
 )
 
 type WebSite struct {
@@ -10,12 +11,11 @@ type WebSite struct {
 
 func New() *WebSite {
 	cli := &WebSite{ClientWeb: client.NewClient()}
-	cli.Domain.Path = "/site/provider/web"
 	return cli
 }
 
 func (wc *WebSite) Init() error {
-	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+	wc.Server.AddRoute(dom.Domain().Path(), func(req *client.Request) error {
 		return req.WriteResponse("Not implemented yet")
 	})
 	return nil

@@ -13,7 +13,7 @@ func NewDo() *Do {
 	return &Do{}
 }
 
-func (d *Do) InitFsPath(path string) error {
+func InitFsPath(path string) error {
 	// Initialize file system path
 	// make directory path recursively. Split off the last part if it is a file
 	dir := path

@@ -3,6 +3,7 @@ package webagentapi
 import (
 	"net/http"
 
+	dom "github.com/net12labs/cirm/agent-web-api/consumer/domain"
 	api "github.com/net12labs/cirm/dali/client-api/agent"
 )
 
@@ -13,18 +14,17 @@ type WebAgentApi struct {
 
 func NewWebApi() *WebAgentApi {
 	agt := &WebAgentApi{ClientApi: api.NewClient()}
-	agt.Domain.Path = "/consumer/agent/api"
 	return agt
 }
 
 func (wi *WebAgentApi) Init() {
-	wi.WebApi.Server.AddRoute(wi.Domain.MakePath("refresh-data"), func(req *api.Request) error {
+	wi.WebApi.Server.AddRoute(dom.Domain().MakePath("refresh-data"), func(req *api.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	wi.WebApi.Server.AddRoute(wi.Domain.MakePath("get-routes"), func(req *api.Request) error {
+	wi.WebApi.Server.AddRoute(dom.Domain().MakePath("get-routes"), func(req *api.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

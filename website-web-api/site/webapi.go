@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	webapi "github.com/net12labs/cirm/dali/client-api/website"
-	"github.com/net12labs/cirm/dali/context/cmd"
 	"github.com/net12labs/cirm/dali/shell"
+	"github.com/net12labs/cirm/dali/shell/cmd"
+	dom "github.com/net12labs/cirm/website-web-api/site/domain"
 )
 
 type WebApi struct {
@@ -16,12 +17,11 @@ type WebApi struct {
 
 func NewWebApi() *WebApi {
 	api := &WebApi{ClientApi: webapi.NewClient()}
-	api.Domain.Path = "/site/api"
 	return api
 }
 
 func (api *WebApi) Init() {
-	api.Server.AddRoute(api.Domain.MakePath("login"), func(req *webapi.Request) error {
+	api.Server.AddRoute(dom.Domain().MakePath("login"), func(req *webapi.Request) error {
 
 		rq, err := req.ReadRequestBodyAsMap()
 		if err != nil {
@@ -55,7 +55,7 @@ func (api *WebApi) Init() {
 		// }
 	})
 
-	api.Server.AddRoute(api.Domain.MakePath("create-account"), func(req *webapi.Request) error {
+	api.Server.AddRoute(dom.Domain().MakePath("create-account"), func(req *webapi.Request) error {
 
 		rq, err := req.ReadRequestBodyAsMap()
 		if err != nil {

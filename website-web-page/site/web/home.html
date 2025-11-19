@@ -8,8 +8,8 @@
     <script>
         // Load all components when page loads
         window.addEventListener('DOMContentLoaded', function() {
-            loadComponent('aiAssistantContainer', '/site/agent/assistant', 'AI assistant');
-            loadComponent('aiCopilotContainer', '/site/ai-agent/ai-assistant', 'AI Copilot', true); // Use Shadow DOM
+            loadComponent('aiAssistantContainer', '/site/agent/at/assistant', 'AI assistant');
+            loadComponent('aiCopilotContainer', '/site/ai-agent/at/ai-assistant', 'AI Copilot', true); // Use Shadow DOM
         });
     </script>
     <style>
@@ -113,10 +113,10 @@
         </div>
         <p style="color: #666; margin-bottom: 30px;">Select your role to continue:</p>
         <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
-            <button onclick="navigateTo('/provider')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Provider Portal</button>
-            <button onclick="navigateTo('/admin')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Admin Portal</button>
-            <button onclick="navigateTo('/consumer')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Consumer Portal</button>
-            <button onclick="navigateTo('/platform')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Platform Portal</button>
+            <button onclick="navigateTo('/provider/site/home')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Provider Portal</button>
+            <button onclick="navigateTo('/admin/site/home')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Admin Portal</button>
+            <button onclick="navigateTo('/consumer/site/home')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Consumer Portal</button>
+            <button onclick="navigateTo('/platform/site/home')" style="width: 150px; height: 150px; font-size: 16px; display: flex; align-items: center; justify-content: center; text-align: center;">Platform Portal</button>
         </div>
 
         <div class="login-section">

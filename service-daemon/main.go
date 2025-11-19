@@ -7,7 +7,7 @@ import (
 	"github.com/net12labs/cirm/service-daemon/exec"
 	"github.com/net12labs/cirm/service-daemon/meta"
 
-	"github.com/net12labs/cirm/dali/rtm"
+	"github.com/net12labs/cirm/ops/rtm"
 )
 
 // so context we can also package in the db - so it is all atomic

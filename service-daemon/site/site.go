@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
-	"github.com/net12labs/cirm/dali/rtm"
 	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
 	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
 	web_server "github.com/net12labs/cirm/dali/web-server-web"
+	"github.com/net12labs/cirm/ops/rtm"
 
 	webserver "github.com/net12labs/cirm/mali/web-server"
 	"github.com/net12labs/cirm/service-daemon/site/admin"

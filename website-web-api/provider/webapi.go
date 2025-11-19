@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	webapi "github.com/net12labs/cirm/dali/client-api/website"
+	dom "github.com/net12labs/cirm/website-web-api/provider/domain"
 )
 
 type WebApi struct {
@@ -12,19 +13,18 @@ type WebApi struct {
 
 func NewWebApi() *WebApi {
 	api := &WebApi{ClientApi: webapi.NewClient()}
-	api.Domain.Path = "/provider/api"
 	return api
 }
 
 func (api *WebApi) Init() {
 
-	api.ClientApi.Server.AddRoute(api.Domain.MakePath("refresh-data"), func(req *webapi.Request) error {
+	api.ClientApi.Server.AddRoute(dom.Domain().MakePath("refresh-data"), func(req *webapi.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	api.ClientApi.Server.AddRoute(api.Domain.MakePath("get-routes"), func(req *webapi.Request) error {
+	api.ClientApi.Server.AddRoute(dom.Domain().MakePath("get-routes"), func(req *webapi.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

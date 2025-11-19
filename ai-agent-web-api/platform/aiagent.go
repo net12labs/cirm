@@ -3,6 +3,7 @@ package aiagentwebapi
 import (
 	"net/http"
 
+	dom "github.com/net12labs/cirm/ai-agent-web-api/platform/domain"
 	api "github.com/net12labs/cirm/dali/client-api/ai-agent"
 )
 
@@ -13,12 +14,11 @@ type WebAiAgentApi struct {
 
 func NewWebApi() *WebAiAgentApi {
 	agt := &WebAiAgentApi{ClientApi: api.NewClient()}
-	agt.Domain.Path = "/platform/ai-agent/api"
 	return agt
 }
 
 func (wi *WebAiAgentApi) Init() {
-	wi.ClientApi.Server.AddRoute(wi.Domain.Path+"/refresh-data", func(req *api.Request) error {
+	wi.ClientApi.Server.AddRoute(dom.Domain().Path(), func(req *api.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil

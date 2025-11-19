@@ -3,6 +3,7 @@ package webagentclient
 import (
 	"embed"
 
+	dom "github.com/net12labs/cirm/agent-client-web/admin/domain"
 	client "github.com/net12labs/cirm/dali/client-page/agent"
 )
 
@@ -15,12 +16,11 @@ type WebAgentClient struct {
 
 func NewClient() *WebAgentClient {
 	cli := &WebAgentClient{Client: client.NewClient()}
-	cli.Domain.Path = "/admin/agent"
 	return cli
 }
 
 func (wc *WebAgentClient) Init() error {
-	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+	wc.Server.AddRoute(dom.Domain().Path(), func(req *client.Request) error {
 		// Serve the main page
 		data, err := content.ReadFile("web/index.html")
 		if err != nil {

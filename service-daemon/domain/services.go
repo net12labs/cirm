@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
-	"github.com/net12labs/cirm/dali/rtm"
-	socketserver "github.com/net12labs/cirm/dali/socket-server"
+	socketserver "github.com/net12labs/cirm/dolly/socket-server"
 	webserver "github.com/net12labs/cirm/mali/web-server"
+	"github.com/net12labs/cirm/ops/rtm"
 	"github.com/net12labs/cirm/service-daemon/domain/ecdn"
 )
 
@@ -33,7 +33,7 @@ func (s *Svcs) Init() {
 
 	s.WebServer.AddRoute("/", func(req *webserver.Request) {
 		if req.Path.Path == "/" {
-			req.RedirectToUrl("/site")
+			req.RedirectToUrl("/site/home")
 			return
 		}
 		req.WriteResponse404()
