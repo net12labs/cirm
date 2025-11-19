@@ -3,11 +3,11 @@ package domain
 import (
 	"fmt"
 
+	"github.com/net12labs/cirm/astro-pack/domain/ecdn"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	socketserver "github.com/net12labs/cirm/dolly/socket-server"
 	webserver "github.com/net12labs/cirm/mali/web-server"
 	"github.com/net12labs/cirm/ops/rtm"
-	"github.com/net12labs/cirm/service-daemon/domain/ecdn"
 )
 
 type Svcs struct {

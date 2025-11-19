@@ -3,10 +3,10 @@ package domain
 import (
 	"fmt"
 
+	"github.com/net12labs/cirm/astro-pack/site"
 	"github.com/net12labs/cirm/dali/shell/cmd"
 	"github.com/net12labs/cirm/ops/data"
 	"github.com/net12labs/cirm/ops/rtm"
-	"github.com/net12labs/cirm/service-daemon/site"
 )
 
 type WebSite struct {

@@ -1,9 +1,9 @@
 package refreshdata
 
 import (
+	fetchdata "github.com/net12labs/cirm/astro-pack/site/provider/work/task/fetch-asn-prefixes"
 	wop "github.com/net12labs/cirm/dali/shell/work/operation"
 	"github.com/net12labs/cirm/dali/shell/work/task"
-	fetchdata "github.com/net12labs/cirm/service-daemon/site/provider/work/task/fetch-asn-prefixes"
 )
 
 type RefreshData struct {

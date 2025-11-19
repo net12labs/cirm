@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/service-daemon/domain"
-	"github.com/net12labs/cirm/service-daemon/exec"
-	"github.com/net12labs/cirm/service-daemon/meta"
+	"github.com/net12labs/cirm/astro-pack/domain"
+	"github.com/net12labs/cirm/astro-pack/exec"
+	"github.com/net12labs/cirm/astro-pack/meta"
 
 	"github.com/net12labs/cirm/ops/rtm"
 )

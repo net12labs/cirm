@@ -1,7 +1,7 @@
 package client
 
 import (
-	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
+	clientwebserver "github.com/net12labs/cirm/dali/web-server/page"
 )
 
 type Client struct {

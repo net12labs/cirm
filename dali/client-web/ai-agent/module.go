@@ -1,7 +1,7 @@
 package clientwebaiagent
 
 import (
-	server "github.com/net12labs/cirm/dali/web-server-web"
+	server "github.com/net12labs/cirm/dali/web-server/web"
 )
 
 type ClientWeb struct {

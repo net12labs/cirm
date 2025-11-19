@@ -4,17 +4,17 @@ import (
 	"fmt"
 
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
-	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
-	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
-	web_server "github.com/net12labs/cirm/dali/web-server-web"
+	apiwebserver "github.com/net12labs/cirm/dali/web-server/api"
+	clientwebserver "github.com/net12labs/cirm/dali/web-server/page"
+	web_server "github.com/net12labs/cirm/dali/web-server/web"
 	"github.com/net12labs/cirm/ops/rtm"
 
+	"github.com/net12labs/cirm/astro-pack/site/admin"
+	"github.com/net12labs/cirm/astro-pack/site/consumer"
+	"github.com/net12labs/cirm/astro-pack/site/platform"
+	"github.com/net12labs/cirm/astro-pack/site/provider"
+	"github.com/net12labs/cirm/astro-pack/site/site"
 	webserver "github.com/net12labs/cirm/mali/web-server"
-	"github.com/net12labs/cirm/service-daemon/site/admin"
-	"github.com/net12labs/cirm/service-daemon/site/consumer"
-	"github.com/net12labs/cirm/service-daemon/site/platform"
-	"github.com/net12labs/cirm/service-daemon/site/provider"
-	"github.com/net12labs/cirm/service-daemon/site/site"
 )
 
 type Site struct {
