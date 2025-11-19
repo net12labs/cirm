@@ -3,32 +3,28 @@ package webagentapi
 import (
 	"net/http"
 
-	webapi "github.com/net12labs/cirm/dali/context/webapi"
+	api "github.com/net12labs/cirm/dali/client-api/agent"
 )
 
 type WebAgentApi struct {
-	*webapi.WebApi
+	*api.ClientApi
 	// WebApi fields here
 }
 
-func DomainPath() string {
-	return "/site/agent/api"
-}
-
 func NewWebApi() *WebAgentApi {
-	agt := &WebAgentApi{WebApi: webapi.NewWebApi()}
-	agt.Domain.Path = DomainPath()
+	agt := &WebAgentApi{ClientApi: api.NewClient()}
+	agt.Domain.Path = "/site/agent/api"
 	return agt
 }
 
-func (api *WebAgentApi) Init() {
-	api.WebApi.Server.AddRoute(api.Domain.MakePath("refresh-data"), func(req *webapi.Request) error {
+func (wi *WebAgentApi) Init() {
+	wi.WebApi.Server.AddRoute(wi.Domain.MakePath("refresh-data"), func(req *api.Request) error {
 		req.Response.StatusCode = http.StatusOK
 		req.WriteResponse([]byte("Data refresh triggered"))
 		return nil
 	})
 
-	api.WebApi.Server.AddRoute(api.Domain.MakePath("get-routes"), func(req *webapi.Request) error {
+	wi.WebApi.Server.AddRoute(wi.Domain.MakePath("get-routes"), func(req *api.Request) error {
 		// Get format from query parameter (bash, bird, json, etc.)
 		format := req.Req.URL.Query().Get("format")
 		if format == "" {

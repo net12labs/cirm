@@ -1,22 +1,22 @@
-package webagent
+package webagentweb
 
 import (
-	"github.com/net12labs/cirm/dali/context/agent"
+	client "github.com/net12labs/cirm/dali/client-web/agent"
 )
 
-type Agent struct {
-	*agent.Agent
+type WebAgent struct {
+	*client.ClientWeb
 }
 
-func (a *Agent) RefreshData() {
-
+func New() *WebAgent {
+	cli := &WebAgent{ClientWeb: client.NewClient()}
+	cli.Domain.Path = "/agent/site/web"
+	return cli
 }
 
-func NewAgent() *Agent {
-	ag := &Agent{}
-	ag.Agent = agent.NewAgent()
-	return ag
-}
-func (a *Agent) Init() error {
+func (wc *WebAgent) Init() error {
+	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+		return req.WriteResponse("Not implemented yet")
+	})
 	return nil
 }

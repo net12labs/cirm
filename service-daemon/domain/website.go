@@ -67,9 +67,7 @@ func (d *WebSite) dataInit() {
 
 func (d *WebSite) Init() {
 	d.dataInit()
-	d.Site.Execute = func(cmd *cmd.Cmd) {
-		d.OnExecute(cmd)
-	}
+
 	d.Site.Init()
 
 }

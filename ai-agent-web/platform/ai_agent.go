@@ -1,22 +1,22 @@
-package aiagentweb
+package webaiagentweb
 
 import (
-	aiagent "github.com/net12labs/cirm/dali/context/ai-agent"
+	client "github.com/net12labs/cirm/dali/client-web/ai-agent"
 )
 
-type AiAgent struct {
-	*aiagent.AiAgent
+type WebAiAgent struct {
+	*client.ClientWeb
 }
 
-func (a *AiAgent) RefreshData() {
-
+func New() *WebAiAgent {
+	cli := &WebAiAgent{ClientWeb: client.NewClient()}
+	cli.Domain.Path = "/ai-agent/platform/web"
+	return cli
 }
 
-func NewAiAgent() *AiAgent {
-	ag := &AiAgent{}
-	ag.AiAgent = aiagent.NewAiAgent()
-	return ag
-}
-func (a *AiAgent) Init() error {
+func (wc *WebAiAgent) Init() error {
+	wc.Server.AddRoute(wc.Domain.Path, func(req *client.Request) error {
+		return req.WriteResponse("Not implemented yet")
+	})
 	return nil
 }

@@ -3,7 +3,7 @@ package webagentclient
 import (
 	"embed"
 
-	client "github.com/net12labs/cirm/dali/agent-client-web"
+	client "github.com/net12labs/cirm/dali/client-page/agent"
 )
 
 //go:embed web/*

@@ -14,6 +14,7 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{}
 }
+
 func (s *Server) AddRoute(path string, handler func(req *Request) error) error {
 	s.WebServer.AddRoute(path, func(req *webserver.Request) {
 		apiReq := &Request{Request: req, Response: &Response{Response: req.Response}}

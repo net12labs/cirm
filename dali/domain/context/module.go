@@ -10,21 +10,20 @@ type DomainUnit struct {
 	OnExit      func()
 	ExitMessage string
 	WebServer   *webserver.WebServer
-	ApiRequest  func(req *webserver.Request)
-
-	// Other fields here
 }
 
 type Domain struct {
 	*DomainUnit
+	ApiRequest  func(req *webserver.Request)
 	PageRequest func(req *webserver.Request)
-	// Other fields here
+	WebRequest  func(req *webserver.Request)
 }
 
 type SubDomain struct {
 	*DomainUnit
+	ApiRequest  func(req *webserver.Request)
 	PageRequest func(req *webserver.Request)
-	// Other fields here
+	WebRequest  func(req *webserver.Request)
 }
 
 func NewDomain() *Domain {
@@ -57,6 +56,18 @@ func (su *DomainUnit) SetPath(key string) {
 	su.Path = key
 }
 
-func (a *DomainUnit) OnApiRequest(req *webserver.Request) {
+func (a *SubDomain) OnApiRequest(req *webserver.Request) {
 	a.ApiRequest(req)
+}
+
+func (a *Domain) OnApiRequest(req *webserver.Request) {
+	a.ApiRequest(req)
+}
+
+func (a *SubDomain) OnWebRequest(req *webserver.Request) {
+	a.WebRequest(req)
+}
+
+func (a *Domain) OnWebRequest(req *webserver.Request) {
+	a.WebRequest(req)
 }

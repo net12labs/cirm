@@ -7,6 +7,8 @@ import (
 	"github.com/net12labs/cirm/dali/rtm"
 	apiwebserver "github.com/net12labs/cirm/dali/web-server-api"
 	clientwebserver "github.com/net12labs/cirm/dali/web-server-client"
+	web_server "github.com/net12labs/cirm/dali/web-server-web"
+
 	webserver "github.com/net12labs/cirm/mali/web-server"
 	"github.com/net12labs/cirm/service-daemon/site/admin"
 	"github.com/net12labs/cirm/service-daemon/site/consumer"
@@ -17,13 +19,14 @@ import (
 
 type Site struct {
 	*domain_context.Domain
-	Consumer     *consumer.Unit
-	Provider     *provider.Unit
-	Platform     *platform.Unit
-	Site         *site.Unit
-	Admin        *admin.Unit
-	ApiServer    *apiwebserver.Server
-	ClientServer *clientwebserver.Server
+	Consumer   *consumer.Unit
+	Provider   *provider.Unit
+	Platform   *platform.Unit
+	Site       *site.Unit
+	Admin      *admin.Unit
+	ApiServer  *apiwebserver.Server
+	PageServer *clientwebserver.Server
+	WebxServer *web_server.Server
 }
 
 // so the actual web server may need to be started even higher
@@ -41,25 +44,53 @@ func NewSite() *Site {
 	return sv
 }
 
-func (sv *Site) Init() {
+func (sv *Site) initMappings() {
 
 	sv.ApiServer = apiwebserver.NewServer()
-	sv.ClientServer = clientwebserver.NewServer()
+	sv.PageServer = clientwebserver.NewServer()
+	sv.WebxServer = web_server.NewServer()
 
 	sv.ApiServer.WebServer = sv.WebServer
-	sv.ClientServer.WebServer = sv.WebServer
+	sv.PageServer.WebServer = sv.WebServer
+	sv.WebxServer.WebServer = sv.WebServer
 
-	sv.Site.WebSiteClient.Server = sv.ClientServer
-	sv.Provider.WebSiteClient.Server = sv.ClientServer
-	sv.Platform.WebSiteClient.Server = sv.ClientServer
-	sv.Admin.WebSiteClient.Server = sv.ClientServer
-	sv.Consumer.WebSiteClient.Server = sv.ClientServer
+	sv.Site.WebAgent.Server = sv.WebxServer
+	sv.Provider.WebAgent.Server = sv.WebxServer
+	sv.Platform.WebAgent.Server = sv.WebxServer
+	sv.Admin.WebAgent.Server = sv.WebxServer
+	sv.Consumer.WebAgent.Server = sv.WebxServer
 
-	sv.Site.WebAgentClient.Server = sv.ClientServer
-	sv.Platform.WebAgentClient.Server = sv.ClientServer
-	sv.Provider.WebAgentClient.Server = sv.ClientServer
-	sv.Admin.WebAgentClient.Server = sv.ClientServer
-	sv.Consumer.WebAgentClient.Server = sv.ClientServer
+	sv.Site.WebAiAgent.Server = sv.WebxServer
+	sv.Provider.WebAiAgent.Server = sv.WebxServer
+	sv.Platform.WebAiAgent.Server = sv.WebxServer
+	sv.Admin.WebAiAgent.Server = sv.WebxServer
+	sv.Consumer.WebAiAgent.Server = sv.WebxServer
+
+	sv.Site.WebSite.Server = sv.WebxServer
+	sv.Provider.WebSite.Server = sv.WebxServer
+	sv.Platform.WebSite.Server = sv.WebxServer
+	sv.Admin.WebSite.Server = sv.WebxServer
+	sv.Consumer.WebSite.Server = sv.WebxServer
+
+	// these are Client web servers
+
+	sv.Site.WebSiteClient.Server = sv.PageServer
+	sv.Provider.WebSiteClient.Server = sv.PageServer
+	sv.Platform.WebSiteClient.Server = sv.PageServer
+	sv.Admin.WebSiteClient.Server = sv.PageServer
+	sv.Consumer.WebSiteClient.Server = sv.PageServer
+
+	sv.Site.WebAgentClient.Server = sv.PageServer
+	sv.Platform.WebAgentClient.Server = sv.PageServer
+	sv.Provider.WebAgentClient.Server = sv.PageServer
+	sv.Admin.WebAgentClient.Server = sv.PageServer
+	sv.Consumer.WebAgentClient.Server = sv.PageServer
+
+	sv.Provider.WebAiAgentClient.Server = sv.PageServer
+	sv.Admin.WebAiAgentClient.Server = sv.PageServer
+	sv.Site.WebAiAgentClient.Server = sv.PageServer
+	sv.Consumer.WebAiAgentClient.Server = sv.PageServer
+	sv.Platform.WebAiAgentClient.Server = sv.PageServer
 
 	sv.Site.WebSiteApi.Server = sv.ApiServer
 	sv.Provider.WebSiteApi.Server = sv.ApiServer
@@ -79,37 +110,61 @@ func (sv *Site) Init() {
 	sv.Consumer.WebAiAgentApi.Server = sv.ApiServer
 	sv.Platform.WebAiAgentApi.Server = sv.ApiServer
 
-	sv.Provider.WebAiAgentClient.Server = sv.ClientServer
-	sv.Admin.WebAiAgentClient.Server = sv.ClientServer
-	sv.Site.WebAiAgentClient.Server = sv.ClientServer
-	sv.Consumer.WebAiAgentClient.Server = sv.ClientServer
-	sv.Platform.WebAiAgentClient.Server = sv.ClientServer
+}
+
+func (sv *Site) Init() {
+
+	sv.initMappings()
+	// these are Web request routers
+	sv.Provider.WebRequest = func(req *webserver.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnWebRequest(req)
+	}
+
+	sv.Admin.WebRequest = func(req *webserver.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnWebRequest(req)
+	}
+
+	sv.Site.WebRequest = func(req *webserver.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnWebRequest(req)
+	}
+
+	sv.Consumer.WebRequest = func(req *webserver.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnWebRequest(req)
+	}
+
+	sv.Platform.WebRequest = func(req *webserver.Request) {
+		fmt.Println("Executing command via WebApi:", req)
+		sv.OnWebRequest(req)
+	}
 
 	// these are API request routers
-
-	sv.Provider.ApiRequest = func(req *sitewebapi.Request) {
+	sv.Provider.ApiRequest = func(req *webserver.Request) {
 		fmt.Println("Executing command via WebApi:", req)
-		sv.OnApiRequest(req.Request)
+		sv.OnApiRequest(req)
 	}
 
-	sv.Admin.ApiRequest = func(req *sitewebapi.Request) {
+	sv.Admin.ApiRequest = func(req *webserver.Request) {
 		fmt.Println("Executing command via WebApi:", req)
-		sv.OnApiRequest(req.Request)
+		sv.OnApiRequest(req)
 	}
 
-	sv.Site.ApiRequest = func(req *sitewebapi.Request) {
+	sv.Site.ApiRequest = func(req *webserver.Request) {
 		fmt.Println("Executing command via WebApi:", req)
-		sv.OnApiRequest(req.Request)
+		sv.OnApiRequest(req)
 	}
 
-	sv.Consumer.ApiRequest = func(req *sitewebapi.Request) {
+	sv.Consumer.ApiRequest = func(req *webserver.Request) {
 		fmt.Println("Executing command via WebApi:", req)
-		sv.OnApiRequest(req.Request)
+		sv.OnApiRequest(req)
 	}
 
-	sv.Platform.ApiRequest = func(req *sitewebapi.Request) {
+	sv.Platform.ApiRequest = func(req *webserver.Request) {
 		fmt.Println("Executing command via WebApi:", req)
-		sv.OnApiRequest(req.Request)
+		sv.OnApiRequest(req)
 	}
 
 	// Page request handlers
@@ -142,8 +197,12 @@ func (sv *Site) Init() {
 func (s *Site) OnPageRequest(req *webserver.Request) {
 	fmt.Println("Executing command via Site PageRequest:", req)
 }
-func (s *Site) OnApiRequest(req *apiwebserver.Request) {
+func (s *Site) OnApiRequest(req *webserver.Request) {
 	fmt.Println("Executing command via Site ApiRequest:", req)
+}
+
+func (s *Site) OnWebRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Site WebRequest:", req)
 }
 
 func (s *Site) Start() error {

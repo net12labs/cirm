@@ -6,15 +6,27 @@ import (
 	webagentclient "github.com/net12labs/cirm/agent-client-web/platform"
 	webagentapi "github.com/net12labs/cirm/agent-web-api/platform"
 	webagent "github.com/net12labs/cirm/agent-web/platform"
-	"github.com/net12labs/cirm/dali/context/cmd"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
-	webclient "github.com/net12labs/cirm/site-client-web/platform"
-	webapi "github.com/net12labs/cirm/site-web-api/platform"
-	website "github.com/net12labs/cirm/site-web/platform"
+	webserver "github.com/net12labs/cirm/mali/web-server"
+	webapi "github.com/net12labs/cirm/website-web-api/platform"
+	webclient "github.com/net12labs/cirm/website-web-page/platform"
+	website "github.com/net12labs/cirm/website-web/platform"
 
 	aiagentwebapi "github.com/net12labs/cirm/ai-agent-web-api/platform"
-	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-client/platform"
+	aiagentwebclient "github.com/net12labs/cirm/ai-agent-web-page/platform"
 	webaiagent "github.com/net12labs/cirm/ai-agent-web/platform"
+
+	agent_client "github.com/net12labs/cirm/dali/client-page/agent"
+	aiagent_client "github.com/net12labs/cirm/dali/client-page/ai-agent"
+	website_client "github.com/net12labs/cirm/dali/client-page/website"
+
+	agent_api "github.com/net12labs/cirm/dali/client-api/agent"
+	aiagent_api "github.com/net12labs/cirm/dali/client-api/ai-agent"
+	website_api "github.com/net12labs/cirm/dali/client-api/website"
+
+	agent_web "github.com/net12labs/cirm/dali/client-web/agent"
+	aiagent_web "github.com/net12labs/cirm/dali/client-web/ai-agent"
+	website_web "github.com/net12labs/cirm/dali/client-web/website"
 )
 
 // Possible runmodes are; web, cli
@@ -24,13 +36,13 @@ type Unit struct {
 	Domain        *domain_context.SubDomain
 	WebSiteClient *webclient.WebClient
 	WebSiteApi    *webapi.WebApi
-	WebSite       *website.Site
+	WebSite       *website.WebSite
 
-	WebAgent       *webagent.Agent
+	WebAgent       *webagent.WebAgent
 	WebAgentApi    *webagentapi.WebAgentApi
 	WebAgentClient *webagentclient.WebAgentClient
 
-	WebAiAgent       *webaiagent.AiAgent
+	WebAiAgent       *webaiagent.WebAiAgent
 	WebAiAgentApi    *aiagentwebapi.WebAiAgentApi
 	WebAiAgentClient *aiagentwebclient.WebAiAgentClient
 }
@@ -42,13 +54,13 @@ func NewUnit() *Unit {
 
 	svc.WebSiteClient = webclient.NewWebClient()
 	svc.WebSiteApi = webapi.NewWebApi()
-	svc.WebSite = website.NewSite()
+	svc.WebSite = website.New()
 
-	svc.WebAgent = webagent.NewAgent()
+	svc.WebAgent = webagent.New()
 	svc.WebAgentApi = webagentapi.NewWebApi()
 	svc.WebAgentClient = webagentclient.NewClient()
 
-	svc.WebAiAgent = webaiagent.NewAiAgent()
+	svc.WebAiAgent = webaiagent.New()
 	svc.WebAiAgentApi = aiagentwebapi.NewWebApi()
 	svc.WebAiAgentClient = aiagentwebclient.NewClient()
 
@@ -57,40 +69,57 @@ func NewUnit() *Unit {
 
 func (r *Unit) Init() error {
 
-	r.WebSiteApi.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebSiteApi:", cmd)
-		r.WebSite.OnExecute(cmd)
+	r.WebSite.WebRequest = func(req *website_web.Request) {
+		fmt.Println("Executing command via Admin WebSite:", req)
+		r.OnWebRequest(req.Request)
 	}
-	r.WebSite.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebSite:", cmd)
-		r.OnExecute(cmd)
-	}
-
-	r.WebAgentApi.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebAgentApi:", cmd)
-		r.WebAgent.OnExecute(cmd)
-	}
-	r.WebAgent.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebAgent:", cmd)
-		r.OnExecute(cmd)
+	r.WebAgent.WebRequest = func(req *agent_web.Request) {
+		fmt.Println("Executing command via Admin WebAgent:", req)
+		r.OnWebRequest(req.Request)
 	}
 
-	r.WebAiAgentApi.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebAiAgentApi:", cmd)
-		r.WebAiAgent.OnExecute(cmd)
-	}
-	r.WebAiAgent.Execute = func(cmd *cmd.Cmd) {
-		fmt.Println("Executing command via Platform WebAiAgent:", cmd)
-		r.OnExecute(cmd)
+	r.WebAiAgent.WebRequest = func(req *aiagent_web.Request) {
+		fmt.Println("Executing command via Admin WebAiAgentApi:", req)
+		r.OnWebRequest(req.Request)
 	}
 
 	r.WebSite.Init()
 	r.WebAgent.Init()
 	r.WebAiAgent.Init()
 
+	r.WebSiteApi.ApiRequest = func(req *website_api.Request) {
+		fmt.Println("Executing command via Platform WebSite:", req)
+		r.OnApiRequest(req.Request)
+	}
+
+	r.WebAgentApi.ApiRequest = func(req *agent_api.Request) {
+		fmt.Println("Executing command via Platform WebAgent:", req)
+		r.OnApiRequest(req.Request)
+	}
+
+	r.WebAiAgentApi.ApiRequest = func(req *aiagent_api.Request) {
+		fmt.Println("Executing command via Platform WebAiAgent:", req)
+		r.OnApiRequest(req.Request)
+	}
+
 	r.WebSiteApi.Init()
 	r.WebAgentApi.Init()
 	r.WebAiAgentApi.Init()
+
+	r.WebSiteClient.PageRequest = func(req *website_client.Request) {
+		fmt.Println("Executing command via Admin WebSite:", req)
+		r.OnApiRequest(req.Request)
+	}
+
+	r.WebAgentClient.PageRequest = func(req *agent_client.Request) {
+		fmt.Println("Executing command via Admin WebAgent:", req)
+		r.OnApiRequest(req.Request)
+	}
+
+	r.WebAiAgentClient.PageRequest = func(req *aiagent_client.Request) {
+		fmt.Println("Executing command via Admin WebAiAgent:", req)
+		r.OnApiRequest(req.Request)
+	}
 
 	r.WebSiteClient.Init()
 	r.WebAgentClient.Init()
@@ -104,4 +133,19 @@ func (r *Unit) Run() int {
 	// Initialize other components here
 	// Start the application
 	return 0
+}
+
+func (r *Unit) OnPageRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Platform PageRequest:", req)
+	r.PageRequest(req)
+}
+
+func (r *Unit) OnApiRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Platform ApiRequest:", req)
+	r.ApiRequest(req)
+}
+
+func (r *Unit) OnWebRequest(req *webserver.Request) {
+	fmt.Println("Executing command via Platform WebRequest:", req)
+	r.WebRequest(req)
 }
