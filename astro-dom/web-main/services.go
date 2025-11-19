@@ -3,7 +3,7 @@ package domain
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/astro-pack/domain/ecdn"
+	"github.com/net12labs/cirm/astro-dom/ecdn"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"
 	socketserver "github.com/net12labs/cirm/dolly/socket-server"
 	webserver "github.com/net12labs/cirm/mali/web-server"

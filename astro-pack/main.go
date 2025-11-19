@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/net12labs/cirm/astro-pack/domain"
+	domain "github.com/net12labs/cirm/astro-dom/web-main"
 	"github.com/net12labs/cirm/astro-pack/exec"
 	"github.com/net12labs/cirm/astro-pack/meta"
 

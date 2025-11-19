@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/net12labs/cirm/astro-pack/site"
-	"github.com/net12labs/cirm/dali/shell/cmd"
+	"github.com/net12labs/cirm/dolly/cmd"
 	"github.com/net12labs/cirm/ops/data"
 	"github.com/net12labs/cirm/ops/rtm"
 )

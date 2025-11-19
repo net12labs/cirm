@@ -3,8 +3,8 @@ package aiagentwebapi
 import (
 	"net/http"
 
+	domain "github.com/net12labs/cirm/astro-dom"
 	webapi "github.com/net12labs/cirm/dolly/context/webapi"
-	domain "github.com/net12labs/cirm/domain-web"
 )
 
 type WebAiAgentApi struct {

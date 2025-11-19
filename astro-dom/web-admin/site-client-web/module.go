@@ -3,8 +3,8 @@ package webclient
 import (
 	"embed"
 
+	domain "github.com/net12labs/cirm/astro-dom"
 	client "github.com/net12labs/cirm/dolly/site-client-web"
-	domain "github.com/net12labs/cirm/domain-web"
 )
 
 //go:embed web/*
