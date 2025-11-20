@@ -10,6 +10,13 @@ let isListeningToEvents = false;
 let uploadTargetPath = '/';
 let uploadAbortController = null;
 
+// Volume and VFS Management
+let currentVolume = 'default';
+let currentVFS = 'default';
+let volumeData = {
+    'default': ['default']
+};
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     refreshTree();
@@ -20,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set initial upload path display
     document.getElementById('uploadPath').textContent = '/';
+    
+    // Load volumes
+    loadVolumes();
 });
 
 // Drag and Drop Setup
@@ -96,6 +106,10 @@ async function handleFiles(files) {
     // Ensure path is set correctly
     const targetPath = uploadTargetPath || '/';
     formData.append('path', targetPath);
+    
+    // Add volume and VFS parameters
+    if (currentVolume) formData.append('volume', currentVolume);
+    if (currentVFS) formData.append('vfs', currentVFS);
     
     console.log(`Uploading ${fileArray.length} file(s) to: ${targetPath}`);
     
@@ -391,7 +405,8 @@ function showTab(tabName) {
 // File tree
 async function refreshTree() {
     try {
-        const tree = await fetch(`${API_BASE}/tree?path=/`).then(r => r.json());
+        const url = getAPIUrl('/tree', { path: '/' });
+        const tree = await fetch(url).then(r => r.json());
         renderTree(tree);
     } catch (error) {
         showError('Failed to load file tree: ' + error.message);
@@ -485,7 +500,8 @@ async function loadFile(path) {
 
 // Load text file
 async function loadTextFile(path) {
-    const data = await fetch(`${API_BASE}/file${path}`).then(r => r.json());
+    const url = getAPIUrl(`/file${path}`);
+    const data = await fetch(url).then(r => r.json());
     document.getElementById('editor').value = data.content || '';
     document.getElementById('editor').disabled = false;
     document.getElementById('editor').classList.remove('hidden');
@@ -500,7 +516,7 @@ async function loadImageFile(path) {
     document.getElementById('saveBtn').disabled = true;
     
     // Use download endpoint to get the image
-    const imageUrl = `${API_BASE}/download${path}`;
+    const imageUrl = getAPIUrl(`/download${path}`);
     const img = document.getElementById('previewImage');
     
     img.onload = function() {
@@ -512,7 +528,8 @@ async function loadImageFile(path) {
     
     // Get file size
     try {
-        const info = await fetch(`${API_BASE}/stat${path}`).then(r => r.json());
+        const statUrl = getAPIUrl(`/stat${path}`);
+        const info = await fetch(statUrl).then(r => r.json());
         document.getElementById('imageSize').textContent = formatSize(info.size);
     } catch (e) {
         document.getElementById('imageSize').textContent = '';
@@ -528,7 +545,8 @@ async function loadBinaryFile(path) {
     
     // Get file info
     try {
-        const info = await fetch(`${API_BASE}/stat${path}`).then(r => r.json());
+        const statUrl = getAPIUrl(`/stat${path}`);
+        const info = await fetch(statUrl).then(r => r.json());
         const filename = path.split('/').pop();
         const ext = filename.split('.').pop().toUpperCase();
         
@@ -567,7 +585,8 @@ async function saveFile() {
     
     try {
         const content = document.getElementById('editor').value;
-        await fetch(`${API_BASE}/file${currentPath}`, {
+        const url = getAPIUrl(`/file${currentPath}`);
+        await fetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content })
@@ -587,11 +606,13 @@ async function deleteFile() {
     if (!confirm(`Are you sure you want to delete ${currentPath}?`)) return;
     
     try {
+        let url;
         if (currentIsDir) {
-            await fetch(`${API_BASE}/dir${currentPath}`, { method: 'DELETE' });
+            url = getAPIUrl(`/dir${currentPath}`);
         } else {
-            await fetch(`${API_BASE}/file${currentPath}`, { method: 'DELETE' });
+            url = getAPIUrl(`/file${currentPath}`);
         }
+        await fetch(url, { method: 'DELETE' });
         
         currentPath = null;
         document.getElementById('editor').value = '';
@@ -629,7 +650,8 @@ async function createFile() {
     }
     
     try {
-        await fetch(`${API_BASE}/files`, {
+        const url = getAPIUrl('/files');
+        await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ path: fullPath, content: '' })
@@ -668,7 +690,8 @@ async function createFolder() {
     }
     
     try {
-        await fetch(`${API_BASE}/dirs`, {
+        const url = getAPIUrl('/dirs');
+        await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ path: fullPath })
@@ -1086,3 +1109,234 @@ function showStatus(message, isError) {
         setTimeout(() => el.remove(), 300);
     }, 3000);
 }
+
+// Volume and VFS Management
+function toggleVolumePanel() {
+    const content = document.getElementById('volumeContent');
+    const btn = event.target;
+    content.classList.toggle('collapsed');
+    btn.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+}
+
+// Select volume from tree
+function selectVolume(volumeName) {
+    currentVolume = volumeName;
+    currentVFS = volumeData[volumeName][0]; // Select first VFS
+    updateContextPath();
+    refreshTree();
+    renderVolumeTree(); // Re-render to update active states
+}
+
+// Select VFS from tree
+function selectVFS(volumeName, vfsName) {
+    currentVolume = volumeName;
+    currentVFS = vfsName;
+    updateContextPath();
+    refreshTree();
+    renderVolumeTree(); // Re-render to update active states
+}
+
+// Render volume tree UI
+function renderVolumeTree() {
+    const container = document.getElementById('volumeTree');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    Object.keys(volumeData).forEach(volumeName => {
+        // Volume item
+        const volumeDiv = document.createElement('div');
+        volumeDiv.className = 'volume-item' + (volumeName === currentVolume ? ' active' : '');
+        volumeDiv.onclick = () => selectVolume(volumeName);
+        volumeDiv.innerHTML = `
+            <span class="volume-icon">💾</span>
+            <span class="volume-name">${volumeName}</span>
+            <button onclick="event.stopPropagation(); showCreateVFSDialog('${volumeName}')" class="btn-tiny" title="New VFS">+</button>
+        `;
+        container.appendChild(volumeDiv);
+        
+        // VFS list
+        const vfsList = document.createElement('div');
+        vfsList.className = 'vfs-list';
+        vfsList.style.display = volumeName === currentVolume ? 'flex' : 'none';
+        
+        volumeData[volumeName].forEach(vfsName => {
+            const vfsDiv = document.createElement('div');
+            vfsDiv.className = 'vfs-item' + (volumeName === currentVolume && vfsName === currentVFS ? ' active' : '');
+            vfsDiv.onclick = (e) => {
+                e.stopPropagation();
+                selectVFS(volumeName, vfsName);
+            };
+            vfsDiv.innerHTML = `
+                <span class="vfs-icon">📂</span>
+                <span class="vfs-name">${vfsName}</span>
+            `;
+            vfsList.appendChild(vfsDiv);
+        });
+        
+        container.appendChild(vfsList);
+    });
+}
+
+// Load volumes list
+async function loadVolumes() {
+    try {
+        const response = await fetch(`${API_BASE}/volumes`).catch(() => null);
+        if (!response || !response.ok) {
+            // API not available yet, use default volume silently
+            renderVolumeTree();
+            return;
+        }
+        
+        const volumes = await response.json();
+        if (volumes && volumes.length > 0) {
+            volumeData = {};
+            volumes.forEach(vol => {
+                volumeData[vol] = ['default'];
+            });
+        }
+        
+        renderVolumeTree();
+        updateContextPath();
+    } catch (error) {
+        console.log('Using default volume setup:', error.message);
+        renderVolumeTree();
+    }
+}
+
+// Switch volume
+async function switchVolume() {
+    const select = document.getElementById('volumeSelect');
+    currentVolume = select.value;
+    
+    console.log('Switched to volume:', currentVolume);
+    
+    // Update API base to include volume parameter
+    updateContextPath();
+    
+    // Reload file tree
+    await refreshTree();
+    
+    showSuccess(`Switched to volume: ${currentVolume}`);
+}
+
+// Switch VFS
+async function switchVFS() {
+    const select = document.getElementById('vfsSelect');
+    currentVFS = select.value;
+    
+    console.log('Switched to VFS:', currentVFS);
+    
+    updateContextPath();
+    
+    // Reload file tree
+    await refreshTree();
+    
+    showSuccess(`Switched to VFS: ${currentVFS}`);
+}
+
+// Update context path display
+function updateContextPath() {
+    const path = `${currentVolume}/${currentVFS}`;
+    document.getElementById('contextPath').textContent = path;
+}
+
+// Show create volume dialog
+function showCreateVolumeDialog() {
+    const volumeName = prompt('Enter new volume name:');
+    if (!volumeName) return;
+    
+    if (!/^[a-zA-Z0-9_-]+$/.test(volumeName)) {
+        showError('Volume name can only contain letters, numbers, hyphens, and underscores');
+        return;
+    }
+    
+    createVolume(volumeName);
+}
+
+// Create new volume
+async function createVolume(volumeName) {
+    try {
+        const response = await fetch(`${API_BASE}/volumes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: volumeName })
+        });
+        
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error);
+        }
+        
+        showSuccess(`Volume "${volumeName}" created successfully`);
+        
+        // Add to volume data and render
+        volumeData[volumeName] = ['default'];
+        selectVolume(volumeName);
+        
+    } catch (error) {
+        showError('Failed to create volume: ' + error.message);
+    }
+}
+
+// Show create VFS dialog
+function showCreateVFSDialog(volumeName) {
+    const vfsName = prompt(`Create new VFS in volume "${volumeName}":`);
+    if (!vfsName) return;
+    
+    if (!/^[a-zA-Z0-9_-]+$/.test(vfsName)) {
+        showError('VFS name can only contain letters, numbers, hyphens, and underscores');
+        return;
+    }
+    
+    createVFS(volumeName, vfsName);
+}
+
+// Create new VFS
+async function createVFS(volumeName, vfsName) {
+    try {
+        const response = await fetch(`${API_BASE}/filesystems`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                volume: volumeName,
+                name: vfsName 
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error);
+        }
+        
+        showSuccess(`VFS "${vfsName}" created successfully in volume "${volumeName}"`);
+        
+        // Add to volume data and render
+        if (!volumeData[volumeName]) {
+            volumeData[volumeName] = [];
+        }
+        volumeData[volumeName].push(vfsName);
+        selectVFS(volumeName, vfsName);
+        
+    } catch (error) {
+        showError('Failed to create VFS: ' + error.message);
+    }
+}
+
+// Get API URL with volume and VFS parameters
+function getAPIUrl(endpoint) {
+    const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
+    if (currentVolume && currentVolume !== 'default') {
+        url.searchParams.set('volume', currentVolume);
+    }
+    if (currentVFS && currentVFS !== 'default') {
+        url.searchParams.set('vfs', currentVFS);
+    }
+    return url.toString();
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadVolumes();
+    // ...existing initialization code...
+});

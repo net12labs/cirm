@@ -56,6 +56,39 @@ func NewServer(dbPath string, port int) (*Server, error) {
 	return s, nil
 }
 
+// getVFS returns the VFS for the given volume and filesystem from query params or form values
+// Falls back to default volume/vfs if not specified
+func (s *Server) getVFS(r *http.Request) (*vfsql.VFS, error) {
+	// Try query params first, then form values (for multipart uploads)
+	volumeName := r.URL.Query().Get("volume")
+	if volumeName == "" {
+		volumeName = r.FormValue("volume")
+	}
+	if volumeName == "" {
+		volumeName = "default"
+	}
+
+	vfsName := r.URL.Query().Get("vfs")
+	if vfsName == "" {
+		vfsName = r.FormValue("vfs")
+	}
+	if vfsName == "" {
+		vfsName = "default"
+	}
+
+	vol, err := s.db.GetVolume(volumeName)
+	if err != nil {
+		return nil, fmt.Errorf("volume not found: %v", err)
+	}
+
+	vfs, err := vol.GetVFS(vfsName)
+	if err != nil {
+		return nil, fmt.Errorf("vfs not found: %v", err)
+	}
+
+	return vfs, nil
+}
+
 // setupRoutes configures all API routes
 func (s *Server) setupRoutes() {
 	// API routes first (more specific)
@@ -64,6 +97,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/cdn-url/", s.handleCDNURL)
 	s.mux.HandleFunc("/api/test-create", s.handleTestCreate)
 	s.mux.HandleFunc("/cdn/", s.handleCDN)
+	s.mux.HandleFunc("/api/volumes", s.handleVolumes)
+	s.mux.HandleFunc("/api/filesystems", s.handleFilesystems)
 	s.mux.HandleFunc("/api/files", s.handleFiles)
 	s.mux.HandleFunc("/api/file/", s.handleFile)
 	s.mux.HandleFunc("/api/dirs", s.handleDirs)
@@ -269,9 +304,15 @@ func (s *Server) enableCORS(next http.Handler) http.Handler {
 
 // handleFiles lists files in root or creates new file
 func (s *Server) handleFiles(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	switch r.Method {
 	case "GET":
-		entries, err := s.vfs.ReadDir("/")
+		entries, err := vfs.ReadDir("/")
 		if err != nil {
 			s.jsonError(w, err, http.StatusInternalServerError)
 			return
@@ -288,7 +329,7 @@ func (s *Server) handleFiles(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		f, err := s.vfs.Create(req.Path)
+		f, err := vfs.Create(req.Path)
 		if err != nil {
 			s.jsonError(w, err, http.StatusInternalServerError)
 			return
@@ -317,11 +358,17 @@ func (s *Server) handleFiles(w http.ResponseWriter, r *http.Request) {
 
 // handleFile manages single file operations
 func (s *Server) handleFile(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	path := strings.TrimPrefix(r.URL.Path, "/api/file")
 
 	switch r.Method {
 	case "GET":
-		f, err := s.vfs.Open(path)
+		f, err := vfs.Open(path)
 		if err != nil {
 			s.jsonError(w, err, http.StatusNotFound)
 			return
@@ -348,7 +395,7 @@ func (s *Server) handleFile(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		f, err := s.vfs.OpenFile(path, 2, 0644) // O_RDWR
+		f, err := vfs.OpenFile(path, 2, 0644) // O_RDWR
 		if err != nil {
 			s.jsonError(w, err, http.StatusNotFound)
 			return
@@ -364,7 +411,7 @@ func (s *Server) handleFile(w http.ResponseWriter, r *http.Request) {
 		s.jsonResponse(w, map[string]string{"status": "updated"})
 
 	case "DELETE":
-		if err := s.vfs.Remove(path); err != nil {
+		if err := vfs.Remove(path); err != nil {
 			s.jsonError(w, err, http.StatusInternalServerError)
 			return
 		}
@@ -377,6 +424,12 @@ func (s *Server) handleFile(w http.ResponseWriter, r *http.Request) {
 
 // handleDirs handles directory operations
 func (s *Server) handleDirs(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	switch r.Method {
 	case "POST":
 		var req struct {
@@ -387,7 +440,7 @@ func (s *Server) handleDirs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := s.vfs.MkdirAll(req.Path, 0755); err != nil {
+		if err := vfs.MkdirAll(req.Path, 0755); err != nil {
 			s.jsonError(w, err, http.StatusInternalServerError)
 			return
 		}
@@ -620,9 +673,15 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 
 // handleStat returns file/directory stats
 func (s *Server) handleStat(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	path := strings.TrimPrefix(r.URL.Path, "/api/stat")
 
-	info, err := s.vfs.Stat(path)
+	info, err := vfs.Stat(path)
 	if err != nil {
 		s.jsonError(w, err, http.StatusNotFound)
 		return
@@ -639,12 +698,18 @@ func (s *Server) handleStat(w http.ResponseWriter, r *http.Request) {
 
 // handleTree returns directory tree
 func (s *Server) handleTree(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	path := r.URL.Query().Get("path")
 	if path == "" {
 		path = "/"
 	}
 
-	tree, err := s.buildTree(path, 3) // max depth 3
+	tree, err := s.buildTree(vfs, path, 3) // max depth 3
 	if err != nil {
 		s.jsonError(w, err, http.StatusInternalServerError)
 		return
@@ -654,12 +719,12 @@ func (s *Server) handleTree(w http.ResponseWriter, r *http.Request) {
 }
 
 // buildTree recursively builds directory tree
-func (s *Server) buildTree(path string, depth int) (map[string]interface{}, error) {
+func (s *Server) buildTree(vfs *vfsql.VFS, path string, depth int) (map[string]interface{}, error) {
 	if depth <= 0 {
 		return nil, nil
 	}
 
-	info, err := s.vfs.Stat(path)
+	info, err := vfs.Stat(path)
 	if err != nil {
 		return nil, err
 	}
@@ -672,7 +737,7 @@ func (s *Server) buildTree(path string, depth int) (map[string]interface{}, erro
 	}
 
 	if info.IsDir() {
-		entries, err := s.vfs.ReadDir(path)
+		entries, err := vfs.ReadDir(path)
 		if err != nil {
 			return node, nil
 		}
@@ -680,7 +745,7 @@ func (s *Server) buildTree(path string, depth int) (map[string]interface{}, erro
 		children := []map[string]interface{}{}
 		for _, entry := range entries {
 			childPath := filepath.Join(path, entry.Name())
-			if child, err := s.buildTree(childPath, depth-1); err == nil && child != nil {
+			if child, err := s.buildTree(vfs, childPath, depth-1); err == nil && child != nil {
 				children = append(children, child)
 			}
 		}
@@ -974,6 +1039,12 @@ func (s *Server) handleCDN(w http.ResponseWriter, r *http.Request) {
 
 // handleDownload serves files for download with proper headers
 func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	path := strings.TrimPrefix(r.URL.Path, "/api/download")
 
 	if r.Method != "GET" {
@@ -982,7 +1053,7 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get file info first
-	info, err := s.vfs.Stat(path)
+	info, err := vfs.Stat(path)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
@@ -994,7 +1065,7 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Open file
-	f, err := s.vfs.Open(path)
+	f, err := vfs.Open(path)
 	if err != nil {
 		http.Error(w, "Failed to open file", http.StatusInternalServerError)
 		return
@@ -1066,8 +1137,14 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vfs, err := s.getVFS(r)
+	if err != nil {
+		s.jsonError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	// Parse multipart form (32MB max)
-	err := r.ParseMultipartForm(32 << 20)
+	err = r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		s.jsonError(w, err, http.StatusBadRequest)
 		return
@@ -1132,7 +1209,7 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Printf("Upload: creating at path=%s\n", filePath) // Create file in VFS
-		f, err := s.vfs.Create(filePath)
+		f, err := vfs.Create(filePath)
 		if err != nil {
 			fmt.Printf("Upload: create failed: %v\n", err)
 			results = append(results, map[string]interface{}{
@@ -1158,7 +1235,7 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Verify by reading back
-		verifyF, verifyErr := s.vfs.Open(filePath)
+		verifyF, verifyErr := vfs.Open(filePath)
 		if verifyErr == nil {
 			verifyContent, _ := io.ReadAll(verifyF)
 			verifyF.Close()
@@ -1177,6 +1254,136 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		"uploaded": len(files),
 		"results":  results,
 	})
+}
+
+// handleVolumes manages volume operations
+func (s *Server) handleVolumes(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		// List all volumes
+		volumes, err := s.db.ListVolumes()
+		if err != nil {
+			s.jsonError(w, err, http.StatusInternalServerError)
+			return
+		}
+		s.jsonResponse(w, volumes)
+
+	case "POST":
+		// Create new volume
+		var req struct {
+			Name string `json:"name"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			s.jsonError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		if req.Name == "" {
+			s.jsonError(w, fmt.Errorf("volume name is required"), http.StatusBadRequest)
+			return
+		}
+
+		_, err := s.db.CreateVolume(req.Name)
+		if err != nil {
+			s.jsonError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		s.jsonResponse(w, map[string]interface{}{
+			"success": true,
+			"volume":  req.Name,
+			"message": "Volume created successfully",
+		})
+
+	case "DELETE":
+		// Delete volume
+		volumeName := r.URL.Query().Get("name")
+		if volumeName == "" {
+			s.jsonError(w, fmt.Errorf("volume name is required"), http.StatusBadRequest)
+			return
+		}
+
+		err := s.db.DeleteVolume(volumeName)
+		if err != nil {
+			s.jsonError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		s.jsonResponse(w, map[string]interface{}{
+			"success": true,
+			"message": "Volume deleted successfully",
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleFilesystems manages filesystem operations
+func (s *Server) handleFilesystems(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		// List filesystems for a volume
+		volumeName := r.URL.Query().Get("volume")
+		if volumeName == "" {
+			volumeName = "default"
+		}
+
+		volume, err := s.db.GetVolume(volumeName)
+		if err != nil {
+			s.jsonError(w, err, http.StatusNotFound)
+			return
+		}
+
+		filesystems, err := volume.ListFilesystems()
+		if err != nil {
+			s.jsonError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		s.jsonResponse(w, filesystems)
+
+	case "POST":
+		// Create new filesystem
+		var req struct {
+			Volume string `json:"volume"`
+			Name   string `json:"name"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			s.jsonError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		if req.Volume == "" {
+			req.Volume = "default"
+		}
+		if req.Name == "" {
+			s.jsonError(w, fmt.Errorf("filesystem name is required"), http.StatusBadRequest)
+			return
+		}
+
+		volume, err := s.db.GetVolume(req.Volume)
+		if err != nil {
+			s.jsonError(w, err, http.StatusNotFound)
+			return
+		}
+
+		err = volume.CreateFilesystem(req.Name)
+		if err != nil {
+			s.jsonError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		s.jsonResponse(w, map[string]interface{}{
+			"success":    true,
+			"volume":     req.Volume,
+			"filesystem": req.Name,
+			"message":    "Filesystem created successfully",
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
 
 // jsonResponse sends JSON response

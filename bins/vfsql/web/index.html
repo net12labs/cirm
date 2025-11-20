@@ -14,6 +14,32 @@
         </header>
 
         <div class="main-content">
+            <!-- Volume/VFS Tree Panel -->
+            <aside class="volume-sidebar">
+                <div class="volume-panel">
+                    <div class="panel-header">
+                        <h3>📚 Volumes</h3>
+                        <button onclick="showCreateVolumeDialog()" class="btn-icon" title="New Volume">➕</button>
+                    </div>
+                    <div class="volume-tree" id="volumeTree">
+                        <div class="volume-item active" onclick="selectVolume('default')">
+                            <span class="volume-icon">💾</span>
+                            <span class="volume-name">default</span>
+                            <button onclick="event.stopPropagation(); showCreateVFSDialog('default')" class="btn-tiny" title="New VFS">+</button>
+                        </div>
+                        <div class="vfs-list">
+                            <div class="vfs-item active" onclick="selectVFS('default', 'default')">
+                                <span class="vfs-icon">📂</span>
+                                <span class="vfs-name">default</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="current-context">
+                        <small>📍 <span id="contextPath">default/default</span></small>
+                    </div>
+                </div>
+            </aside>
+
             <!-- Sidebar with file tree -->
             <aside class="sidebar">
                 <h2>File Browser</h2>
