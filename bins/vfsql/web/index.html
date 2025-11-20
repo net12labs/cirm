@@ -27,7 +27,7 @@
                     <div class="drop-zone-content">
                         <span class="drop-icon">📁</span>
                         <p>Drag & Drop files here</p>
-                        <p class="drop-hint">or click to browse</p>
+                        <p class="drop-hint">or click to browse (multiple files supported)</p>
                         <input type="file" id="fileInput" multiple hidden>
                     </div>
                     <div class="drop-target-path">
@@ -59,7 +59,26 @@
                             <button onclick="deleteFile()" id="deleteBtn" disabled>🗑️ Delete</button>
                         </div>
                     </div>
+                    
+                    <!-- Text Editor -->
                     <textarea id="editor" placeholder="Select a file or create a new one..."></textarea>
+                    
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="image-preview hidden">
+                        <img id="previewImage" alt="Image preview">
+                        <div class="image-info">
+                            <span id="imageSize"></span>
+                            <span id="imageDimensions"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Binary File Info -->
+                    <div id="binaryInfo" class="binary-info hidden">
+                        <div class="binary-icon">📦</div>
+                        <h3>Binary File</h3>
+                        <p>This file cannot be edited in the browser.</p>
+                        <div id="binaryDetails"></div>
+                    </div>
                     
                     <!-- Upload Progress -->
                     <div id="uploadProgress" class="upload-progress hidden">

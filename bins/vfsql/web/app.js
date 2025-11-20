@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('saveBtn').disabled = false;
     });
     setupDragAndDrop();
+    
+    // Set initial upload path display
+    document.getElementById('uploadPath').textContent = '/';
 });
 
 // Drag and Drop Setup
@@ -89,7 +92,12 @@ async function handleFiles(files) {
     
     // Use multipart upload for better binary support
     const formData = new FormData();
-    formData.append('path', uploadTargetPath);
+    
+    // Ensure path is set correctly
+    const targetPath = uploadTargetPath || '/';
+    formData.append('path', targetPath);
+    
+    console.log(`Uploading ${fileArray.length} file(s) to: ${targetPath}`);
     
     // Add all files to form data
     fileArray.forEach(file => {
@@ -99,7 +107,7 @@ async function handleFiles(files) {
         itemDiv.className = 'upload-item';
         itemDiv.id = `upload-${file.name}`;
         itemDiv.innerHTML = `
-            <span class="name">${file.name}</span>
+            <span class="name">${file.name} → ${targetPath}</span>
             <span class="status pending">⏳</span>
         `;
         detailsDiv.appendChild(itemDiv);
@@ -107,43 +115,56 @@ async function handleFiles(files) {
     
     try {
         // Upload all files at once
+        console.log('Sending upload request...');
         const response = await fetch(`${API_BASE}/upload`, {
             method: 'POST',
             body: formData,
             signal: uploadAbortController.signal
         });
         
+        console.log('Upload response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error(`Upload failed: ${response.statusText}`);
+            const errorText = await response.text();
+            throw new Error(`Upload failed: ${response.statusText} - ${errorText}`);
         }
         
         const result = await response.json();
+        console.log('Upload result:', result);
         
         // Update status for each file
-        result.results.forEach(fileResult => {
-            const itemDiv = document.getElementById(`upload-${fileResult.name}`);
-            if (itemDiv) {
-                if (fileResult.success) {
-                    itemDiv.querySelector('.status').textContent = '✓';
-                    itemDiv.querySelector('.status').className = 'status success';
-                } else {
-                    itemDiv.querySelector('.status').textContent = '✗';
-                    itemDiv.querySelector('.status').className = 'status error';
-                    itemDiv.title = fileResult.error || 'Upload failed';
+        if (result.results && Array.isArray(result.results)) {
+            result.results.forEach(fileResult => {
+                const itemDiv = document.getElementById(`upload-${fileResult.name}`);
+                if (itemDiv) {
+                    if (fileResult.success) {
+                        itemDiv.querySelector('.status').textContent = '✓';
+                        itemDiv.querySelector('.status').className = 'status success';
+                        // Update to show actual path
+                        if (fileResult.path) {
+                            itemDiv.querySelector('.name').textContent = fileResult.path;
+                        }
+                    } else {
+                        itemDiv.querySelector('.status').textContent = '✗';
+                        itemDiv.querySelector('.status').className = 'status error';
+                        itemDiv.title = fileResult.error || 'Upload failed';
+                    }
                 }
+            });
+            
+            progressFill.style.width = '100%';
+            
+            const successful = result.results.filter(r => r.success).length;
+            progressText.textContent = `Uploaded ${successful} of ${fileArray.length} file(s)`;
+            
+            if (successful > 0) {
+                showSuccess(`Successfully uploaded ${successful} file(s) to ${targetPath}`);
             }
-        });
-        
-        progressFill.style.width = '100%';
-        
-        const successful = result.results.filter(r => r.success).length;
-        progressText.textContent = `Uploaded ${successful} of ${fileArray.length} file(s)`;
-        
-        if (successful > 0) {
-            showSuccess(`Successfully uploaded ${successful} file(s)`);
-        }
-        if (successful < fileArray.length) {
-            showError(`Failed to upload ${fileArray.length - successful} file(s)`);
+            if (successful < fileArray.length) {
+                showError(`Failed to upload ${fileArray.length - successful} file(s)`);
+            }
+        } else {
+            throw new Error('Invalid response format from server');
         }
         
     } catch (error) {
@@ -309,6 +330,8 @@ async function selectFile(path, isDir) {
         document.getElementById('uploadPath').textContent = uploadTargetPath;
     }
     
+    console.log(`Selected: ${path} (isDir: ${isDir}), upload target: ${uploadTargetPath}`);
+    
     // Update active state
     document.querySelectorAll('.tree-item').forEach(item => {
         item.classList.remove('active');
@@ -332,18 +355,109 @@ async function selectFile(path, isDir) {
 // Load file content
 async function loadFile(path) {
     try {
-        const data = await fetch(`${API_BASE}/file${path}`).then(r => r.json());
-        document.getElementById('editor').value = data.content || '';
-        document.getElementById('editor').disabled = false;
-        document.getElementById('saveBtn').disabled = true;
+        // Hide all content views
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('imagePreview').classList.add('hidden');
+        document.getElementById('binaryInfo').classList.add('hidden');
+        
+        // Check if it's an image file
+        const ext = path.split('.').pop().toLowerCase();
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'];
+        const binaryExts = ['pdf', 'zip', 'tar', 'gz', 'exe', 'dll', 'so', 'bin'];
+        
+        if (imageExts.includes(ext)) {
+            await loadImageFile(path);
+        } else if (binaryExts.includes(ext)) {
+            await loadBinaryFile(path);
+        } else {
+            await loadTextFile(path);
+        }
     } catch (error) {
         showError('Failed to load file: ' + error.message);
+    }
+}
+
+// Load text file
+async function loadTextFile(path) {
+    const data = await fetch(`${API_BASE}/file${path}`).then(r => r.json());
+    document.getElementById('editor').value = data.content || '';
+    document.getElementById('editor').disabled = false;
+    document.getElementById('editor').classList.remove('hidden');
+    document.getElementById('saveBtn').disabled = true;
+}
+
+// Load image file
+async function loadImageFile(path) {
+    // Hide editor, show image preview
+    document.getElementById('editor').classList.add('hidden');
+    document.getElementById('imagePreview').classList.remove('hidden');
+    document.getElementById('saveBtn').disabled = true;
+    
+    // Use download endpoint to get the image
+    const imageUrl = `${API_BASE}/download${path}`;
+    const img = document.getElementById('previewImage');
+    
+    img.onload = function() {
+        document.getElementById('imageDimensions').textContent = 
+            `${img.naturalWidth} × ${img.naturalHeight} pixels`;
+    };
+    
+    img.src = imageUrl;
+    
+    // Get file size
+    try {
+        const info = await fetch(`${API_BASE}/stat${path}`).then(r => r.json());
+        document.getElementById('imageSize').textContent = formatSize(info.size);
+    } catch (e) {
+        document.getElementById('imageSize').textContent = '';
+    }
+}
+
+// Load binary file
+async function loadBinaryFile(path) {
+    // Hide editor, show binary info
+    document.getElementById('editor').classList.add('hidden');
+    document.getElementById('binaryInfo').classList.remove('hidden');
+    document.getElementById('saveBtn').disabled = true;
+    
+    // Get file info
+    try {
+        const info = await fetch(`${API_BASE}/stat${path}`).then(r => r.json());
+        const filename = path.split('/').pop();
+        const ext = filename.split('.').pop().toUpperCase();
+        
+        document.getElementById('binaryDetails').innerHTML = `
+            <div class="binary-detail-row">
+                <span class="binary-detail-label">Filename:</span>
+                <span class="binary-detail-value">${filename}</span>
+            </div>
+            <div class="binary-detail-row">
+                <span class="binary-detail-label">Type:</span>
+                <span class="binary-detail-value">${ext} File</span>
+            </div>
+            <div class="binary-detail-row">
+                <span class="binary-detail-label">Size:</span>
+                <span class="binary-detail-value">${formatSize(info.size)}</span>
+            </div>
+            <div class="binary-detail-row">
+                <span class="binary-detail-label">Modified:</span>
+                <span class="binary-detail-value">${new Date(info.modTime).toLocaleString()}</span>
+            </div>
+        `;
+    } catch (e) {
+        console.error('Failed to load binary file info:', e);
     }
 }
 
 // Save file
 async function saveFile() {
     if (!currentPath || currentIsDir) return;
+    
+    // Only save if editor is visible (text files)
+    if (document.getElementById('editor').classList.contains('hidden')) {
+        showError('Cannot save binary files');
+        return;
+    }
     
     try {
         const content = document.getElementById('editor').value;
@@ -386,19 +500,38 @@ async function deleteFile() {
 
 // Create new file
 async function createFile() {
-    const path = prompt('Enter file path (e.g., /myfile.txt):');
-    if (!path) return;
+    // Use current upload target path (which is the selected directory)
+    const basePath = uploadTargetPath || '/';
+    const displayPath = basePath === '/' ? 'root' : basePath;
+    const fileName = prompt(`Create new file in: ${displayPath}\n\nEnter filename (e.g., myfile.txt):`);
+    if (!fileName) return;
+    
+    // Clean up the file name (remove leading/trailing slashes)
+    const cleanName = fileName.replace(/^\/+|\/+$/g, '');
+    
+    if (!cleanName) {
+        showError('Invalid filename');
+        return;
+    }
+    
+    // Build the full path
+    let fullPath;
+    if (basePath === '/') {
+        fullPath = `/${cleanName}`;
+    } else {
+        fullPath = `${basePath}/${cleanName}`;
+    }
     
     try {
         await fetch(`${API_BASE}/files`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path, content: '' })
+            body: JSON.stringify({ path: fullPath, content: '' })
         });
         
-        showSuccess('File created successfully');
+        showSuccess(`File created: ${fullPath}`);
         refreshTree();
-        selectFile(path, false);
+        selectFile(fullPath, false);
     } catch (error) {
         showError('Failed to create file: ' + error.message);
     }
@@ -406,17 +539,36 @@ async function createFile() {
 
 // Create new folder
 async function createFolder() {
-    const path = prompt('Enter folder path (e.g., /myfolder):');
-    if (!path) return;
+    // Use current upload target path (which is the selected directory)
+    const basePath = uploadTargetPath || '/';
+    const displayPath = basePath === '/' ? 'root' : basePath;
+    const folderName = prompt(`Create new folder in: ${displayPath}\n\nEnter folder name (e.g., documents):`);
+    if (!folderName) return;
+    
+    // Clean up the folder name (remove leading/trailing slashes)
+    const cleanName = folderName.replace(/^\/+|\/+$/g, '');
+    
+    if (!cleanName) {
+        showError('Invalid folder name');
+        return;
+    }
+    
+    // Build the full path
+    let fullPath;
+    if (basePath === '/') {
+        fullPath = `/${cleanName}`;
+    } else {
+        fullPath = `${basePath}/${cleanName}`;
+    }
     
     try {
         await fetch(`${API_BASE}/dirs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path })
+            body: JSON.stringify({ path: fullPath })
         });
         
-        showSuccess('Folder created successfully');
+        showSuccess(`Folder created: ${fullPath}`);
         refreshTree();
     } catch (error) {
         showError('Failed to create folder: ' + error.message);

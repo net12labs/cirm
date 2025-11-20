@@ -195,6 +195,103 @@ header p {
     resize: vertical;
 }
 
+/* Image Preview */
+.image-preview {
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+    padding: 20px;
+}
+
+.image-preview.hidden {
+    display: none;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 600px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: white;
+    padding: 10px;
+}
+
+.image-info {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Binary File Info */
+.binary-info {
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+    padding: 40px;
+    text-align: center;
+}
+
+.binary-info.hidden {
+    display: none;
+}
+
+.binary-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.binary-info h3 {
+    color: #667eea;
+    margin-bottom: 10px;
+}
+
+.binary-info p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+#binaryDetails {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: left;
+    max-width: 400px;
+}
+
+.binary-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.binary-detail-row:last-child {
+    border-bottom: none;
+}
+
+.binary-detail-label {
+    font-weight: 500;
+    color: #666;
+}
+
+.binary-detail-value {
+    color: #333;
+}
+
 button {
     padding: 10px 20px;
     background: #667eea;
@@ -610,6 +707,11 @@ button:disabled {
     background: #555;
 }
 
+/* Hidden utility class */
+.hidden {
+    display: none !important;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
     .main-content {
@@ -618,6 +720,10 @@ button:disabled {
     
     .sidebar {
         max-height: 300px;
+    }
+    
+    .image-preview img {
+        max-height: 400px;
     }
 }
 

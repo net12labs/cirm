@@ -876,11 +876,20 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		targetPath = "/"
 	}
 
+	// Ensure path starts with /
+	if !strings.HasPrefix(targetPath, "/") {
+		targetPath = "/" + targetPath
+	}
+
+	fmt.Printf("Upload: target path=%s\n", targetPath)
+
 	files := r.MultipartForm.File["files"]
 	if len(files) == 0 {
 		s.jsonError(w, fmt.Errorf("no files provided"), http.StatusBadRequest)
 		return
 	}
+
+	fmt.Printf("Upload: processing %d files\n", len(files))
 
 	results := make([]map[string]interface{}, 0, len(files))
 
@@ -910,15 +919,17 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Printf("Upload: filename=%s, read=%d bytes\n", fileHeader.Filename, len(content))
 
-		// Create file path
-		filePath := filepath.Join(targetPath, fileHeader.Filename)
-		if !strings.HasPrefix(filePath, "/") {
-			filePath = "/" + filePath
+		// Create file path - build it manually to ensure Unix-style paths
+		var filePath string
+		if targetPath == "/" {
+			filePath = "/" + fileHeader.Filename
+		} else {
+			// Remove trailing slash from targetPath if present
+			cleanTarget := strings.TrimSuffix(targetPath, "/")
+			filePath = cleanTarget + "/" + fileHeader.Filename
 		}
 
-		fmt.Printf("Upload: creating at path=%s\n", filePath)
-
-		// Create file in VFS
+		fmt.Printf("Upload: creating at path=%s\n", filePath) // Create file in VFS
 		f, err := s.vfs.Create(filePath)
 		if err != nil {
 			fmt.Printf("Upload: create failed: %v\n", err)

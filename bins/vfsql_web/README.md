@@ -69,20 +69,24 @@ Open your browser and navigate to:
 
 ### File Browser Tab
 
-- **New File** - Create a new file
-- **New Folder** - Create a new directory
+- **New File** - Create a new file in the currently selected directory
+- **New Folder** - Create a new directory in the currently selected directory
 - **Refresh** - Reload the file tree
 - **Drag & Drop** - Drag files from your computer directly into the drop zone
 - **Click to Browse** - Click the drop zone to select files from your computer
 - Click on any file to view/edit its contents
-- Upload target path updates based on selected directory
+- Click on any directory to set it as the target for new files/folders/uploads
+- Current target directory is shown in the drop zone ("Uploading to: /path")
 
 ### Editor Tab
 
-- View and edit file contents
+- **Text Files** - View and edit in the built-in editor
+- **Image Files** - Automatic image preview with dimensions and size
+  - Supported: JPG, PNG, GIF, BMP, WEBP, SVG, ICO
+- **Binary Files** - Shows file information (PDF, ZIP, etc.)
 - **Upload Files** button - Select files from your computer
 - **Download** button - Download current file to your computer
-- **Save** button - Persist changes to the file
+- **Save** button - Persist changes to text files
 - **Delete** button - Remove files/directories
 - Auto-save indicator when changes are made
 - Upload progress indicator with per-file status
