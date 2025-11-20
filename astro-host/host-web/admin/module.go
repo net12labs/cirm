@@ -3,7 +3,7 @@ package admin
 import (
 	"fmt"
 
-	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-web/admin"
+	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-page/admin"
 	webagentapi "github.com/net12labs/cirm/astro-site/web/agent-web-api/admin"
 	website "github.com/net12labs/cirm/astro-site/web/website-web/admin"
 	domain_context "github.com/net12labs/cirm/dali/domain/context"

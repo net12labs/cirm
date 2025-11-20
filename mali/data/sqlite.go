@@ -9,6 +9,7 @@ import (
 
 type SqliteDb struct {
 	db     *sql.DB
+	Db     *sql.DB
 	DbPath string
 }
 
@@ -22,6 +23,8 @@ func (db *SqliteDb) Init() error {
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
+
+	db.Db = db.db
 
 	// Create test table
 	createTableSQL := `CREATE TABLE IF NOT EXISTS test (

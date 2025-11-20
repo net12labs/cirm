@@ -3,7 +3,7 @@ package platform
 import (
 	"fmt"
 
-	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-web/platform"
+	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-page/platform"
 	webagentapi "github.com/net12labs/cirm/astro-site/web/agent-web-api/platform"
 	webagent "github.com/net12labs/cirm/astro-site/web/agent-web/platform"
 	webapi "github.com/net12labs/cirm/astro-site/web/website-web-api/platform"

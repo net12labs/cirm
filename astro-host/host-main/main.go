@@ -5,6 +5,7 @@ import (
 
 	domain "github.com/net12labs/cirm/astro-dom/dom-web"
 	hostadmin "github.com/net12labs/cirm/astro-host/host-admin"
+	sitedb "github.com/net12labs/cirm/astro-host/host-main/db_schema/site"
 	"github.com/net12labs/cirm/astro-host/host-main/ecdn"
 	astrowebmain "github.com/net12labs/cirm/astro-host/host-web"
 	astrowebadmin "github.com/net12labs/cirm/astro-host/host-web-admin"
@@ -45,6 +46,7 @@ func (m *Main) Run() {
 	m.HostAdmin = hostadmin.NewHostAdmin()
 
 	m.WebServer = webserver.NewWebServer()
+	dbInit()
 	m.Ecdn = ecdn.NewEcdn()
 	m.WebServer.AddRoute("/", func(req *webserver.Request) {
 		if req.Path.Path == "/" {
@@ -79,10 +81,9 @@ func (m *Main) Run() {
 }
 
 func dbInit() {
-	dbPath := rtm.Etc.Get("main_db_path").String()
-	mainDb := data.Ops.CreateDb("dom", dbPath)
-	hostDb := data.Ops.CreateDb("host", dbPath)
-	siteDb := data.Ops.CreateDb("host-site", dbPath)
+	mainDb := data.Ops.CreateDb("dom", rtm.Etc.Get("dom_db_path").String())
+	hostDb := data.Ops.CreateDb("host", rtm.Etc.Get("host_db_path").String())
+	siteDb := data.Ops.CreateDb("site", rtm.Etc.Get("site_db_path").String())
 
 	databases := []*mdata.SqliteDb{mainDb, hostDb, siteDb}
 	for _, db := range databases {
@@ -91,6 +92,17 @@ func dbInit() {
 			rtm.Runtime.Exit(1)
 		}
 	}
+	sitedb.InitSchema()
+	sitedb.Dbo.Db = siteDb
+
+	fmt.Println("=== Resetting database ===")
+	if err := sitedb.Dbo.InitDb(); err != nil {
+		fmt.Println("Failed to reset database:", err)
+		rtm.Runtime.Exit(1)
+	}
+	fmt.Println("=== Database initialized successfully ===")
+	fmt.Printf("Tables created: %v\n", sitedb.Dbo.ListTables())
+
 }
 
 func Try() {
@@ -101,7 +113,6 @@ func Try() {
 
 	if rtm.Args.HasKey("--run") {
 		processInit()
-		dbInit()
 
 		go func() {
 			m := &Main{}

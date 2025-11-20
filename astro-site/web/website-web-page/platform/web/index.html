@@ -3,93 +3,669 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>gtn.one - Global Internet Connectivity</title>
-    <style> 
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+    <title>FoodHub - Delicious Deals</title>
+    <script src="/ecdn/js/core.js"></script>
+    <script>
+        // Load copilot lite component when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadComponent('copilotLiteContainer', '/site/ai-agent/at/ai-assistant', 'Copilot Lite', true); // Use Shadow DOM
+        });
+    </script>
+    <style>
+        * {
             margin: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 800px;
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c8102e 0%, #ff4444 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
             margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
             background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: #c8102e;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: white;
+            color: #c8102e;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+            padding: 40px 20px;
             text-align: center;
+            color: #333;
         }
-        h1 {
-            color: #1e3c72;
-            margin-top: 0;
-            font-size: 2.5em;
+
+        .banner h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
         }
-        .tagline {
-            color: #666;
-            font-size: 1.2em;
+
+        .banner p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .promo-code {
+            background: white;
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #c8102e;
+            border: 2px dashed #c8102e;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin: 30px 0 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: #c8102e;
+            border-radius: 3px;
+        }
+
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             margin-bottom: 40px;
         }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-            text-align: left;
-        }
-        .feature {
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        .feature h3 {
-            color: #1e3c72;
-            margin-top: 0;
-        }
-        .feature p {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
+
+        .deal-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-            font-size: 1em;
-            text-decoration: none;
-            display: inline-block;
         }
-        .logout-btn:hover {
-            background: #c82333;
+
+        .deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .deal-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #ddd, #f0f0f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #c8102e;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge.special {
+            background: #ff9900;
+        }
+
+        .badge.new {
+            background: #28a745;
+        }
+
+        .deal-content {
+            padding: 20px;
+        }
+
+        .deal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .deal-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .deal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #c8102e;
+        }
+
+        .original-price {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 5px;
+        }
+
+        .add-btn {
+            background: #c8102e;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .add-btn:hover {
+            background: #a00d25;
+        }
+
+        .coupons-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .coupon-card {
+            background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
+            border: 2px dashed #c8102e;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coupon-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #c8102e, #ff9900);
+        }
+
+        .coupon-discount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #c8102e;
+            margin-bottom: 5px;
+        }
+
+        .coupon-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .coupon-code {
+            background: #c8102e;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .coupon-expiry {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .category-chip {
+            background: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .category-chip:hover,
+        .category-chip.active {
+            background: #c8102e;
+            color: white;
+            border-color: #c8102e;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ffcc00;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .banner h1 {
+                font-size: 28px;
+            }
+
+            .deals-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="/site/site/home" class="logout-btn">Logout</a>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍔</div>
+                <span>FoodHub</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary">👤 John Doe</button>
+                <button class="btn btn-secondary" id="logoutBtn">Logout</button>
+                <button class="btn btn-primary">🛒 Cart (0)</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="banner">
+        <h1>🎉 Weekend Super Sale! 🎉</h1>
+        <p>Get up to 50% OFF on all combo meals</p>
+        <div class="promo-code">USE CODE: WEEKEND50</div>
+    </div>
+
     <div class="container">
-        <h1>gtn.one</h1>
-        <p class="tagline">Global Internet Connectivity Provider</p>
-        
-        <div class="features">
-            <div class="feature">
-                <h3>🌍 Global Reach</h3>
-                <p>Connect to the world with our extensive network infrastructure</p>
+        <div class="categories">
+            <div class="category-chip active">🔥 Hot Deals</div>
+            <div class="category-chip">🍔 Burgers</div>
+            <div class="category-chip">🍗 Chicken</div>
+            <div class="category-chip">🍕 Pizza</div>
+            <div class="category-chip">🥤 Beverages</div>
+            <div class="category-chip">🍰 Desserts</div>
+            <div class="category-chip">🌯 Wraps</div>
+        </div>
+
+        <h2 class="section-title">🔥 Featured Bundles</h2>
+        <div class="deals-grid">
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍔🍟🥤</span>
+                    <div class="badge">SAVE 40%</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Mega Burger Bundle</div>
+                    <div class="deal-description">2 Deluxe Burgers + Large Fries + 2 Drinks. Perfect for sharing!</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$15.99</span>
+                            <span class="original-price">$26.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <h3>⚡ Fast & Reliable</h3>
-                <p>High-performance connectivity with 99.9% uptime guarantee</p>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍗🍗🍗</span>
+                    <div class="badge special">BESTSELLER</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Family Feast Bucket</div>
+                    <div class="deal-description">12 Crispy Chicken Pieces + 4 Biscuits + Family Fries + 1.5L Soda</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$24.99</span>
+                            <span class="original-price">$39.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <h3>🔒 Secure</h3>
-                <p>Enterprise-grade security for all your connections</p>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍕🥤</span>
+                    <div class="badge new">NEW</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Pizza Party Box</div>
+                    <div class="deal-description">2 Large Pizzas (any toppings) + Garlic Bread + 2 Beverages</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$29.99</span>
+                            <span class="original-price">$45.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🌯🥗🥤</span>
+                    <div class="badge">HEALTHY</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Wrap & Salad Combo</div>
+                    <div class="deal-description">Grilled Chicken Wrap + Garden Salad + Fresh Juice</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$12.99</span>
+                            <span class="original-price">$18.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍔🍔</span>
+                    <div class="badge special">LIMITED</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Double Trouble Deal</div>
+                    <div class="deal-description">2 Premium Burgers + 2 Medium Fries + 2 Shakes of your choice</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$19.99</span>
+                            <span class="original-price">$32.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍗🍟🧁</span>
+                    <div class="badge">VALUE</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Kids Special Box</div>
+                    <div class="deal-description">4 Chicken Nuggets + Small Fries + Juice + Toy Surprise</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$7.99</span>
+                            <span class="original-price">$12.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coupons-section">
+            <h2 class="section-title">🎟️ Available Coupons</h2>
+            <div class="coupons-grid">
+                <div class="coupon-card">
+                    <div class="coupon-discount">30% OFF</div>
+                    <div class="coupon-title">On orders above $25</div>
+                    <div class="coupon-code">SAVE30</div>
+                    <div class="coupon-expiry">Valid until Dec 31, 2024</div>
+                </div>
+
+                <div class="coupon-card">
+                    <div class="coupon-discount">$5 OFF</div>
+                    <div class="coupon-title">First Order Special</div>
+                    <div class="coupon-code">FIRST5</div>
+                    <div class="coupon-expiry">Valid for new customers</div>
+                </div>
+
+                <div class="coupon-card">
+                    <div class="coupon-discount">BUY 1 GET 1</div>
+                    <div class="coupon-title">On all burgers</div>
+                    <div class="coupon-code">BOGO</div>
+                    <div class="coupon-expiry">Valid on weekdays</div>
+                </div>
+
+                <div class="coupon-card">
+                    <div class="coupon-discount">FREE DELIVERY</div>
+                    <div class="coupon-title">On orders above $20</div>
+                    <div class="coupon-code">FREEDEL</div>
+                    <div class="coupon-expiry">Valid until Jan 15, 2025</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">⭐ Special Offers</h2>
+        <div class="deals-grid">
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>☕🥐</span>
+                    <div class="badge new">BREAKFAST</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Morning Starter</div>
+                    <div class="deal-description">Coffee + Croissant + Hash Browns - Available until 11 AM</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$5.99</span>
+                            <span class="original-price">$9.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍗🌶️</span>
+                    <div class="badge">SPICY</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Hot Wings Bucket</div>
+                    <div class="deal-description">20 Spicy Wings + Ranch Dip + Celery Sticks</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$16.99</span>
+                            <span class="original-price">$24.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-card">
+                <div class="deal-image">
+                    <span>🍦🍰</span>
+                    <div class="badge special">DESSERT</div>
+                </div>
+                <div class="deal-content">
+                    <div class="deal-title">Sweet Treats Box</div>
+                    <div class="deal-description">2 Ice Cream Sundaes + 2 Chocolate Brownies + Whipped Cream</div>
+                    <div class="deal-footer">
+                        <div>
+                            <span class="price">$11.99</span>
+                            <span class="original-price">$17.99</span>
+                        </div>
+                        <button class="add-btn">Add +</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Menu</a>
+                <a href="#">Locations</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <p>&copy; 2024 FoodHub. All rights reserved. | Delivering happiness one meal at a time 🍔</p>
+        </div>
+    </footer>
+
+    <!-- Copilot Lite Side Panel Container -->
+    <div id="copilotLiteContainer">
+        <p style="color: #666;">Loading Copilot Lite...</p>
+    </div>
+
+    <script>
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            window.location.href = '/site/site/home';
+        });
+
+        // Add interactivity
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.textContent = 'Added ✓';
+                this.style.background = '#28a745';
+                setTimeout(() => {
+                    this.textContent = 'Add +';
+                    this.style.background = '';
+                }, 1500);
+            });
+        });
+
+        document.querySelectorAll('.category-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.deal-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('add-btn')) {
+                    alert('View deal details: ' + this.querySelector('.deal-title').textContent);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

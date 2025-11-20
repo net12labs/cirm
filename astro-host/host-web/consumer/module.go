@@ -10,7 +10,7 @@ import (
 	webclient "github.com/net12labs/cirm/astro-site/web/website-web-page/consumer"
 	website "github.com/net12labs/cirm/astro-site/web/website-web/consumer"
 
-	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-web/consumer"
+	webagentclient "github.com/net12labs/cirm/astro-site/web/agent-client-page/consumer"
 	webagentapi "github.com/net12labs/cirm/astro-site/web/agent-web-api/consumer"
 	webagent "github.com/net12labs/cirm/astro-site/web/agent-web/consumer"
 

@@ -1,7 +1,6 @@
 package web_server
 
 import (
-	"fmt"
 	"net/http"
 
 	webserver "github.com/net12labs/cirm/mali/web-server"
@@ -15,7 +14,6 @@ func NewServer() *Server {
 	return &Server{}
 }
 func (s *Server) AddRoute(path string, handler func(req *Request) error) error {
-	fmt.Println("Adding route:", path)
 	s.WebServer.AddRoute(path, func(req *webserver.Request) {
 		apiReq := &Request{Request: req, Response: &Response{Response: req.Response}}
 		err := handler(apiReq)

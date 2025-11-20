@@ -10,6 +10,8 @@ func Init() {
 	rtm.Etc.SetKV("home_dir", "../units/"+rtm.Etc.Get("unit_id").String())
 	rtm.Etc.SetKV("pid_file_path", rtm.Etc.Get("home_dir").String()+"/proc/china-ip-routes-maker.pid")
 	rtm.Etc.SetKV("data_dir", rtm.Etc.Get("home_dir").String()+"/data")
-	rtm.Etc.SetKV("main_db_path", rtm.Etc.Get("data_dir").String()+"/main.db")
+	rtm.Etc.SetKV("dom_db_path", rtm.Etc.Get("data_dir").String()+"/dom.db")
+	rtm.Etc.SetKV("host_db_path", rtm.Etc.Get("data_dir").String()+"/host.db")
+	rtm.Etc.SetKV("site_db_path", rtm.Etc.Get("data_dir").String()+"/site.db")
 	rtm.Etc.SetKV("socket_path", rtm.Etc.Get("home_dir").String()+"/main.sock")
 }

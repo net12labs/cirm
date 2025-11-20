@@ -33,7 +33,7 @@ func (ws *WebServer) AddRoute(path string, handler func(req *Request)) {
 		ws.mux = http.NewServeMux()
 	}
 
-	fmt.Printf("Registering route: %s\n", path)
+	//fmt.Printf("Registering route: %s\n", path)
 	ws.mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		req := NewRequest(w, r)
 		// fmt.Printf("Handler triggered for path: %s (requested: %s)\n", path, r.URL.Path)

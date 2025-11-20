@@ -1,6 +1,7 @@
 package apiwebserver
 
 import (
+	"fmt"
 	"net/http"
 
 	webserver "github.com/net12labs/cirm/mali/web-server"
@@ -23,6 +24,7 @@ func (s *Server) AddRoute(path string, handler func(req *Request) error) error {
 		}
 		if err := handler(apiReq); err != nil {
 			apiReq.Response.StatusCode = http.StatusInternalServerError
+			fmt.Println("Error occurred while processing request:", err)
 			apiReq.WriteResponse(map[string]any{"message": "Internal server error"})
 			return
 		}

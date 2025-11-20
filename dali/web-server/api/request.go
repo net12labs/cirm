@@ -20,6 +20,14 @@ func (s *Request) Validate_HasBody() bool {
 	return s.Request.Req.Body != nil
 }
 
+func (s *Request) Json2Struct(v any) error {
+	bodyBytes, err := io.ReadAll(s.Request.Req.Body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bodyBytes, v)
+}
+
 func (s *Request) ReadRequestBodyAsMap() (map[string]any, error) {
 
 	var result map[string]any
