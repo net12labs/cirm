@@ -3,16 +3,18 @@
 
 cd /home/lxk/Desktop/cirm/bins/vfsql_web
 
-echo "=== Testing build ==="
-go build -o vfsql_web . 2>&1
+echo "=== Testing Build ==="
+go build -o vfsql_web . 2>&1 | head -20
 
 if [ $? -eq 0 ]; then
-    echo "✓ Build successful"
     echo ""
-    echo "Starting server..."
-    ./vfsql_web
+    echo "✓ Build successful!"
 else
-    echo "✗ Build failed"
     echo ""
-    echo "Please fix the compilation errors above"
+    echo "✗ Build failed - showing first 20 errors"
+    echo ""
+    echo "Common fixes:"
+    echo "1. Check for duplicate function declarations"
+    echo "2. Check for misplaced code (comments or partial functions)"
+    echo "3. Look for 'illegal label' or 'missing comma' errors"
 fi

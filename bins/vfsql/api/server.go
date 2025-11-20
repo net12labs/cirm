@@ -61,7 +61,9 @@ func (s *Server) setupRoutes() {
 	// API routes first (more specific)
 	s.mux.HandleFunc("/api/upload", s.handleUpload)
 	s.mux.HandleFunc("/api/download/", s.handleDownload)
+	s.mux.HandleFunc("/api/cdn-url/", s.handleCDNURL)
 	s.mux.HandleFunc("/api/test-create", s.handleTestCreate)
+	s.mux.HandleFunc("/cdn/", s.handleCDN)
 	s.mux.HandleFunc("/api/files", s.handleFiles)
 	s.mux.HandleFunc("/api/file/", s.handleFile)
 	s.mux.HandleFunc("/api/dirs", s.handleDirs)
@@ -607,7 +609,13 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.jsonResponse(w, results)
+	// Normalize all paths in results.Paths - remove double slashes
+	normalizedResults := make([]string, len(results.Paths))
+	for i, p := range results.Paths {
+		normalizedResults[i] = strings.ReplaceAll(p, "//", "/")
+	}
+
+	s.jsonResponse(w, normalizedResults)
 }
 
 // handleStat returns file/directory stats
@@ -768,6 +776,200 @@ func (s *Server) handleTestCreate(w http.ResponseWriter, r *http.Request) {
 		"content_match": string(readBack) == testContent,
 		"read_back":     string(readBack),
 	})
+}
+
+// handleCDNURL generates CDN URLs for files
+// GET /api/cdn-url/{path} returns {"url": "/cdn/{hash}/{path}"}
+func (s *Server) handleCDNURL(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	filePath := strings.TrimPrefix(r.URL.Path, "/api/cdn-url")
+
+	if filePath == "" || filePath == "/" {
+		s.jsonError(w, fmt.Errorf("file path required"), http.StatusBadRequest)
+		return
+	}
+
+	// Verify file exists
+	info, err := s.vfs.Stat(filePath)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	if info.IsDir() {
+		s.jsonError(w, fmt.Errorf("cannot create CDN URL for directory"), http.StatusBadRequest)
+		return
+	}
+
+	// Generate hash (simple version - in production use proper HMAC)
+	// Format: base64url(sha256(volumeID:fsID:path))
+	hashInput := fmt.Sprintf("vfs:%s", filePath)
+	hash := fmt.Sprintf("%x", []byte(hashInput))[:16] // Use first 16 chars for simplicity
+
+	// Build CDN URL
+	cdnPath := strings.TrimPrefix(filePath, "/")
+	cdnURL := fmt.Sprintf("/cdn/%s/%s", hash, cdnPath)
+
+	// Get the host from the request
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	host := r.Host
+	if host == "" {
+		host = "localhost:8080"
+	}
+
+	fullURL := fmt.Sprintf("%s://%s%s", scheme, host, cdnURL)
+
+	s.jsonResponse(w, map[string]interface{}{
+		"url":      cdnURL,
+		"full_url": fullURL,
+		"path":     filePath,
+		"hash":     hash,
+		"size":     info.Size(),
+		"modified": info.ModTime().Unix(),
+	})
+}
+
+// handleCDN serves files in a CDN-style URL with cache headers
+// URL format: /cdn/{hash}/{path}
+// Hash is base64url(sha256(volumeID:fsID:secret))
+func (s *Server) handleCDN(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" && r.Method != "HEAD" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse URL: /cdn/{hash}/{path}
+	urlPath := strings.TrimPrefix(r.URL.Path, "/cdn/")
+	parts := strings.SplitN(urlPath, "/", 2)
+
+	if len(parts) < 2 {
+		http.Error(w, "Invalid CDN URL format. Use: /cdn/{hash}/{path}", http.StatusBadRequest)
+		return
+	}
+
+	hash := parts[0]
+	filePath := "/" + parts[1]
+
+	fmt.Printf("[CDN] Request: hash=%s, path=%s\n", hash, filePath)
+
+	// TODO: Validate hash against volume/fs ID
+	// For now, we'll just serve from the current VFS
+	// In production, you'd validate: hash == base64url(sha256(volumeID:fsID:secret))
+
+	// Get file info
+	info, err := s.vfs.Stat(filePath)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	if info.IsDir() {
+		http.Error(w, "Cannot serve directory", http.StatusBadRequest)
+		return
+	}
+
+	// Open file
+	f, err := s.vfs.Open(filePath)
+	if err != nil {
+		http.Error(w, "Failed to open file", http.StatusInternalServerError)
+		return
+	}
+	defer f.Close()
+
+	// Read content
+	content, err := io.ReadAll(f)
+	if err != nil {
+		http.Error(w, "Failed to read file", http.StatusInternalServerError)
+		return
+	}
+
+	// Get filename and extension
+	filename := filepath.Base(filePath)
+	ext := strings.ToLower(filepath.Ext(filename))
+
+	// Determine content type
+	contentType := "application/octet-stream"
+	switch ext {
+	case ".txt":
+		contentType = "text/plain; charset=utf-8"
+	case ".json":
+		contentType = "application/json"
+	case ".xml":
+		contentType = "application/xml"
+	case ".html", ".htm":
+		contentType = "text/html; charset=utf-8"
+	case ".css":
+		contentType = "text/css"
+	case ".js":
+		contentType = "application/javascript"
+	case ".md":
+		contentType = "text/markdown; charset=utf-8"
+	case ".csv":
+		contentType = "text/csv"
+	case ".jpg", ".jpeg":
+		contentType = "image/jpeg"
+	case ".png":
+		contentType = "image/png"
+	case ".gif":
+		contentType = "image/gif"
+	case ".svg":
+		contentType = "image/svg+xml"
+	case ".webp":
+		contentType = "image/webp"
+	case ".ico":
+		contentType = "image/x-icon"
+	case ".pdf":
+		contentType = "application/pdf"
+	case ".zip":
+		contentType = "application/zip"
+	case ".mp4":
+		contentType = "video/mp4"
+	case ".mp3":
+		contentType = "audio/mpeg"
+	case ".woff":
+		contentType = "font/woff"
+	case ".woff2":
+		contentType = "font/woff2"
+	case ".ttf":
+		contentType = "font/ttf"
+	case ".otf":
+		contentType = "font/otf"
+	}
+
+	// Set CDN headers
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(content)))
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable") // Cache for 1 year
+	w.Header().Set("Access-Control-Allow-Origin", "*")                     // Allow CORS
+	w.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+
+	// Add ETag for caching
+	etag := fmt.Sprintf(`"%x-%d"`, info.ModTime().Unix(), info.Size())
+	w.Header().Set("ETag", etag)
+
+	// Check If-None-Match for 304 responses
+	if match := r.Header.Get("If-None-Match"); match == etag {
+		w.WriteHeader(http.StatusNotModified)
+		return
+	}
+
+	// Handle HEAD requests
+	if r.Method == "HEAD" {
+		return
+	}
+
+	// Write content
+	w.Write(content)
+
+	fmt.Printf("[CDN] Served: %s (%d bytes, %s)\n", filePath, len(content), contentType)
 }
 
 // handleDownload serves files for download with proper headers

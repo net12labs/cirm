@@ -1,0 +1,23 @@
+--- a/api/server.go
++++ b/api/server.go
+@@ -610,8 +610,12 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 
+-	// Normalize all paths in results - remove double slashes
+-	for i := range results {
+-		results[i] = strings.ReplaceAll(results[i], "//", "/")
++	// Normalize all paths in results.Paths - remove double slashes
++	if results != nil && results.Paths != nil {
++		for i := range results.Paths {
++			results.Paths[i] = strings.ReplaceAll(results.Paths[i], "//", "/")
++		}
+ 	}
+ 
+-	fmt.Printf("[Search] Found %d results (normalized)\n", len(results))
++	resultCount := 0
++	if results != nil {
++		resultCount = len(results.Paths)
++	}
++	fmt.Printf("[Search] Found %d results (normalized)\n", resultCount)
+ 	s.jsonResponse(w, results)

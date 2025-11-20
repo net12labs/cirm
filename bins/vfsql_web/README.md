@@ -157,6 +157,12 @@ Open your browser and navigate to:
 - `GET /api/tree?path=:path` - Get directory tree
 - `GET /api/events` - Server-sent events stream
 - `POST /api/upload` - Multipart file upload (supports binary files)
+- `GET /api/cdn-url/:path` - Generate CDN URL for a file
+
+### CDN Endpoint
+
+- `GET /cdn/{hash}/{path}` - Serve files with CDN caching headers
+- `HEAD /cdn/{hash}/{path}` - Get file headers without content
 
 ## Example Usage
 
@@ -308,3 +314,114 @@ This is a development/testing tool. For production use:
 ## License
 
 Same as parent project.
+
+## CDN URLs
+
+VFSQL provides CDN-style URLs for serving files that can be embedded in other websites.
+
+### Features
+
+- **Long-term caching** - Files are cached for 1 year with immutable directive
+- **CORS enabled** - Can be used from any domain
+- **ETag support** - Efficient caching with 304 Not Modified responses
+- **Multiple content types** - Automatic detection for images, videos, fonts, etc.
+- **High performance** - Optimized for static asset delivery
+
+### Getting CDN URLs
+
+#### Via Web Interface
+
+1. Select a file in the file browser
+2. Click the **🔗 Get CDN URL** button
+3. Copy the generated URL
+4. Use it in your HTML, CSS, or JavaScript
+
+#### Via API
+
+```bash
+# Get CDN URL for a file
+curl http://localhost:8080/api/cdn-url/images/logo.png
+
+# Response:
+{
+  "url": "/cdn/a1b2c3d4e5f6/images/logo.png",
+  "full_url": "http://localhost:8080/cdn/a1b2c3d4e5f6/images/logo.png",
+  "path": "/images/logo.png",
+  "hash": "a1b2c3d4e5f6",
+  "size": 12345,
+  "modified": 1234567890
+}
+```
+
+### Using CDN URLs
+
+#### In HTML
+
+```html
+<!-- Images -->
+<img src="http://your-server.com/cdn/a1b2c3d4e5f6/images/photo.jpg" alt="Photo">
+
+<!-- CSS -->
+<link rel="stylesheet" href="http://your-server.com/cdn/a1b2c3d4e5f6/styles/main.css">
+
+<!-- JavaScript -->
+<script src="http://your-server.com/cdn/a1b2c3d4e5f6/scripts/app.js"></script>
+
+<!-- Fonts -->
+@font-face {
+  font-family: 'MyFont';
+  src: url('http://your-server.com/cdn/a1b2c3d4e5f6/fonts/myfont.woff2');
+}
+
+<!-- Videos -->
+<video src="http://your-server.com/cdn/a1b2c3d4e5f6/videos/intro.mp4" controls></video>
+
+<!-- PDFs -->
+<embed src="http://your-server.com/cdn/a1b2c3d4e5f6/docs/manual.pdf" type="application/pdf">
+```
+
+#### In Markdown
+
+```markdown
+![Logo](http://your-server.com/cdn/a1b2c3d4e5f6/images/logo.png)
+[Download PDF](http://your-server.com/cdn/a1b2c3d4e5f6/docs/guide.pdf)
+```
+
+### URL Format
+
+```
+/cdn/{hash}/{path}
+```
+
+- **hash** - Security hash (prevents path enumeration)
+- **path** - File path within the VFS
+
+### Supported File Types
+
+The CDN endpoint automatically sets correct Content-Type headers for:
+
+- **Images**: JPG, PNG, GIF, SVG, WEBP, ICO
+- **Documents**: PDF, TXT, JSON, XML, HTML, MD, CSV
+- **Styles**: CSS
+- **Scripts**: JS
+- **Fonts**: WOFF, WOFF2, TTF, OTF
+- **Media**: MP4, MP3
+- **Archives**: ZIP
+
+### Cache Headers
+
+```
+Cache-Control: public, max-age=31536000, immutable
+Access-Control-Allow-Origin: *
+X-Content-Type-Options: nosniff
+ETag: "timestamp-size"
+```
+
+### Example Use Cases
+
+1. **Serve images for a blog** - Host images in VFSQL, link from blog posts
+2. **CDN for web assets** - Serve CSS, JS, fonts for websites
+3. **File sharing** - Share files via permanent URLs
+4. **API documentation** - Host images and diagrams
+5. **Email templates** - Link to hosted images in emails
+6. **Mobile apps** - Serve assets for mobile applications

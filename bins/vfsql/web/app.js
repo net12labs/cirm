@@ -218,6 +218,109 @@ function uploadFiles() {
     document.getElementById('fileInput').click();
 }
 
+// Get CDN URL for file
+async function getCDNUrl() {
+    if (!currentPath || currentIsDir) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/cdn-url${currentPath}`);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to get CDN URL: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Create a modal/dialog to show the URL
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%;">
+                <h3 style="margin-top: 0; color: #667eea;">🔗 CDN URL</h3>
+                <p style="color: #666;">Use this URL to link to your file from other websites:</p>
+                
+                <div style="margin: 20px 0;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Full URL:</label>
+                    <input type="text" id="cdnFullUrl" value="${data.full_url}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace;"
+                           readonly>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Relative URL:</label>
+                    <input type="text" id="cdnRelUrl" value="${data.url}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace;"
+                           readonly>
+                </div>
+                
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <strong>Features:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>✓ Long-term caching (1 year)</li>
+                        <li>✓ CORS enabled for cross-origin use</li>
+                        <li>✓ ETag support for efficient caching</li>
+                        <li>✓ Immutable content</li>
+                    </ul>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="copyToClipboard('${data.full_url}')" 
+                            style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        📋 Copy Full URL
+                    </button>
+                    <button onclick="this.closest('[style*=fixed]').remove()" 
+                            style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Close
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Select the URL text on click
+        document.getElementById('cdnFullUrl').addEventListener('click', function() {
+            this.select();
+        });
+        document.getElementById('cdnRelUrl').addEventListener('click', function() {
+            this.select();
+        });
+        
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+        showSuccess('CDN URL generated');
+    } catch (error) {
+        showError('Failed to get CDN URL: ' + error.message);
+        console.error('CDN URL error:', error);
+    }
+}
+
+// Copy to clipboard helper
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showSuccess('URL copied to clipboard!');
+    }).catch(err => {
+        showError('Failed to copy: ' + err.message);
+    });
+}
+
 // Download file
 async function downloadFile() {
     if (!currentPath || currentIsDir) return;
@@ -317,6 +420,8 @@ function renderTree(node, container = document.getElementById('fileTree'), level
 
 // File selection
 async function selectFile(path, isDir) {
+    // Normalize path - remove double slashes
+    path = path.replace(/\/+/g, '/');
     currentPath = path;
     currentIsDir = isDir;
     
@@ -342,6 +447,7 @@ async function selectFile(path, isDir) {
     document.getElementById('saveBtn').disabled = true;
     document.getElementById('deleteBtn').disabled = false;
     document.getElementById('downloadBtn').disabled = isDir;
+    document.getElementById('cdnBtn').disabled = isDir;
     
     if (!isDir) {
         await loadFile(path);
@@ -787,6 +893,104 @@ async function performSearch() {
             `).join('')}
         `;
     } catch (error) {
+        showError('Search failed: ' + error.message);
+    }
+}
+
+// Search files with improved error handling and UI
+async function searchFiles() {
+    console.log('[Search] Starting search...');
+    
+    const pattern = document.getElementById('searchPattern')?.value || '';
+    const path = document.getElementById('searchPath')?.value || '/';
+    const recursive = document.getElementById('searchRecursive')?.checked || true;
+    const tags = document.getElementById('searchTags')?.value || '';
+    const description = document.getElementById('searchDescription')?.value || '';
+    
+    console.log('[Search] Parameters:', { pattern, path, recursive, tags, description });
+    
+    // Validate at least one search criteria
+    if (!pattern && !tags && !description) {
+        showError('Please enter at least one search criteria (pattern, tags, or description)');
+        return;
+    }
+    
+    const resultsDiv = document.getElementById('searchResults');
+    resultsDiv.innerHTML = '<p>🔄 Searching...</p>';
+    
+    try {
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (pattern) params.append('pattern', pattern);
+        params.append('path', path);
+        params.append('recursive', recursive.toString());
+        if (tags) params.append('tags', tags);
+        if (description) params.append('description', description);
+        
+        const url = `${API_BASE}/search?${params}`;
+        console.log('[Search] Fetching:', url);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('[Search] Response:', data);
+        
+        // Handle different response formats
+        const results = data.Paths || data.paths || data || [];
+        const totalCount = data.TotalCount || data.totalCount || results.length;
+        
+        console.log('[Search] Parsed results:', results, 'Total:', totalCount);
+        
+        // Display results
+        if (!results || results.length === 0) {
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <div style="font-size: 3em;">🔍</div>
+                    <p>No files found matching your criteria</p>
+                    <p style="font-size: 0.9em;">Try different search terms or enable recursive search</p>
+                </div>
+            `;
+        } else {
+            resultsDiv.innerHTML = `
+                <div style="margin-bottom: 15px; padding: 10px; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #4caf50;">
+                    <strong style="color: #2e7d32;">✓ Found ${results.length} file(s)</strong>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    ${results.map(filePath => {
+                        // Normalize path - remove double slashes
+                        const normalizedPath = filePath.replace(/\/+/g, '/');
+                        return `
+                        <div class="search-result-item" 
+                             onclick="selectFile('${normalizedPath}', false); showTab('editor')"
+                             style="cursor: pointer; padding: 12px; margin: 8px 0; background: #f9f9f9; border-radius: 5px; border-left: 3px solid #667eea; transition: all 0.2s;"
+                             onmouseover="this.style.background='#e8eaf6'; this.style.transform='translateX(5px)'"
+                             onmouseout="this.style.background='#f9f9f9'; this.style.transform='translateX(0)'">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">📄</span>
+                                <span style="font-family: monospace; color: #333;">${normalizedPath}</span>
+                            </div>
+                        </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            showSuccess(`Found ${results.length} file(s)`);
+        }
+    } catch (error) {
+        console.error('[Search] Error:', error);
+        resultsDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #d32f2f;">
+                <div style="font-size: 3em;">⚠️</div>
+                <p><strong>Search Failed</strong></p>
+                <p style="font-size: 0.9em; color: #666;">${error.message}</p>
+            </div>
+        `;
         showError('Search failed: ' + error.message);
     }
 }
